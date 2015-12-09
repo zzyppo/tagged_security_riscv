@@ -61,6 +61,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   if (!params(BuildFPU).isEmpty) decode_table ++= FDecode.table
   if (!params(BuildFPU).isEmpty && params(FDivSqrt)) decode_table ++= FDivSqrtDecode.table
   if (!params(BuildRoCC).isEmpty) decode_table ++= RoCCDecode.table
+  decode_table ++= TagDecode.table
 
   val ex_ctrl = Reg(new IntCtrlSigs)
   val mem_ctrl = Reg(new IntCtrlSigs)
