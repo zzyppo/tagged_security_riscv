@@ -1,0 +1,12 @@
+ChangeLog for Chisel v2.2.30
+
+#563 Update combinational loop analysis.
+#559 Deal with exceptions in the test application.
+#530 Avoid java.lang.StackOverflowError trying to get widthW().
+#528 Generate ChiselError for asserts().
+#395 - Deprecate '!=' in favour of '=/='.
+ Ensure testKeywordsNull() has an application to execute. (Testing)
+ Update Mem write interface. (Chisel3 compatibility)
+ Fix spurious Chisel3 Vec compatibility warning. (Chisel3 compatibility)
+ Fix printf output collection to pass FlushPrintfOutput test. (Testing)
+ Major overhaul of Tester implementation - use memory mapped files for tester communication. (Testing performance)
