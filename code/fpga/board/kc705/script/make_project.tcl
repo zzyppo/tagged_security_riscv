@@ -89,7 +89,7 @@ generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_0/axi_bram_ctrl_0.xci]
 
 # Memory Controller
-create_ip -name mig_7series -vendor xilinx.com -library ip -version 2.4 -module_name mig_7series_0
+create_ip -name mig_7series -vendor xilinx.com -library ip -version 2.3 -module_name mig_7series_0
 set_property CONFIG.XML_INPUT_FILE [file normalize $origin_dir/script/mig_config.prj] [get_ips mig_7series_0]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci]
