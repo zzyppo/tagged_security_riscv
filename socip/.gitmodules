@@ -1,0 +1,3 @@
+[submodule "uart"]
+	path = uart
+	url = https://github.com/lowrisc/flexpret.git

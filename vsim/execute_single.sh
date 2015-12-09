@@ -1,0 +1,1 @@
+./DefaultConfig-sim-debug +vcd +vcd_name=output/super.vcd +max-cycles=100000000 +load=output/rv64ui-p-sra.hex | /home/zaepo/lowRISC/lowrisc-chip/riscv/bin/spike-dasm  >output/rv64ui-p-sra.verilator.out && [ $PIPESTATUS -eq 0 ]
