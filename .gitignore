@@ -1,5 +1,6 @@
 target/
 project/target
+riscv/
 *.swp
 *~
 .addons-dont-touch
