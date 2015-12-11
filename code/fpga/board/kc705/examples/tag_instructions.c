@@ -15,7 +15,7 @@ int main() {
   int test = 0;
  // for(i=0; i<10; i++) {
     int temp = 0;
-int tag_in = 0x66;
+int tag_in = 0x01;
  asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(a));
 temp = 0;
   asm volatile ("stag %0, 0(%1)"

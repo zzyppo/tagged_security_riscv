@@ -80,7 +80,7 @@ class DefaultConfig extends ChiselConfig (
       }: PF
 
       // Tag Cache
-      case TagBits => 4
+      case TagBits => 2
       case TCBlockBits => site(MIFDataBits)
       case TCTransactors => Knob("TC_XACTORS")
       case TCBlockTags => 1 << log2Down(site(TCBlockBits) / site(TagBits))
