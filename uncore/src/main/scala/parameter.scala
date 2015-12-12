@@ -44,6 +44,7 @@ case object TCBlockBits extends Field[Int]
 case object TCTransactors extends Field[Int]
 case object TCBlockTags extends Field[Int]
 case object TCBaseAddr extends Field[Int]
+case object TagTLDataBits extends Field[Int]
 
 // Rocket Core Constants
 case object XLen extends Field[Int]

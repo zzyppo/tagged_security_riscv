@@ -76,11 +76,11 @@ class DefaultConfig extends ChiselConfig (
       case "L2Bank" => {
         case NSets => Knob("L2_SETS")
         case NWays => Knob("L2_WAYS")
-        case RowBits => site(TLDataBits)
+        case RowBits => site(TagTLDataBits)
       }: PF
 
       // Tag Cache
-      case TagBits => 2
+      case TagBits => 4
       case TCBlockBits => site(MIFDataBits)
       case TCTransactors => Knob("TC_XACTORS")
       case TCBlockTags => 1 << log2Down(site(TCBlockBits) / site(TagBits))
@@ -121,6 +121,7 @@ class DefaultConfig extends ChiselConfig (
       case TLBlockAddrBits => site(PAddrBits) - site(CacheBlockOffsetBits)
       case TLNClients => site(TLNCachingClients) + site(TLNCachelessClients)
       case TLDataBits => site(CacheBlockBytes)*8/site(TLDataBeats)
+      case TagTLDataBits => site(TLDataBits) + site(TagBits) * (site(TLDataBits) / site(CacheBlockBytes))
       case TLWriteMaskBits => (site(TLDataBits) - 1) / 8 + 1
       case TLDataBeats => 4
       case TLNetworkIsOrderedP2P => false

@@ -1031,9 +1031,9 @@ class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal
 
   // tag utilities
   val tagUtil = new TagUtil(params(TagBits), coreDataBits)
-    writeArb.io.in(1).bits.data := tagUtil.insertTag(narrow_grant.bits.data)
+    //writeArb.io.in(1).bits.data := tagUtil.insertTag(narrow_grant.bits.data)
     //Right version
-    //writeArb.io.in(1).bits.data := narrow_grant.bits.data(encTaggedRowBits-1,0)
+    writeArb.io.in(1).bits.data := narrow_grant.bits.data(encTaggedRowBits-1,0)
     ////
 
   data.io.read <> readArb.io.out
