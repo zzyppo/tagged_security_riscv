@@ -37,10 +37,9 @@
 	\begin{itemize}
 		\item Motivation
     	\item Vulnerable buffer overflow attacks
-    	\item RISC-V
-    	\item Hardware and Toolchain
+    	\item Rocket and Tool-chain
     	\item Tagged Memory
-    	\item Untethered RISC-V
+    	\item Untethered Rocket
     	\item Tag Security Policies
     	\item Project Time-line
 	\end{itemize}
@@ -50,16 +49,16 @@
 \section{Motivation}
 \begin{frame}
 	\frametitle{Motivation}
-	Current Status
+	Status
 	\begin{itemize}
-		\item Stack buffer overflow still a huge impact on security
-    	\item Getting access to the computer by injection of code
-    	\item No solution yet which protects this asset
+		\item Memory vulnerabilities have a huge impact on security
+		\item Code reuse attacks alter control flow (ROP, JOP )
+    	\item No direct hardware countermeasures exist %which protects control flow
 	\end{itemize}
-	Main Goals
+	Goals
 	\begin{itemize}
-		\item Implement strong Security policies using Tagged Memory
-    	\item Efficient and Secure Solution
+		\item Enforce security policies using tagged memory
+    	\item Efficient and secure solution
     	\item Effortless protection of  existing programs
     	\item Development on a open source processor 
 	\end{itemize}
@@ -68,7 +67,7 @@
 \section{Buffer Overflows}
 \begin{frame}
 	\frametitle{Buffer Overflows}
-	Stack and Heap often target of attacks due to programming errors (range checks)
+	Stack and heap often target of attacks due to programming errors (range checks)
 	\begin{itemize}
 		\item Leaks easy to fix,  also easy to oversee
 		\item Attack can take control of machine
@@ -95,9 +94,9 @@
 	\frametitle{Modify Pointer To Callback Function}
 	Similar attack but operates also on heap ...
 	\begin{itemize}
-		\item callback function pointer somewhere in heap
-		\item inject attack code by heap buffer overflow
-		\item change the function pointer to point to attack code
+		\item Callback function pointer somewhere in heap
+		\item Inject attack code by heap buffer overflow
+		\item Change the function pointer to point to attack code
 	\end{itemize}
 \end{frame}
 
@@ -114,12 +113,12 @@
 
 \end{frame}
 
-\section{RISC-V}
+\section{Rocket}
 \begin{frame}
-	\frametitle{RISC-V}
+	\frametitle{Rocket}
 	\begin{itemize}
-		\item Open-Source processor, University of Berkley
-		\item Optimized Instruction set for research topics
+		\item Open-Source, University of Berkley
+		\item Optimized instruction set for research topics (RISC-V)
 		\item Developed with Chisel
 		\item PROCESSOR DATA
 		\item Currently tethered to ARM-Processor (boot-strapping)
@@ -127,7 +126,7 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{RISC-V Processor Structure}
+	\frametitle{Rocket Processor Structure}
 	ToDo: Other picture
 	\begin{figure}[!h]
 	\begin{center}
@@ -140,33 +139,14 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{The lowRISC project}
-		Sub organisation 
-		\begin{itemize}
-		\item Goal to make a fully open SoC 
-		\item Raspberry Pi for grown ups
-		\item Community project to support hardware and application designers  
-	\end{itemize}
-\end{frame}
-
-\section{Hardware and Toolchain}
-\begin{frame}
-	\frametitle{Hardware}
-	Original designed for Zynq boards. This thesis will be done on Kintex-7
-	\begin{itemize}
-			\item Kintex 7 information
-		\end{itemize}
-\end{frame}
-
-\begin{frame}
 	\frametitle{Chisel}
 	Developed by University of Berkley
 	\begin{itemize}
 		\item New high level hardware design language
 		\item Based on Scala
 		\item Full control over resulting RTL structures
-		\item Powerful generator (e.g add and remove modules per define)
-		\item Outputs: Cycle accurate C++ Emulator, Verilog
+		\item Powerful generator %(e.g add and remove modules per define)
+		\item Outputs: Cycle accurate C++ emulator, Verilog
 		\item Use Vectors, Maps, Objects within Scala
 	\end{itemize}
 \end{frame}
@@ -178,18 +158,29 @@
 		\item Fully adapted GNU Toolchain
 		\item RISC-V bare-metal compiler
 		\item RISC-V Linux compiler
-		\item Simulation with C++ Emulator (Waveform output included)
-		\item FPGA-implemenation using Verilog output and Xilinx Vivado
+		\item Simulation with C++ emulator %(Waveform output included)
+		\item FPGA-implemenation using Verilog and Xilinx Vivado
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The lowRISC project}
+		RISC-V at Cambridge 
+		\begin{itemize}
+		\item Goal to make a fully open SoC 
+		\item Raspberry Pi for grown ups
+		\item Community project to support hardware and application designers  
+		\item Extend Rocket core with security features (tagged memory)
 	\end{itemize}
 \end{frame}
 
 \section{Tagged Memory}
 \begin{frame}
 	\frametitle{Tagged Memory}
-	Extension to RISC-V by lowRISC team.
+	Extension to Rocket by lowRISC team.
 	\begin{itemize}
-		\item Ability to tag every 64 bits in memory with one or more tags
-		\item So far only Framework (load and store tag)
+		\item Ability to tag every 64 bits in memory with one or more tag bits
+		\item So far only framework (load and store tag)
 		\item Additional Tag-Cache to improve performance
 	\end{itemize}
 	Changes to RISC-V
@@ -212,10 +203,10 @@
 	\end{figure}
 \end{frame}
 
-\section{Untethered RISC-V}
+\section{Untethered Rocket}
 \begin{frame}
-	\frametitle{Current RISC-V}
-	Currently RISC-V is thehered to ARM-Processing System
+	\frametitle{Current Rocket/ lowRISC}
+	Currently tethered to ARM-Processing system (Zynq)
 	\begin{itemize}
 	\item HostIO: AXI Lite interface for Input/Output handled by ARM
 	\item MemIO: AXI HP for DDR3 Memory access through ARM
@@ -240,13 +231,13 @@
 	\frametitle{Changes for Untethering}
 	lowRISC team implemented untethered version on Kintex-7 board (upcoming release)
 	\begin{itemize}
-	\item MemIO exchanged with NASTI-Bus (Berkley AXI-4 implementation)
+	\item MemIO exchanged with NASTI-Bus %(Berkley AXI-4 implementation)
 	\item HostIO for debug purposes
 	\item Adding IO devices like UART and SPI
 	\item IO interface is NASTI-Lite
 	\item Implementation of IO memory map
-	\item internal and external Bus width reduced to 128 bit (4 bursts for one cache line)
-	\item Tagged Memory not ported yet.
+	\item Internal and external Bus width reduced to 128 bit %(4 bursts for one cache line)
+	\item Tagged memory not ported yet
 	\end{itemize}
 \end{frame}
 
@@ -269,7 +260,7 @@
    Idea: Secure return address and function pointers from attackers
    \begin{itemize}
 	   \item Only minor to no change to existing Programs (Linux context switch)
- 	  \item Use of 2 tag bits (Bit 1: DATA/INVALID, Bit 2: RETURN)
+ 	  \item Use of 2 tag bits per 64 bit data %(Bit 1: DATA/INVALID, Bit 2: RETURN)
  	  \item Implementation in untethered version
  	  \item Tag Control Unit that checks tags and causes traps/reset   
  	  \item No changes to compiler aimed for these policies
@@ -294,11 +285,11 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Function Pointer Protection}
+	\frametitle{Dynamic Taint Tracking}
 	\begin{enumerate}
 	\item Data and function pointers tagged as DATA
 	\item Attacker injects code and overwrites function pointer. (IO input causes INV tag)
-	\item JAL-R tries to jump to address with INV tag(trap performed).
+	\item JAL-R tries to jump to address with INV tag (trap performed).
 	\end{enumerate}
 	\begin{figure}[!h]
 		\begin{center}
@@ -316,8 +307,8 @@
 	\frametitle{Project Time-line}
    \begin{itemize}
    	  \item Preparation and lowRISC tutorial. 1.12.2015, 180h [Done]
-	   \item Implementation of Tagged Memory. 31.01.2015, 150h
-	   \item Tag Security Policies. 31.04.2015, 200h
+	   \item Implementation of tagged memory. 31.01.2015, 150h
+	   \item Tag security policies. 31.04.2015, 200h
 		\item Documentation. 31.05.2015, 200h
    \end{itemize}
 \end{frame}
