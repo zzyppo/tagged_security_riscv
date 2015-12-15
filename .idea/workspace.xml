@@ -55,8 +55,8 @@
       <file leaf-file-name="tilelink.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/uncore/src/main/scala/tilelink.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.52897197">
-              <caret line="1619" column="0" selection-start-line="1619" selection-start-column="0" selection-end-line="1619" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.5850467">
+              <caret line="1621" column="0" selection-start-line="1621" selection-start-column="0" selection-end-line="1621" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -758,7 +758,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="55" y="-14" width="1875" height="969" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1208,8 +1208,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/uncore/src/main/scala/tilelink.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.52897197">
-          <caret line="1619" column="0" selection-start-line="1619" selection-start-column="0" selection-end-line="1619" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5850467">
+          <caret line="1621" column="0" selection-start-line="1621" selection-start-column="0" selection-end-line="1621" selection-end-column="0" />
           <folding />
         </state>
       </provider>
