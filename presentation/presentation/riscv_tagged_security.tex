@@ -19,7 +19,7 @@
 %% Titelblatt-Einstellungen
 \title[Tagged Memory Security on RISC-V]{Tagged Memory Security on RISC-V}
 \author{Philipp Jantscher}
-\date{Graz, 18. December 2015}		% \today für heutiges Datum verwenden
+\date{Graz, 17. December 2015}		% \today für heutiges Datum verwenden
 %\date{\today}
 \institute[IAIK]{IAIK}
 \instituteurl{www.iaik.tugraz.at}
@@ -52,7 +52,7 @@
 	Status
 	\begin{itemize}
 		\item Memory vulnerabilities have a huge impact on security
-		\item Code reuse attacks alter control flow (ROP, JOP )
+		\item Code reuse attacks alter control flow (ROP, JOP)
     	\item No direct hardware countermeasures exist %which protects control flow
 	\end{itemize}
 	Goals
@@ -83,7 +83,7 @@
 \begin{center}
 %\includegraphics[width=9cm]{figures/reader_states.jpg}
 \scalebox{0.4}{%
-\includegraphics{figures/stack_return_overflow.png}
+\includegraphics{figures/stackoverflow.pdf}
 }
 \end{center}
 \end{figure}
@@ -106,7 +106,7 @@
 \begin{center}
 %\includegraphics[width=9cm]{figures/reader_states.jpg}
 \scalebox{0.4}{%
-\includegraphics{figures/heap_callback_overflow-2.png}
+\includegraphics{figures/heap_callback_overflow.pdf}
 }
 \end{center}
 \end{figure}
@@ -117,22 +117,23 @@
 \begin{frame}
 	\frametitle{Rocket}
 	\begin{itemize}
-		\item Open-Source, University of Berkley
+		\item Open-Source, University of Berkeley
 		\item Optimized instruction set for research topics (RISC-V)
 		\item Developed with Chisel
-		\item PROCESSOR DATA
 		\item Currently tethered to ARM-Processor (boot-strapping)
+		\item 64 bit, Single-Issue In-Order 5-stage pipeline
+		\item 1.72 DMIPS/MHz
+		 \item Clock rate \textgreater 1GHz
 	\end{itemize}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Rocket Processor Structure}
-	ToDo: Other picture
 	\begin{figure}[!h]
 	\begin{center}
 	%\includegraphics[width=9cm]{figures/reader_states.jpg}
 		\scalebox{0.25}{%
-		\includegraphics{figures/rocket.png}
+		\includegraphics{figures/rocketoverview.png}
 	}
 	\end{center}
 	\end{figure}
@@ -140,7 +141,7 @@
 
 \begin{frame}
 	\frametitle{Chisel}
-	Developed by University of Berkley
+	Developed by University of Berkeley
 	\begin{itemize}
 		\item New high level hardware design language
 		\item Based on Scala
@@ -152,14 +153,14 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Toolchain}
+	\frametitle{RISC-V Toolchain}
 	Several software tools for development
 	\begin{itemize}
 		\item Fully adapted GNU Toolchain
 		\item RISC-V bare-metal compiler
 		\item RISC-V Linux compiler
 		\item Simulation with C++ emulator %(Waveform output included)
-		\item FPGA-implemenation using Verilog and Xilinx Vivado
+		\item FPGA-implementation using Verilog and Xilinx Vivado
 	\end{itemize}
 \end{frame}
 
@@ -181,18 +182,18 @@
 	\begin{itemize}
 		\item Ability to tag every 64 bits in memory with one or more tag bits
 		\item So far only framework (load and store tag)
-		\item Additional Tag-Cache to improve performance
+		\item Area in DRAM reserved for tags
 	\end{itemize}
 	Changes to RISC-V
 		\begin{itemize}
 		\item Add L1 data cache support for tagged memory type
 		\item TileLink size 512 to 544 bits to transfer data + tags
-		\item Adding of Tag-Cache
+		\item Addition of Tag-Cache
 	\end{itemize}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Tag Cache}
+	\frametitle{Tag-Cache}
 \begin{figure}[!h]
 	\begin{center}
 	%\includegraphics[width=9cm]{figures/reader_states.jpg}
@@ -206,9 +207,9 @@
 \section{Untethered Rocket}
 \begin{frame}
 	\frametitle{Current Rocket/ lowRISC}
-	Currently tethered to ARM-Processing system (Zynq)
+	Tethered to ARM-Processing system (Zynq)
 	\begin{itemize}
-	\item HostIO: AXI Lite interface for Input/Output handled by ARM
+	\item HostIO: AXI Lite interface for input/output handled by ARM
 	\item MemIO: AXI HP for DDR3 Memory access through ARM
 	\item Boot strapping
 	\item RISC-V Frontend Server handles console in/out
@@ -221,7 +222,7 @@
 		\begin{center}
 	%\includegraphics[width=9cm]{figures/reader_states.jpg}
 		\scalebox{0.38}{%
-		\includegraphics{figures/rocket_fpga_setup.png}
+		\includegraphics{figures/rocket_fpga_setup.pdf}
 	}
 	\end{center}
 	\end{figure}
@@ -229,13 +230,11 @@
 
 \begin{frame}
 	\frametitle{Changes for Untethering}
-	lowRISC team implemented untethered version on Kintex-7 board (upcoming release)
+	lowRISC team implemented untethered version on Kintex-7 board
 	\begin{itemize}
 	\item MemIO exchanged with NASTI-Bus %(Berkley AXI-4 implementation)
-	\item HostIO for debug purposes
-	\item Adding IO devices like UART and SPI
-	\item IO interface is NASTI-Lite
-	\item Implementation of IO memory map
+	\item Memory mapped IO with NASTI-Lite
+	\item Peripherals like UART and SPI for communication and debug
 	\item Internal and external Bus width reduced to 128 bit %(4 bursts for one cache line)
 	\item Tagged memory not ported yet
 	\end{itemize}
@@ -247,7 +246,7 @@
 	\begin{center}
 	%\includegraphics[width=9cm]{figures/reader_states.jpg}
 		\scalebox{0.32}{%
-		\includegraphics{figures/rocket_soc_setup.png}
+		\includegraphics{figures/rocket_soc_setup.pdf}
 	}
 	\end{center}
 	\end{figure}
@@ -259,11 +258,11 @@
 	\frametitle{Tag Security Policies}
    Idea: Secure return address and function pointers from attackers
    \begin{itemize}
-	   \item Only minor to no change to existing Programs (Linux context switch)
+	   \item Only minor to no change to operating system (Linux context switch)
  	  \item Use of 2 tag bits per 64 bit data %(Bit 1: DATA/INVALID, Bit 2: RETURN)
  	  \item Implementation in untethered version
  	  \item Tag Control Unit that checks tags and causes traps/reset   
- 	  \item No changes to compiler aimed for these policies
+ 	  \item Transparent for applications
    \end{itemize}
 \end{frame}
 
@@ -272,13 +271,13 @@
 	\begin{enumerate}
 	\item Function Call: JAL stores return address to stack. Tags memory as RET
 	\item Attacker overwrites return address. RET tag cleared.
-	\item JAL-R tries to jump to address in RA register without tag (trap performed).
+	\item JAL-R tries to jump to address in RA register without tag (trap performed)
 	\end{enumerate}
 	\begin{figure}[!h]
 		\begin{center}
 	%\includegraphics[width=9cm]{figures/reader_states.jpg}
 		\scalebox{0.35}{%
-		\includegraphics{figures/rat_address_tag.png}
+		\includegraphics{figures/rat_address_tag.pdf}
 	}
 	\end{center}
 	\end{figure}
@@ -289,13 +288,13 @@
 	\begin{enumerate}
 	\item Data and function pointers tagged as DATA
 	\item Attacker injects code and overwrites function pointer. (IO input causes INV tag)
-	\item JAL-R tries to jump to address with INV tag (trap performed).
+	\item JAL-R tries to jump to address with INV tag (trap performed)
 	\end{enumerate}
 	\begin{figure}[!h]
 		\begin{center}
 	%\includegraphics[width=9cm]{figures/reader_states.jpg}
 		\scalebox{0.35}{%
-		\includegraphics{figures/callback_fp_tag.png}
+		\includegraphics{figures/callback_fp_tag.pdf}
 	}
 	\end{center}
 	\end{figure}
