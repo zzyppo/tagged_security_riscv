@@ -197,7 +197,7 @@ class DefaultConfig extends ChiselConfig (
 
     case "L2_XACTORS" => 2
     case "L2_SETS" => 256 // 1024
-    case "L2_WAYS" => 8
+    case "L2_WAYS" => 4
 
     case "TC_XACTORS" => 1
     case "TC_SETS" => 64
