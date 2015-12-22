@@ -5,6 +5,7 @@
 #include "uart.h"
 #include "memory.h"
 
+#define USE_IO_SPACE
 unsigned long long lfsr64(unsigned long long d) {
   // x^64 + x^63 + x^61 + x^60 + 1
   unsigned long long bit = 
