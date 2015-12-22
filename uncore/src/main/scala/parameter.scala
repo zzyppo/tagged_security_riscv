@@ -45,6 +45,17 @@ case object TCTransactors extends Field[Int]
 case object TCBlockTags extends Field[Int]
 case object TCBaseAddr extends Field[Int]
 case object TagTLDataBits extends Field[Int]
+case object TagMemSize extends Field[Int]
+case object TCTrackers extends Field[Int]
+case object TagRowTags extends Field[Int]
+case object TagRowBlocks extends Field[Int]
+case object TagRowBytes extends Field[Int]
+case object TagBlockBlocks extends Field[Int]
+case object TagBlockBytes extends Field[Int]
+case object TagBlockTagBits extends Field[Int]
+
+
+
 
 // Rocket Core Constants
 case object XLen extends Field[Int]

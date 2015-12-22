@@ -80,11 +80,19 @@ class DefaultConfig extends ChiselConfig (
       }: PF
 
       // Tag Cache
+      case TagMemSize => 20
       case TagBits => 4
       case TCBlockBits => site(MIFDataBits)
       case TCTransactors => Knob("TC_XACTORS")
       case TCBlockTags => 1 << log2Down(site(TCBlockBits) / site(TagBits))
       case TCBaseAddr => Knob("TC_BASE_ADDR")
+      case TCTrackers => 1
+      case TagBlockBytes => site(CacheBlockBytes)
+      case TagRowBytes => site(MIFDataBits) / 8
+      case TagRowTags => 1 << log2Down((site(TagRowBytes) * 8) / site(TagBits))
+      case TagRowBlocks => site(TagRowTags) * 8 / site(CacheBlockBytes)
+      case TagBlockBlocks => site(TagBlockBytes) / site(TagRowBytes) * site(TagRowBlocks)
+      case TagBlockTagBits => site(TagBits) * site(CacheBlockBytes) / 8
       case "TagCache" => {
         case NSets => Knob("TC_SETS")
         case NWays => Knob("TC_WAYS")
