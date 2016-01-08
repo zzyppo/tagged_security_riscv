@@ -1,0 +1,65 @@
+[*]
+[*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
+[*] Wed Dec  9 18:53:19 2015
+[*]
+[dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/tag.vcd"
+[dumpfile_mtime] "Wed Dec  9 18:43:43 2015"
+[dumpfile_size] 49030613
+[savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/config.gtkw"
+[timestart] 13327
+[size] 1855 921
+[pos] -1 -294
+*-4.000000 13264 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.v.
+[treeopen] TOP.v.Rocket.
+[treeopen] TOP.v.Rocket.RocketTile.
+[treeopen] TOP.v.Rocket.RocketTile.dcache.
+[treeopen] TOP.v.Rocket.RocketTile.dcache.data.
+[sst_width] 368
+[signals_width] 411
+[sst_expanded] 1
+[sst_vpaned_height] 466
+@28
+TOP.v.clk
+@22
+TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_data_0[31:0]
+TOP.v.Rocket.RocketTile.core.alu.io_in1[63:0]
+TOP.v.Rocket.RocketTile.core.alu.io_in2[63:0]
+TOP.v.Rocket.RocketTile.core.alu.io_adder_out[63:0]
+TOP.v.Rocket.RocketTile.core.rf_wdata[63:0]
+TOP.v.Rocket.RocketTile.core.rf_waddr[4:0]
+TOP.v.Rocket.RocketTile.core.alu.sum[63:0]
+@28
+TOP.v.Rocket.RocketTile.core.rf_wen
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_valid
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_ready
+@22
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_data[63:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_addr[39:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_cmd[4:0]
+@800022
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_typ[3:0]
+@28
+(0)TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_typ[3:0]
+(1)TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_typ[3:0]
+(2)TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_typ[3:0]
+(3)TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_typ[3:0]
+@22
+TOP.v.Rocket.RocketTile.dcache.data.io_write_bits_data[127:0]
+TOP.v.Rocket.RocketTile.dcache.data.io_write_bits_addr[11:0]
+TOP.v.Rocket.RocketTile.dcache.data.io_write_bits_data[127:0]
+TOP.v.Rocket.RocketTile.dcache.data.io_read_bits_addr[11:0]
+TOP.v.Rocket.RocketTile.dcache.data.io_read_bits_way_en[3:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_has_data
+@22
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_data_subword[63:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_data[63:0]
+@23
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+@1001200
+-group_end
+[pattern_trace] 1
+[pattern_trace] 0
