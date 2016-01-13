@@ -1,1 +1,0 @@
-./DefaultConfig-sim-debug +vcd +vcd_name=output/tag.vcd +max-cycles=1000000 +load=/home/zaepo/iaikgit/2015_master_jantscher/code/fpga/board/kc705/examples/tag_instructions.hex | /home/zaepo/iaikgit/2015_master_jantscher/code/riscv/bin/spike-dasm  >output/tag.verilator.out && [ $PIPESTATUS -eq 0 ]

@@ -1,3 +1,0 @@
-[submodule "kc705"]
-	path = board/kc705
-	url = https://github.com/lowRISC/lowrisc-kc705.git
