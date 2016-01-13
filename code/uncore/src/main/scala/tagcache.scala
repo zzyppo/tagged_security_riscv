@@ -438,6 +438,87 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
       data = nasti_with_tags.toUInt()
     ))
 
+/*
+  //----------------------state machine
+  switch (state) {
+    is(s_idle) {
+      when(io.uncached.acquire.valid) {
+        acq_src := c_acq.bits.payload.client_xact_id
+        acq_addr := c_acq.bits.payload.addr
+        if(tlDataBeats > 1)
+          collect_acq_data := acq_has_data
+        acq_data_process := Bool(true)
+        acq_wr := acq_has_data
+        state := s_meta_read
+      }
+    }
+    is(s_meta_read) {
+      when(io.meta.read.ready) { state := s_meta_resp }
+    }
+    is(s_meta_resp) {
+      when(io.meta.resp.valid) {
+        state :=
+          Mux(io.meta.resp.bits.hit,
+            Mux(acq_wr, s_data_write_hit, s_data_read_hit),  // cache hit
+            Mux(tagIsValid(io.meta.resp.bits.tag) && tagIsDirty(io.meta.resp.bits.tag),
+              s_data_read_wb, // cache miss, WB needed
+              s_mem_req))     // cache miss, WB not needed
+      }
+    }
+    is(s_data_read_hit) {
+      when(io.data.read.ready) { state := s_data_resp_hit }
+    }
+    is(s_data_resp_hit) {
+      state := s_gnt
+    }
+    is(s_data_write_hit) {
+      when(!collect_acq_data) { // ensure the acq messasge is received
+        when(io.data.write.ready) { state := s_meta_write_hit }
+      }
+    }
+    is(s_data_read_wb) {
+      when(io.data.read.ready) { state := s_data_resp_wb }
+    }
+    is(s_data_resp_wb) {
+      when(wb_read_done) { state := s_data_resp_wb_done }
+    }
+    is(s_data_resp_wb_done) {
+      when(wb_data_done) { state := s_write_back }
+    }
+    is(s_write_back) {
+      when(mem_tag_data_write_done) {
+        state := s_mem_req
+      }
+    }
+    is(s_mem_req) {
+      when(!acq_data_process) { // ensure the original req sent
+        when(io.mem_req.ready) { state := s_data_write_refill }
+      }
+    }
+    is(s_data_write_refill) {
+      when(refill_data_done) {
+        mem_tag_refill_ready := Bool(false)
+        state := s_meta_write_refill
+      }
+    }
+    is(s_meta_write_refill) {
+      when(io.meta.write.ready) {
+        state := Mux(acq_wr, s_data_write_hit, s_data_read_hit)
+      }
+    }
+    is(s_meta_write_hit) {
+      when(io.meta.write.ready) {state := s_busy }
+    }
+    is(s_gnt) {
+      gnt_enable := Bool(true)
+      state := s_busy
+    }
+    is(s_busy) {
+      when(!gnt_enable && !acq_data_process) { state := s_idle }
+    }
+  }
+  */
+
 
 }
 
