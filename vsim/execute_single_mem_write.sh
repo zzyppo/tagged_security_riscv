@@ -1,0 +1,1 @@
+./DefaultConfig-sim-debug +vcd +vcd_name=output/memory_read_write.vcd +max-cycles=1000000 +load=/home/zaepo/iaikgit/2015_master_jantscher/code/fpga/board/kc705/examples/memory_read_write.hex | /home/zaepo/iaikgit/2015_master_jantscher/code/riscv/bin/spike-dasm  >output/memory_read_write.verilator.out && [ $PIPESTATUS -eq 0 ]

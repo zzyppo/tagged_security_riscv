@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="10357834-08aa-4d38-a5ea-77dc4c8e21ed" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fpga/board/kc705/examples/Makefile" afterPath="$PROJECT_DIR$/fpga/board/kc705/examples/Makefile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fpga/board/kc705/examples/dram.c" afterPath="$PROJECT_DIR$/fpga/board/kc705/examples/dram.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fpga/board/kc705/src/boot.mem" afterPath="$PROJECT_DIR$/fpga/board/kc705/src/boot.mem" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uncore/src/main/scala/tagcache.scala" afterPath="$PROJECT_DIR$/uncore/src/main/scala/tagcache.scala" />
-    </list>
+    <list default="true" id="10357834-08aa-4d38-a5ea-77dc4c8e21ed" name="Default" comment="" />
     <ignored path="RSICV_Tagged_Sec.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -111,8 +105,8 @@
       <file leaf-file-name="blk_mem_gen_v8_2.v" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fpga/board/kc705/lowrisc-chip-imp/lowrisc-chip-imp.srcs/sources_1/ip/axi_bram_ctrl_0/blk_mem_gen_v8_2/simulation/blk_mem_gen_v8_2.v">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33333334">
-              <caret line="2081" column="31" selection-start-line="2081" selection-start-column="31" selection-end-line="2081" selection-end-column="31" />
+            <state vertical-scroll-proportion="0.67895544">
+              <caret line="2096" column="68" selection-start-line="2096" selection-start-column="68" selection-end-line="2096" selection-end-column="68" />
               <folding />
             </state>
           </provider>
@@ -171,9 +165,9 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="55" />
-    <option name="y" value="24" />
-    <option name="width" value="1635" />
-    <option name="height" value="1026" />
+    <option name="y" value="-14" />
+    <option name="width" value="1395" />
+    <option name="height" value="924" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -726,8 +720,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="55" y="24" width="1635" height="1026" extended-state="6" />
-    <editor active="true" />
+    <frame x="55" y="-14" width="1395" height="924" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1152,8 +1146,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fpga/board/kc705/lowrisc-chip-imp/lowrisc-chip-imp.srcs/sources_1/ip/axi_bram_ctrl_0/blk_mem_gen_v8_2/simulation/blk_mem_gen_v8_2.v">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334">
-          <caret line="2081" column="31" selection-start-line="2081" selection-start-column="31" selection-end-line="2081" selection-end-column="31" />
+        <state vertical-scroll-proportion="0.67895544">
+          <caret line="2096" column="68" selection-start-line="2096" selection-start-column="68" selection-end-line="2096" selection-end-column="68" />
           <folding />
         </state>
       </provider>
