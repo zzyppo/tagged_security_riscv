@@ -1,0 +1,10 @@
+\beamer@endinputifotherversion {3.33pt}
+\beamer@sectionintoc {1}{Outline}{2}{0}{1}
+\beamer@sectionintoc {2}{Motivation}{3}{0}{2}
+\beamer@sectionintoc {3}{Buffer Overflows}{4}{0}{3}
+\beamer@sectionintoc {4}{RISC-V}{8}{0}{4}
+\beamer@sectionintoc {5}{Hardware and Toolchain}{11}{0}{5}
+\beamer@sectionintoc {6}{Tagged Memory}{14}{0}{6}
+\beamer@sectionintoc {7}{Untethered RISC-V}{16}{0}{7}
+\beamer@sectionintoc {8}{Tag Security Policies}{20}{0}{8}
+\beamer@sectionintoc {9}{Project Time-line}{23}{0}{9}
