@@ -289,6 +289,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   require(dstIdBits + tlClientXactIdBits < nastiXIdBits, "NASTIIO converter is going truncate tags: " + dstIdBits + " + " + tlClientXactIdBits + " >= " + nastiXIdBits)
   // assume MI or MEI protocol
 
+
   // rename signals
   val tl_acq = io.tl.acquire.bits
   val tl_rel = io.tl.release.bits
@@ -300,7 +301,14 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val na_b = io.nasti.b.bits
   val na_r = io.nasti.r.bits
 
-  // internal control signals
+
+  //Tag signals and definitions
+  val collect_acq_data = Reg(init=Bool(false))
+  val acq_data_process = Reg(init=Bool(false)) // process the original data read/write requests
+  val acq_data = Vec.fill(tlDataBeats){Reg(io.tl.acquire.bits.data.clone)}
+ // val (acq_data_cnt, acq_data_done) = Counter(io.tl.acquire.fire() && is_write, tlDataBeats)
+
+  // Converter internal control signalspayload
   val write_multiple_data = Reg(init=Bool(false))
   val read_multiple_data = Reg(init=Bool(false))
   val (nw_cnt, nw_finish) =
@@ -341,6 +349,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     is_acq := Bool(false)
   }
 
+  //AQUIRE/ RELEASE RECEIVER
   when(is_idle && io.tl.acquire.valid && !io.tl.release.valid) { // release take priority
     write_multiple_data := tl_acq.hasMultibeatData()
     read_multiple_data := !tl_acq.isBuiltInType() || tl_acq.isBuiltInType(Acquire.getBlockType)
@@ -357,6 +366,18 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     g_type_out := Mux(tl_acq.isBuiltInType(), tl_acq.getBuiltInGrantType(), UInt(0)) // assume MI or MEI
   }
 
+  /*
+  when(collect_acq_data || state === s_idle) {
+    io.tl.acquire.ready := Bool(true)
+    when(io.tl.acquire.valid) {
+      acq_data(acq_data_cnt) := tl_acq.data
+    }
+    when(acq_data_done) {
+      collect_acq_data := Bool(false)
+    }
+  }
+  */
+
   when(is_idle && io.tl.release.valid) {
     write_multiple_data := Bool(true)
     read_multiple_data := Bool(false)
@@ -369,6 +390,29 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     size_out := bytesToXSize(UInt(tlDataBytes))
     g_type_out := Grant.voluntaryAckType
   }
+
+  // GRANT HANDLER
+  //Nasti data in bits
+  val nasti_with_tags = tagUtil.insertTag(io.nasti.r.bits.data)
+
+  io.tl.grant.valid := Mux(is_write, io.nasti.b.valid, io.nasti.r.valid)
+  tl_gnt := Mux(is_write,
+    Grant(
+      dst = tag_out >> tlClientXactIdBits,
+      is_builtin_type = Bool(true),
+      g_type = g_type_out,
+      client_xact_id = tag_out(tlClientXactIdBits-1,0),
+      manager_xact_id = UInt(id)),
+    Grant(
+      dst = tag_out >> tlClientXactIdBits,
+      is_builtin_type = is_builtin,
+      g_type = g_type_out,
+      client_xact_id = tag_out(tlClientXactIdBits-1,0),
+      manager_xact_id = UInt(id),
+      addr_beat = nr_cnt,
+
+      data = nasti_with_tags.toUInt()
+    ))
 
   when(io.nasti.ar.fire() || io.nasti.aw.fire()) {
     cmd_sent := Bool(true)
@@ -414,47 +458,26 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   // tilelink release
   io.tl.release.ready := !is_acq && io.nasti.w.fire()
 
-  // tilelink grant
 
-  //Nasti data in bits
-  val nasti_with_tags = tagUtil.insertTag(io.nasti.r.bits.data)
 
-  io.tl.grant.valid := Mux(is_write, io.nasti.b.valid, io.nasti.r.valid)
-  tl_gnt := Mux(is_write,
-    Grant(
-      dst = tag_out >> tlClientXactIdBits,
-      is_builtin_type = Bool(true),
-      g_type = g_type_out,
-      client_xact_id = tag_out(tlClientXactIdBits-1,0),
-      manager_xact_id = UInt(id)),
-    Grant(
-      dst = tag_out >> tlClientXactIdBits,
-      is_builtin_type = is_builtin,
-      g_type = g_type_out,
-      client_xact_id = tag_out(tlClientXactIdBits-1,0),
-      manager_xact_id = UInt(id),
-      addr_beat = nr_cnt,
 
-      data = nasti_with_tags.toUInt()
-    ))
-
-/*
   //----------------------state machine
   switch (state) {
     is(s_idle) {
-      when(io.uncached.acquire.valid) {
-        acq_src := c_acq.bits.payload.client_xact_id
-        acq_addr := c_acq.bits.payload.addr
+      when(io.tl.acquire.valid) {
+       // acq_src := c_acq.bits.payload.client_xact_id
+       // acq_addr := c_acq.bits.payload.addr
         if(tlDataBeats > 1)
-          collect_acq_data := acq_has_data
+          collect_acq_data := is_write
         acq_data_process := Bool(true)
-        acq_wr := acq_has_data
         state := s_meta_read
       }
     }
+
     is(s_meta_read) {
       when(io.meta.read.ready) { state := s_meta_resp }
     }
+    /*
     is(s_meta_resp) {
       when(io.meta.resp.valid) {
         state :=
@@ -516,8 +539,9 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     is(s_busy) {
       when(!gnt_enable && !acq_data_process) { state := s_idle }
     }
+    */
   }
-  */
+
 
 
 }
