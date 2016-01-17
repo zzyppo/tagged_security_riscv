@@ -24,29 +24,26 @@ unsigned long long lfsr64(unsigned long long d) {
 long array[600];
 
 int main() {
-  unsigned long waddr = 0;
-  unsigned long raddr = 0;
-  unsigned long long wkey = 0;
-  unsigned long long rkey = 0;
   unsigned int i = 0;
-  unsigned int error_cnt = 0;
-  unsigned distance = 0;
-
+int temp = 0;
+  asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
  // uart_init();
   //printf("Memory RW test program.\n");
 
   for(i = 0; i < 300; i++)
   { 
-     array[i] = i + 0xFFBB0000;
+     array[i] = i + 0x11110000;
   }
+  asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
 
   for(i = 0; i < 300; i++)
   { 
-     if(array[i] != (i + 0xFFBB0000))
+     if(array[i] != (i + 0x11110000))
 	{
 	  return -1;
 	}
   }
+  asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
 
   return 0;
 
