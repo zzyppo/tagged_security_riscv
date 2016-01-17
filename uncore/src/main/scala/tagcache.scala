@@ -514,6 +514,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   na_aw.region := UInt("b0000")
   na_aw.user := UInt(0)
 
+//Nasti_valid one cycle too late
   val nasti_sending = Reg(init=Bool(false))
   //io.nasti.w.valid := Bool(false)
   io.nasti.w.valid := nasti_sending
