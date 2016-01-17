@@ -1,4 +1,1 @@
 
-[submodule "code"]
-	path = code
-	url = git@github.com:zzyppo/tagged_security_riscv.git
