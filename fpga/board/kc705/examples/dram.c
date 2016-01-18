@@ -5,6 +5,7 @@
 #include "uart.h"
 #include "memory.h"
 
+//#define USE_IO_SPACE
 unsigned long long lfsr64(unsigned long long d) {
   // x^64 + x^63 + x^61 + x^60 + 1
   unsigned long long bit = 
@@ -50,8 +51,9 @@ int main() {
   syscall(SYS_set_iobase+1, 0x40000000, 0x3fffffff, 0); /* DDR3, 0x40000000 - 0x7fffffff */
   syscall(SYS_set_iobase+5, 0, 0, 0);                   /* update io space */
 #endif
-
+  long loop_cnt = 0;
   while(1) {
+	loop_cnt++;
     printf("Write block @%lx using key %llx\n", waddr, wkey);
     for(i=0; i<STEP_SIZE; i++) {
       *(get_ddr_base() + waddr) = wkey;
@@ -66,7 +68,8 @@ int main() {
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);
         if(rkey != rd) {
-          printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
+	//uart_init();
+         printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
           error_cnt++;
           exit(1);
         }
@@ -75,6 +78,12 @@ int main() {
         if(error_cnt > 10) exit(1);
       }
     }
+   if(loop_cnt == 20)  
+   {
+      //uart_init();
+         printf("Tests Done\n");
+      exit(0);
+   }
   }
 }
 

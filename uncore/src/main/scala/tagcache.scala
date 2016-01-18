@@ -517,7 +517,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 //Nasti_valid one cycle too late
   val nasti_sending = Reg(init=Bool(false))
   //io.nasti.w.valid := Bool(false)
-  io.nasti.w.valid := nasti_sending
+  io.nasti.w.valid := nasti_sending || (!cmd_sent && ((acq_data_process && is_write) || send_tag_data))
   when( !cmd_sent && ((acq_data_process && is_write) || send_tag_data)) //Nasti AW valid
   {
     nasti_sending := Bool(true)
