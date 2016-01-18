@@ -5,6 +5,6 @@
 //A simple test
 int main() {
   uart_init();
-  printf("Hello World!\n");
+  printf("H\n");
 }
 

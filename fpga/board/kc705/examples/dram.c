@@ -64,13 +64,14 @@ int main() {
     if(distance < VERIFY_DISTANCE) distance++;
 
     if(distance == VERIFY_DISTANCE) {
-      printf("Check block @%lx using key %llx\n", raddr, rkey);
+  //    printf("Check block @%lx using key %llx\n", raddr, rkey);
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);
         if(rkey != rd) {
 	//uart_init();
-         printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
+         //printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
           error_cnt++;
+	  printf("Error! i== %d\n", loop_cnt);
           exit(1);
         }
         raddr = (raddr + 1) & 0x3ffffff;
@@ -80,7 +81,7 @@ int main() {
     }
    if(loop_cnt == 20)  
    {
-      //uart_init();
+     // uart_init();
          printf("Tests Done\n");
       exit(0);
    }

@@ -1,7 +1,7 @@
 // See LICENSE for license details.
 
 #include "uart.h"
-
+#define HW
 volatile uint32_t *uart_base_ptr = (uint32_t *)(UART_BASE);
 
 void uart_init() {
@@ -24,13 +24,17 @@ void uart_init() {
 
 void uart_send(uint8_t data) {
   // wait until THR empty
+  #ifdef HW
   while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
+  #endif
   *(uart_base_ptr + UART_THR) = data;
 }
 
 void uart_send_string(const char *str) {
   while(*str != 0) {
+    #ifdef HW
     while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
+    #endif
     *(uart_base_ptr + UART_THR) = *(str++);
   }
 }
@@ -38,14 +42,18 @@ void uart_send_string(const char *str) {
 void uart_send_buf(const char *buf, const int32_t len) {
   int32_t i;
   for(i=0; i<len; i++) {
+    #ifdef HW
     while(! (*(uart_base_ptr + UART_LSR) & 0x40u));
+    #endif
     *(uart_base_ptr + UART_THR) = *(buf + i);
   }
 }
 
 uint8_t uart_recv() {
   // wait until RBR has data
-  while(! (*(uart_base_ptr + UART_LSR) & 0x01u));
+    #ifdef HW
+    while(! (*(uart_base_ptr + UART_LSR) & 0x01u));
+    #endif
 
   return *(uart_base_ptr + UART_RBR);
 
