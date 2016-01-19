@@ -197,15 +197,15 @@ class DefaultConfig extends ChiselConfig (
     case "NBANKS" => 1
     //Modified values in order to trigger writebacks more often for testing (slow as hell)
     case "L1D_MSHRS" => 2
-    case "L1D_SETS" => 64 //64
-    case "L1D_WAYS" => 4 //4
+    case "L1D_SETS" => 32 //64
+    case "L1D_WAYS" => 2//4
 
     case "L1I_SETS" => 64
     case "L1I_WAYS" => 4
 
     case "L2_XACTORS" => 2
-    case "L2_SETS" => 256 //256 // 1024
-    case "L2_WAYS" => 4 // 4
+    case "L2_SETS" => 32 //256 // 1024
+    case "L2_WAYS" => 2 // 4
 
     case "TC_XACTORS" => 1
     case "TC_SETS" => 64
