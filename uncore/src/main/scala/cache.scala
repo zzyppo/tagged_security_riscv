@@ -895,6 +895,7 @@ class L2AcquireTracker(trackerId: Int) extends L2XactTracker {
                           xact.allocate() && 
                           (coh.outer.requiresVoluntaryWriteback() ||
                              coh.inner.requiresProbesOnVoluntaryWriteback())
+
     val needs_inner_probes = tag_match && coh.inner.requiresProbes(xact)
     when(!tag_match || is_hit && pending_coh_on_hit != coh) { pending_meta_write := Bool(true) }
     pending_coh := Mux(is_hit, pending_coh_on_hit, Mux(tag_match, coh, pending_coh_on_miss))

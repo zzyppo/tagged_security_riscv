@@ -5,7 +5,7 @@
 #include "uart.h"
 #include "memory.h"
 
-//#define IS_SIMULATION
+#define IS_SIMULATION
 //#define USE_IO_SPACE
 unsigned long long lfsr64(unsigned long long d) {
   // x^64 + x^63 + x^61 + x^60 + 1
@@ -78,6 +78,10 @@ int temp = 0;
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);
         if(rkey != rd) {
+        #ifdef IS_SIMULATION
+	uart_init();
+	printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
+	#endif
         #ifndef IS_SIMULATION
          printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
 	      printf("Error! i== %d\n", loop_cnt);
