@@ -5,30 +5,41 @@
 #include "uart.h"
 #include "memory.h"
 
+volatile uint32_t *uart_base = (uint32_t *)(UART_BASE);
 //#define IS_SIMULATION
-//#define USE_IO_SPACE
+
+void printBuffer(unsigned char* buffer, unsigned int len)
+{
+  int i = 0;
+  for(i = 0; i < len; i++)
+  {
+   while(! (*(uart_base + UART_LSR) & 0x40u));
+    *(uart_base + UART_THR) = buffer[i];
+  }
+
+
+}
+
+
 unsigned long long lfsr64(unsigned long long d) {
   // x^64 + x^63 + x^61 + x^60 + 1
-  unsigned long long bit = 
+
+  unsigned long long bit =
     (d >> (64-64)) ^
     (d >> (64-63)) ^
     (d >> (64-61)) ^
     (d >> (64-60)) ^
     1;
   return (d >> 1) | (bit << 63);
+
+
+  //return 0x1234567890ABCDEF;
 }
 
-#ifdef USE_IO_SPACE
-#define SYS_soft_reset 617
-#define SYS_set_iobase 0x12200
-#define SYS_set_membase 0x2100
-extern long syscall(long num, long arg0, long arg1, long arg2);
-#endif
-
-//#define STEP_SIZE 16 //4
-#define STEP_SIZE 1024*16
-//#define VERIFY_DISTANCE 2
+#define STEP_SIZE 32
+//#define STEP_SIZE 1024*16
 #define VERIFY_DISTANCE 16
+//#define VERIFY_DISTANCE 16
 
 
 int main() {
@@ -39,32 +50,29 @@ int main() {
   unsigned int i = 0;
   unsigned int error_cnt = 0;
   unsigned distance = 0;
+  unsigned char* error = "ERROR";
 int temp = 0;
   long array[2];
 
 #ifndef IS_SIMULATION
   uart_init();
-  printf("DRAM test program.\n");
+  //printf("DRAM test program.\n");
   #endif
 
-#ifdef USE_IO_SPACE
-  // map DDR3 to IO
-  syscall(SYS_set_membase, 0x0, 0x3fffffff, 0x0); /* BRAM, 0x00000000 - 0x3fffffff */
-  syscall(SYS_set_membase+5, 0, 0, 0);            /* update memory space */
-
-  syscall(SYS_set_iobase, 0x80000000, 0x7fffffff, 0);   /* IO devices, 0x80000000 - 0xffffffff */
-  syscall(SYS_set_iobase+1, 0x40000000, 0x3fffffff, 0); /* DDR3, 0x40000000 - 0x7fffffff */
-  syscall(SYS_set_iobase+5, 0, 0, 0);                   /* update io space */
-#endif
   long loop_cnt = 0;
+  //waddr = 0xb0;
+  //raddr = 0xb0;
   while(1) {
 	loop_cnt++;
+    //wkey = lfsr64(wkey);
+    //rkey = lfsr64(rkey);
 	#ifndef IS_SIMULATION
-    printf("Write block @%lx using key %llx\n", waddr, wkey);
+    //printf("Write block @%lx using key %llx\n", waddr, wkey);
     #endif
+
     for(i=0; i<STEP_SIZE; i++) {
       *(get_ddr_base() + waddr) = wkey;
-      waddr = (waddr + 1) & 0x3ffffff;
+      waddr = (waddr + 0x1) & 0x3ffffff;
       wkey = lfsr64(wkey);
     }
     
@@ -73,23 +81,33 @@ int temp = 0;
     if(distance == VERIFY_DISTANCE) {
   	asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
   	#ifndef IS_SIMULATION
-      printf("Check block @%lx using key %llx\n", raddr, rkey);
+       // while(! (*(uart_base + UART_LSR) & 0x40u));
+       // *(uart_base + UART_THR) = 'Y';
+      //printf("Check block @%lx \n", raddr);
+      printf("Z\n");
       #endif
+
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);
+        //printf("rd %llx\n", rd);
         if(rkey != rd) {
+        asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
         #ifdef IS_SIMULATION
-	uart_init();
-	printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
-	#endif
+            asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
+	        uart_init();
+	        printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
+	    #endif
         #ifndef IS_SIMULATION
-         printf("Error! key %llx stored @%lx does not match with %llx\n", rd, raddr, rkey);
-	      printf("Error! i== %d\n", loop_cnt);
-	      #endif
-	       error_cnt++;
-          exit(1);
+            printBuffer(error, sizeof(error));
+	        //printf("Error! i== %d\n", loop_cnt);
+
+            //*(uart_base + UART_THR) = (uint8_t)loop_cnt;
+	        //while(1);
+	    #endif
+	        error_cnt++;
+            exit(1);
         }
-        raddr = (raddr + 1) & 0x3ffffff;
+        raddr = (raddr + 0x1) & 0x3ffffff;
         rkey = lfsr64(rkey);
         if(error_cnt > 10) exit(1);
       }

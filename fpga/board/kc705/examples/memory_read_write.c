@@ -27,8 +27,8 @@ int main() {
   unsigned int i = 0;
 int temp = 0;
   asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
-  //uart_init();
-  //printf("Memory RW test program.\n");
+  uart_init();
+  printf("Memory RW test program.\n");
   asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
   for(i = 0; i < 200; i++)
   { 
@@ -42,13 +42,13 @@ int temp = 0;
 	//printf("read i is: %d\n", i);
      if(array[i] != (i + 0x11110000))
 	{
-	//  printf("Error");
+	  printf("Error");
 	  return -1;
 	}
   }
- // printf("Hier\n");
+ printf("Hier\n");
   asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
- // printf("DONE/ passed\n");
+  printf("DONE/ passed\n");
   return 0;
 
 }

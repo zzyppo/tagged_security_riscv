@@ -28,7 +28,7 @@ RISCV_LINK_OPTS = -nostdlib -nostartfiles -ffast-math -lc -lgcc
 
 default: all
 
-TARGETS = boot dram hello reset sdcard tag_instructions memory_read_write
+TARGETS = boot dram hello reset sdcard tag_instructions memory_read_write dram_antibug
 
 DRIVER_OBJS += \
 	$(DRIVER_DIR)/syscalls.o \

@@ -164,7 +164,7 @@ $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/bo
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello boot dram sdcard memory_read_write
+EXAMPLES = hello boot dram sdcard memory_read_write dram_antibug
 
 $(EXAMPLES):
 	cd examples && make

@@ -1,29 +1,29 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Thu Jan 28 11:45:24 2016
+[*] Sat Jan 23 08:57:06 2016
 [*]
 [dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/dram.vcd"
-[dumpfile_mtime] "Thu Jan 28 11:45:24 2016"
-[dumpfile_size] 23724951
-[savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/cahces.gtkw"
-[timestart] 271
-[size] 1855 1056
-[pos] 1064 -181
-*-8.000000 730 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile_mtime] "Wed Jan 20 11:06:32 2016"
+[dumpfile_size] 668963971
+[savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/cahces_meta_cache.gtkw"
+[timestart] 9473
+[size] 1615 1026
+[pos] -616 -399
+*-7.000000 9596 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.v.
 [treeopen] TOP.v.Rocket.
 [treeopen] TOP.v.Rocket.L2HellaCacheBank.
+[treeopen] TOP.v.Rocket.L2HellaCacheBank.meta.
 [treeopen] TOP.v.Rocket.L2HellaCacheBank.tshrfile.
 [treeopen] TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.
 [treeopen] TOP.v.Rocket.l2Network.
 [treeopen] TOP.v.Rocket.RocketTile.
 [treeopen] TOP.v.Rocket.RocketTile.core.
-[treeopen] TOP.v.Rocket.tc.
 [sst_width] 388
-[signals_width] 586
+[signals_width] 460
 [sst_expanded] 1
-[sst_vpaned_height] 687
+[sst_vpaned_height] 664
 @24
 TOP.v.Rocket.RocketTile.core.csr_io_time[63:0]
 @22
@@ -169,7 +169,43 @@ TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.state[2:0]
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_bits_tag[20:0]
 @28
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_bits_way_en[1:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_read_valid
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_read_bits_id[1:0]
+@22
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_read_bits_idx[4:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_read_bits_tag[20:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_valid
+@22
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_meta_tag[20:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_id[1:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_way_en[1:0]
+TOP.v.Rocket.L2HellaCacheBank.meta.io_resp_bits_id[1:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_meta_coh_inner_sharers
+@29
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_tag_match
+@28
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_valid
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_ready
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_bits_way_en[1:0]
+@22
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_bits_idx[4:0]
+@28
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_bits_id[1:0]
+@22
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_bits_data_tag[20:0]
+@28
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_bits_data_coh_outer_state[1:0]
+[color] 6
+TOP.v.Rocket.L2HellaCacheBank.meta.io_write_bits_data_coh_inner_sharers
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_meta_coh_outer_state[1:0]
 @22
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.state[3:0]
@@ -198,7 +234,7 @@ TOP.v.Rocket.tc.TagCacheTracker.io_nasti_aw_valid
 @22
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_aw_bits_addr[31:0]
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_aw_bits_id[7:0]
-@29
+@28
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_w_valid
 @22
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_w_bits_data[127:0]
@@ -209,7 +245,6 @@ TOP.v.Rocket.tc.TagCacheTracker.io_nasti_w_bits_strb[15:0]
 @28
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_b_valid
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_b_ready
-TOP.v.Rocket.tc.TagCacheTracker.io_nasti_ar_ready
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_ar_valid
 @22
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_ar_bits_addr[31:0]
@@ -227,11 +262,5 @@ TOP.v.Rocket.tc.TagCacheTracker.io_tl_acquire_ready
 TOP.v.Rocket.tc.TagCacheTracker.io_tl_grant_ready
 TOP.v.Rocket.tc.TagCacheTracker.nw_finish
 TOP.v.Rocket.tc.TagCacheTracker.nw_cnt[1:0]
-TOP.v.Rocket.tc.TagCacheTracker.acq_data_process
-@22
-TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
-@28
-TOP.v.Rocket.tc.TagCacheTracker.cmd_sent
-TOP.v.Rocket.tc.TagCacheTracker.io_tl_acquire_valid
 [pattern_trace] 1
 [pattern_trace] 0
