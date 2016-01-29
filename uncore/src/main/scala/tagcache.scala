@@ -384,9 +384,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
       opSizeToXSize(tl_acq.op_size()))
     g_type_out := Mux(tl_acq.isBuiltInType(), tl_acq.getBuiltInGrantType(), UInt(0)) // assume MI or MEI
 
-    when(acq_data_done) {
-      collect_acq_data := Bool(false)
-    }
+
   }
 
   when((state === s_idle) && io.tl.release.valid) {
@@ -402,15 +400,19 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     len_out := UInt(tlDataBeats-1)
     size_out := bytesToXSize(UInt(tlDataBytes))
     g_type_out := Grant.voluntaryAckType
+  }
 
-    when(acq_data_done) {
-      collect_acq_data := Bool(false)
-    }
+  when(acq_data_done) {
+    collect_acq_data := Bool(false)
+  }
+
+  when(collect_acq_data) {
+    acq_data(acq_data_cnt) := Mux(is_acq, tl_acq.data, tl_rel.data)
   }
 
   // GRANT HANDLER
-  //Nasti data in bits
-  //Default
+
+  //Default Valid strobe
   io.tl.grant.valid := Bool(false)
   when(gnt_enable)
   {
@@ -458,13 +460,32 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   na_aw.region := UInt("b0000")
   na_aw.user := UInt(0)
 
+  /*
+  val nasti_sending = Reg(init=Bool(false))
+  //io.nasti.w.valid := Bool(false)
+
+  when( !cmd_sent && ((acq_data_process && is_write) || send_tag_data)) //Nasti AW valid
+  {
+    nasti_sending := Bool(true)
+    //io.nasti.w.valid := Bool(true)
+  }
+
+  when(nw_finish)
+  {
+    nasti_sending := Bool(false)
+    // io.nasti.w.valid := Bool(false)
+  }
+*/
+
   // nasti.w
-  io.nasti.w.valid := ((io.tl.acquire.valid && is_acq) || (io.tl.release.valid && !is_acq)) && is_write
+  //io.nasti.w.valid := nasti_sending || (!cmd_sent && ((acq_data_process && is_write) || send_tag_data))
+ io.nasti.w.valid := ((io.tl.acquire.valid && is_acq) || (io.tl.release.valid && !is_acq)) && is_write
   na_w.strb := Mux(is_acq && tl_acq.isSubBlockType(), tl_acq.wmask(), SInt(-1, nastiWStrobeBits).toUInt)
-  val tl_acq_data_without_tag = tagUtil.removeTag(tl_acq.data)
-  val tl_rel_data_without_tag = tagUtil.removeTag(tl_rel.data)
-  //na_w.data := Mux(is_acq, tl_acq.data, tl_rel.data)
-  na_w.data := Mux(is_acq, tl_acq_data_without_tag, tl_rel_data_without_tag)
+  //val tl_acq_data_without_tag = tagUtil.removeTag(tl_acq.data)
+  //val tl_rel_data_without_tag = tagUtil.removeTag(tl_rel.data)
+  //na_w.data := Mux(is_acq, tl_acq_data_without_tag, tl_rel_data_without_tag)
+ // na_w.data := Mux(acq_data_process,acq_rel_input_data_without_tag, UInt(0)) //Think about what if tag is written
+  na_w.data := acq_rel_input_data_without_tag//Think about what if tag is written
   na_w.last := nw_finish || is_acq && !tl_acq.hasMultibeatData()
 
   //Original request is handled if data is fully written or read from nasti
@@ -477,6 +498,17 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   // nasti.ar
   io.nasti.ar.valid :=  !cmd_sent && ((acq_data_process && is_read)) //Or read Tag
   io.nasti.ar.bits := io.nasti.aw.bits
+ // na_ar.id := tag_out    //ToDO Mux for Tag sending
+ //na_ar.addr := addr_out
+ // na_ar.len := len_out
+  //na_ar.size := size_out
+  //na_ar.burst := UInt("b01")
+  //na_ar.lock := Bool(false)
+  //na_ar.cache := UInt("b0000")
+  //na_ar.prot := UInt("b000")
+  //na_ar.qos := UInt("b0000")
+  //na_ar.region := UInt("b0000")
+  //na_ar.user := UInt(0)
 
   //ToDo wrong at the moment
   when(io.nasti.r.valid && acq_data_process && is_read)
