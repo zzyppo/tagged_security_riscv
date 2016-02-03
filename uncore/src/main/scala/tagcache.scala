@@ -28,9 +28,7 @@ abstract trait TagCacheParameters extends UsesParameters {
   val nWays = params(NWays)                // the number of ways in the tag cache
   val nSets = params(NSets)                // the number of sets in the tag cache
 
-  // memory interface
-  //val mifDataBits = params(MIFDataBits)           // the width of a single memory read/write
-  //val mifDataBeats = params(MIFDataBeats)         // the number of packets in a memory IF burst
+
 
   //  Tile link interface
   val tlDataBits = params(TLDataBits)             // the datawidth of a single tile linke packet
@@ -45,6 +43,10 @@ abstract trait TagCacheParameters extends UsesParameters {
   val tlBeatAddrBits = log2Up(tlDataBeats)
   val tlWriteMaskBits = params(TLWriteMaskBits)
   val tlByteAddrBits = log2Up(tlWriteMaskBits)
+
+  // memory interface
+  val mifDataBits = params(MIFDataBits)           // the width of a single memory read/write
+  val mifDataBeats = tlDataBeats       // the number of packets in a memory IF burst
 
   // structure parameters for the tag cache
   val nTrackers = params(TCTrackers)        // the number of concurrent trackers
@@ -252,7 +254,28 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val s_idle :: s_dummy_wait :: s_meta_read :: s_meta_resp :: s_data_read_hit :: s_data_resp_hit :: s_data_write_hit :: s_data_read_wb :: s_data_resp_wb :: s_data_resp_wb_done :: s_write_back :: s_mem_req :: s_data_write_refill :: s_meta_write_refill :: s_meta_write_hit :: s_gnt :: s_busy :: Nil = Enum(UInt(), 17)
   val state = Reg(init=s_idle)
 
-  // tag utilities
+  /*
+  // tag utilities MODIFIED and wrong ATM
+  val tagUtil = new TagUtil(tagBits, coreDataBits)
+  def tagIsValid(meta:Bits): Bool = meta(tagCacheTagBits+1)
+  def tagIsDirty(meta:Bits): Bool = meta(tagCacheTagBits)
+  def addrFromTag(tag: Bits, acq_addr: UInt): UInt =
+    Cat(tag(tag.getWidth - 2, 0), acq_addr(tagCahceUnTagBits-1, 0) >> UInt(blockOffBits)) << UInt(blockOffBits)
+  def addrToTag(addr: Bits, dirty: Bool): Bits = Cat(UInt(1,1), dirty, UInt(addr) >> UInt(tagCahceUnTagBits))
+  def tagAddrConv(addr:UInt): UInt = {
+    // get the fill physical addr
+    //val full_addr = Cat(addr, Bits(0, blockOffBits))
+    // shift to get tag addr
+    val shifted_addr = addr >> UInt(tagCacheUnIndexBits)
+    val tag_addr = Cat(Bits(tagBaseAddr,paddrBits)(paddrBits-1, tagMemSize),shifted_addr(tagMemSize-1,0))
+    // remove lower block offsets
+    //(tag_addr >> UInt(blockOffBits))tag
+    tag_addr
+  }
+  def addrToIndex(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnIndexBits)
+  def addrToRowAddr(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnRowAddrBits)
+  */
+   // tag utilities
   val tagUtil = new TagUtil(tagBits, coreDataBits)
   def tagIsValid(meta:Bits): Bool = meta(tagCacheTagBits+1)
   def tagIsDirty(meta:Bits): Bool = meta(tagCacheTagBits)
@@ -270,6 +293,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   }
   def addrToIndex(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnIndexBits)
   def addrToRowAddr(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnRowAddrBits)
+
 
   private def opSizeToXSize(ops: UInt) = MuxLookup(ops, UInt("b111"), Seq(
     MT_B  -> UInt(0),
@@ -301,14 +325,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val na_b = io.nasti.b.bits
   val na_r = io.nasti.r.bits
 
-
-  // Converter internal control signalspayload
-  val write_multiple_data = Reg(init=Bool(false))
-  val read_multiple_data = Reg(init=Bool(false))
-  val (nw_cnt, nw_finish) =
-    Counter(io.nasti.w.fire() && write_multiple_data, tlDataBeats)
-  val (nr_cnt, nr_finish) =
-    Counter((io.nasti.r.fire() && read_multiple_data), tlDataBeats)
   val is_read = Reg(init=Bool(false))
   val is_write = Reg(init=Bool(false))
   val is_acq = Reg(init=Bool(false))
@@ -321,16 +337,23 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val cmd_sent = Reg(init=Bool(false))
   val is_idle = !(is_read || is_write)
 
+  val acq_addr = addr_out >> blockOffBits
+
 
   //Tag signals and definitions
   val collect_acq_data = Reg(init=Bool(false))
   val acq_data_process = Reg(init=Bool(false)) // process the original data read/write requests
   val acq_data = Reg(Vec.fill(tlDataBeats){io.tl.acquire.bits.data.clone})
   val (acq_data_cnt, acq_data_done) = Counter((io.tl.acquire.fire() || io.tl.release.fire()) && is_write, tlDataBeats)
-  //val acq_data_no_tag = Vec((0 until tlDataBeats).map(i => tagUtil.removeTag(acq_data(i))))
-  val send_tag_data = Reg(init=Bool(false))
-
   val acq_rel_input_data_without_tag = Mux(is_acq, tagUtil.removeTag(tl_acq.data) , tagUtil.removeTag(tl_rel.data))
+  val acq_repl_meta = Reg(io.meta.resp.bits.tag.clone)
+  val acq_way_en = Reg(init=Bits(0, nWays))
+  val mem_acq_data_read = Reg(Vec.fill(mifDataBeats){io.nasti.r.bits.data.clone})
+  val mem_tag_data_read = Reg(Vec.fill(mifDataBeats){io.nasti.r.bits.data.clone})
+
+  val (mem_tag_data_write_cnt, mem_tag_data_write_done) =
+    Counter(io.nasti.w.fire() && state === s_write_back && !acq_data_process, mifDataBeats)
+  val mem_tag_refill_ready = Reg(init=Bool(false))
 
   val is_read_precess = Reg(init=Bool(false))
   val is_write_process = Reg(init=Bool(false))
@@ -338,6 +361,34 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val gnt_enable = Reg(init=Bool(false))
   val gnt_data = Reg(Vec.fill(tlDataBeats){io.tl.grant.bits.data.clone})
   val (gnt_data_cnt, gnt_data_done) = Counter(io.tl.grant.fire() && !is_write_process, tlDataBeats)
+
+  val gnt_tag = Reg(Bits(width=tagBlockTagBits))
+
+  val mifTagRows = mifDataBits / (tagRowBytes * 8)
+  val wb_data = Reg(Vec.fill(mifDataBeats*mifTagRows){io.data.resp.bits.data.clone})
+  val (wb_read_cnt, wb_read_done) =
+    Counter(io.data.read.fire() && state != s_data_read_hit, mifDataBeats * mifTagRows)
+  val (wb_data_cnt, wb_data_done) =
+    Counter(io.data.resp.valid && state != s_data_resp_hit, mifDataBeats * mifTagRows)
+
+  val mem_tag_data_write = Reg(Vec.fill(mifDataBeats){io.nasti.w.bits.data.clone})
+
+  // tag refill
+  val (refill_data_cnt, refill_data_done) =
+    Counter(io.data.write.fire() && (state === s_data_write_refill), tagBlockBytes / tagRowBytes)
+  val refill_data = Reg(Vec.fill(tagBlockBytes / tagRowBytes){io.data.write.bits.data.clone})
+
+  val mem_send_tag = (state === s_write_back && !acq_data_process)
+  val mem_receive_tag =  (state === s_mem_req && !acq_data_process)
+
+
+  // Converter internal control signalspayload
+  val write_multiple_data = Reg(init=Bool(false))
+  val read_multiple_data = Reg(init=Bool(false))
+  val (nw_cnt, nw_finish) =
+    Counter(io.nasti.w.fire() && write_multiple_data, tlDataBeats)
+  val (nr_cnt, nr_finish) =
+    Counter((io.nasti.r.fire() && ((read_multiple_data && acq_data_process) || (mem_receive_tag) )), tlDataBeats)
 
 
 
@@ -384,7 +435,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
       opSizeToXSize(tl_acq.op_size()))
     g_type_out := Mux(tl_acq.isBuiltInType(), tl_acq.getBuiltInGrantType(), UInt(0)) // assume MI or MEI
 
-
   }
 
   when((state === s_idle) && io.tl.release.valid) {
@@ -424,6 +474,8 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     io.tl.grant.valid := Bool(true)
   }
 
+  gnt_data := gnt_data.fromBits(tagUtil.insertTag(mem_acq_data_read.toBits, gnt_tag))
+
   tl_gnt := Mux(is_write_process ,
     Grant(
       dst = tag_out >> tlClientXactIdBits,
@@ -446,10 +498,28 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     cmd_sent := Bool(true)
   }
 
+  // write back tags
+  mem_tag_data_write := mem_tag_data_write.fromBits(wb_data.toBits)
+
   // nasti.aw
-  io.nasti.aw.valid :=  !cmd_sent && ((acq_data_process && is_write)) // || send_tag_data)
-  na_aw.id := tag_out
-  na_aw.addr := addr_out
+  io.nasti.aw.valid :=  !cmd_sent && ((acq_data_process && is_write) || mem_send_tag)
+
+  when(mem_send_tag)
+  {
+    na_aw.id := tag_out  //Insert ID bit for tag
+    na_aw.addr := tagAddrConv(addrFromTag(acq_repl_meta, acq_addr) ) << UInt(blockOffBits)
+  }
+  .elsewhen(mem_receive_tag)
+  {
+    na_aw.id := tag_out  //Insert ID bit for tag
+    na_aw.addr := tagAddrConv(acq_addr) <<  UInt(blockOffBits) //tagAddrConv(addr_out)
+  }
+  .otherwise
+  {
+    na_aw.id := tag_out  //Insert ID bit for tag
+    na_aw.addr := addr_out
+  }
+
   na_aw.len := len_out
   na_aw.size := size_out
   na_aw.burst := UInt("b01")
@@ -460,33 +530,14 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   na_aw.region := UInt("b0000")
   na_aw.user := UInt(0)
 
-  /*
-  val nasti_sending = Reg(init=Bool(false))
-  //io.nasti.w.valid := Bool(false)
-
-  when( !cmd_sent && ((acq_data_process && is_write) || send_tag_data)) //Nasti AW valid
-  {
-    nasti_sending := Bool(true)
-    //io.nasti.w.valid := Bool(true)
-  }
-
-  when(nw_finish)
-  {
-    nasti_sending := Bool(false)
-    // io.nasti.w.valid := Bool(false)
-  }
-*/
 
   // nasti.w
   //io.nasti.w.valid := nasti_sending || (!cmd_sent && ((acq_data_process && is_write) || send_tag_data))
- io.nasti.w.valid := ((io.tl.acquire.valid && is_acq) || (io.tl.release.valid && !is_acq)) && is_write
-  na_w.strb := Mux(is_acq && tl_acq.isSubBlockType(), tl_acq.wmask(), SInt(-1, nastiWStrobeBits).toUInt)
-  //val tl_acq_data_without_tag = tagUtil.removeTag(tl_acq.data)
-  //val tl_rel_data_without_tag = tagUtil.removeTag(tl_rel.data)
-  //na_w.data := Mux(is_acq, tl_acq_data_without_tag, tl_rel_data_without_tag)
- // na_w.data := Mux(acq_data_process,acq_rel_input_data_without_tag, UInt(0)) //Think about what if tag is written
-  na_w.data := acq_rel_input_data_without_tag//Think about what if tag is written
-  na_w.last := nw_finish || is_acq && !tl_acq.hasMultibeatData()
+  io.nasti.w.valid := (((io.tl.acquire.valid && is_acq) || (io.tl.release.valid && !is_acq)) && is_write) || mem_send_tag
+  na_w.strb := Mux(is_acq && tl_acq.isSubBlockType() && !mem_send_tag, tl_acq.wmask(), SInt(-1, nastiWStrobeBits).toUInt)
+  na_w.data := Mux(mem_send_tag, mem_tag_data_write(mem_tag_data_write_cnt), acq_rel_input_data_without_tag)
+  na_w.last := Mux(mem_send_tag, mem_tag_data_write_done, nw_finish || (is_acq && !tl_acq.hasMultibeatData()))
+    //(mem_send_tag && mem_tag_data_write_done) || ( !mem_send_tagnw_finish || (is_acq && !tl_acq.hasMultibeatData()))
 
   //Original request is handled if data is fully written or read from nasti
   when((io.nasti.b.fire() && acq_data_process && is_write) || (nr_finish && acq_data_process && is_read))
@@ -494,42 +545,117 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     acq_data_process := Bool(false)
   }
 
-
   // nasti.ar
-  io.nasti.ar.valid :=  !cmd_sent && ((acq_data_process && is_read)) //Or read Tag
+  io.nasti.ar.valid :=  !cmd_sent && ((acq_data_process && is_read) || mem_receive_tag ) //Or read Tag
   io.nasti.ar.bits := io.nasti.aw.bits
- // na_ar.id := tag_out    //ToDO Mux for Tag sending
- //na_ar.addr := addr_out
- // na_ar.len := len_out
-  //na_ar.size := size_out
-  //na_ar.burst := UInt("b01")
-  //na_ar.lock := Bool(false)
-  //na_ar.cache := UInt("b0000")
-  //na_ar.prot := UInt("b000")
-  //na_ar.qos := UInt("b0000")
-  //na_ar.region := UInt("b0000")
-  //na_ar.user := UInt(0)
 
-  //ToDo wrong at the moment
-  when(io.nasti.r.valid && acq_data_process && is_read)
+  //ToDo wrong at the moment (seperate for acquire and tag read )
+  when(io.nasti.r.valid)
   {
-    gnt_data(nr_cnt) := tagUtil.insertTag(io.nasti.r.bits.data)
+    when(acq_data_process && is_read)
+    {
+      //gnt_data(nr_cnt) := tagUtil.insertTag(io.nasti.r.bits.data)
+      mem_acq_data_read(nr_cnt) := io.nasti.r.bits.data
+    }
 
+    when(mem_receive_tag)
+    {
+      mem_tag_data_read(nr_cnt) := io.nasti.r.bits.data
+    }
+
+   // when(nr_finish && mem_receive_tag) { mem_tag_refill_ready := Bool(true) }
   }
 
+
+
   // nasti.b
-  io.nasti.b.ready := io.nasti.b.valid && is_write// || Tag write
+  io.nasti.b.ready := io.nasti.b.valid && (is_write || mem_send_tag)
 
   // nasti.r
-  io.nasti.r.ready := io.nasti.r.valid && is_read // || Tag read
-
-  // tilelink acquire
- // io.tl.acquire.ready := is_acq && (io.nasti.w.fire() || io.nasti.ar.fire())
-
-  // tilelink release
-  //io.tl.release.ready := !is_acq && io.nasti.w.fire()
+  io.nasti.r.ready := io.nasti.r.valid && (is_read || mem_receive_tag)// || Tag read
 
 
+  //----------------------meta interface
+  io.meta.read.valid := Bool(false)
+  io.meta.read.bits.id := UInt(id)
+  io.meta.read.bits.tag := addrToTag(acq_addr, Bool(false))
+  io.meta.read.bits.idx := addrToIndex(acq_addr)
+
+  when(state === s_meta_read) {
+    io.meta.read.valid := Bool(true)
+  }
+
+  when(state === s_meta_resp && io.meta.resp.valid) {
+    //acq_hit := io.meta.resp.bits.hit
+    acq_repl_meta := io.meta.resp.bits.tag
+    acq_way_en := io.meta.resp.bits.way_en
+  }
+
+  // meta write after refill
+  io.meta.write.valid := Bool(false)
+  io.meta.write.bits.tag := addrToTag(acq_addr, Bool(false))
+  io.meta.write.bits.idx := addrToIndex(acq_addr)
+  io.meta.write.bits.way_en := acq_way_en
+
+  when(state === s_meta_write_refill) {
+    io.meta.write.valid := Bool(true)
+  }
+
+  when(state === s_meta_write_hit) {
+    io.meta.write.valid := Bool(true)
+    io.meta.write.bits.tag := addrToTag(acq_addr, Bool(true))
+  }
+
+  //----------------------data array interface
+  // read for hit
+  io.data.read.valid := Bool(false)
+  io.data.read.bits.id := UInt(id)
+  io.data.read.bits.addr := addrToRowAddr(acq_addr)
+  io.data.read.bits.way_en := acq_way_en
+
+  when(state === s_data_read_hit) {
+    io.data.read.valid := Bool(true)
+  }
+
+  when(state === s_data_resp_hit) {
+    val _rowOffset = acq_addr(tagCacheUnRowAddrBits-1, 0)
+    gnt_tag := io.data.resp.bits.data >> (_rowOffset * UInt(tagBlockTagBits))
+  }
+
+  // read for write back
+  when(state === s_data_read_wb || state === s_data_resp_wb) {
+    io.data.read.valid := Bool(true)
+    io.data.read.bits.addr := Cat(addrToIndex(acq_addr), wb_read_cnt)
+  }
+
+  when(state === s_data_resp_wb || state === s_data_resp_wb_done) {
+    when(io.data.resp.valid) {
+      wb_data(wb_data_cnt) := io.data.resp.bits.data
+    }
+  }
+
+  // write for hit
+  io.data.write.valid := Bool(false)
+  io.data.write.bits.data := (
+    UInt(tagUtil.extractTag(acq_data.toBits))
+      << (acq_addr(tagCacheUnRowAddrBits-1, 0) * UInt(tagBlockTagBits))
+    )
+  io.data.write.bits.addr := addrToRowAddr(acq_addr)
+  io.data.write.bits.wmask := UInt(1,1) << acq_addr(tagCacheUnRowAddrBits-1, 0)
+  io.data.write.bits.way_en := acq_way_en
+
+  when(state === s_data_write_hit && !collect_acq_data) {
+    io.data.write.valid := Bool(true)
+  }
+
+  // write for refill
+  refill_data := refill_data.fromBits(mem_tag_data_read.toBits)
+  when(state === s_data_write_refill) {
+    io.data.write.valid := Bool(true)
+    io.data.write.bits.data := refill_data(refill_data_cnt)
+    io.data.write.bits.addr := Cat(addrToIndex(acq_addr), refill_data_cnt)
+    io.data.write.bits.wmask := SInt(-1)
+  }
 
 
   //----------------------state machine
@@ -541,7 +667,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
         if (tlDataBeats > 1)
           collect_acq_data := (tl_acq.isBuiltInType() && tl_acq.hasData()) || io.tl.release.valid
         acq_data_process := Bool(true)
-        state := s_dummy_wait //s_meta_read
+        state := s_meta_read//s_dummy_wait //
       }
     }
 
@@ -550,68 +676,75 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
         state := s_gnt
       }
     }
-    /*
-      is(s_meta_read) {
-        when(io.meta.read.ready) { state := s_meta_resp }
+
+    is(s_meta_read) {
+      when(io.meta.read.ready) { state := s_meta_resp }
+    }
+    is(s_meta_resp) {
+      when(io.meta.resp.valid) {
+        state :=
+          Mux(io.meta.resp.bits.hit,
+            Mux(is_write_process, s_data_write_hit, s_data_read_hit),  // cache hit
+            Mux(tagIsValid(io.meta.resp.bits.tag) && tagIsDirty(io.meta.resp.bits.tag),
+              s_data_read_wb, // cache miss, WB needed
+              s_mem_req))     // cache miss, WB not needed
       }
-      is(s_meta_resp) {
-        when(io.meta.resp.valid) {
-          state :=
-            Mux(io.meta.resp.bits.hit,
-              Mux(acq_wr, s_data_write_hit, s_data_read_hit),  // cache hit
-              Mux(tagIsValid(io.meta.resp.bits.tag) && tagIsDirty(io.meta.resp.bits.tag),
-                s_data_read_wb, // cache miss, WB needed
-                s_mem_req))     // cache miss, WB not needed
-        }
+    }
+    is(s_data_read_hit) {
+      when(io.data.read.ready) { state := s_data_resp_hit }
+    }
+    is(s_data_resp_hit) {
+      state := s_gnt
+    }
+    is(s_data_write_hit) {
+      when(!collect_acq_data) { // ensure the acq messasge is received
+        when(io.data.write.ready) { state := s_meta_write_hit }
       }
-      is(s_data_read_hit) {
-        when(io.data.read.ready) { state := s_data_resp_hit }
-      }
-      is(s_data_resp_hit) {
-        state := s_gnt
-      }
-      is(s_data_write_hit) {
-        when(!collect_acq_data) { // ensure the acq messasge is received
-          when(io.data.write.ready) { state := s_meta_write_hit }
-        }
-      }
-      is(s_data_read_wb) {
-        when(io.data.read.ready) { state := s_data_resp_wb }
-      }
-      is(s_data_resp_wb) {
-        when(wb_read_done) { state := s_data_resp_wb_done }
-      }
-      is(s_data_resp_wb_done) {
-        when(wb_data_done) { state := s_write_back }
-      }
-      is(s_write_back) {
-        when(mem_tag_data_write_done) {
+    }
+    is(s_data_read_wb) {
+      when(io.data.read.ready) { state := s_data_resp_wb }
+    }
+    is(s_data_resp_wb) {
+      when(wb_read_done) { state := s_data_resp_wb_done }
+    }
+    is(s_data_resp_wb_done) {
+      when(wb_data_done) { state := s_write_back }
+    }
+    is(s_write_back) {
+      when(!acq_data_process)
+      {
+        when( io.nasti.b.valid) {
           state := s_mem_req
         }
       }
-      is(s_mem_req) {
-        when(!acq_data_process) { // ensure the original req sent
-          when(io.mem_req.ready) { state := s_data_write_refill }
-        }
+
+    }
+    is(s_mem_req) {
+      when(!acq_data_process) { // ensure the original req sent
+        when(nr_finish) { state := s_data_write_refill }
       }
-      is(s_data_write_refill) {
-        when(refill_data_done) {
-          mem_tag_refill_ready := Bool(false)
-          state := s_meta_write_refill
-        }
+    }
+    is(s_data_write_refill) {
+      when(refill_data_done) {
+        mem_tag_refill_ready := Bool(false)
+        state := s_meta_write_refill
       }
-      is(s_meta_write_refill) {
-        when(io.meta.write.ready) {
-          state := Mux(acq_wr, s_data_write_hit, s_data_read_hit)
-        }
+    }
+    is(s_meta_write_refill) {
+      when(io.meta.write.ready) {
+        state := Mux(is_write_process, s_data_write_hit, s_data_read_hit)
       }
-      is(s_meta_write_hit) {
-        when(io.meta.write.ready) {state := s_busy }
-      }
-      */
+    }
+    is(s_meta_write_hit) {
+      when(io.meta.write.ready) {state := s_gnt }
+    }
+
     is(s_gnt) {
-      gnt_enable := Bool(true)
-      state := s_busy
+      when(!acq_data_process)
+      {
+        gnt_enable := Bool(true)
+        state := s_busy
+      }
     }
 
     is(s_busy) {

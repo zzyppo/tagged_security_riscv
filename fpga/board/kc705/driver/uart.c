@@ -1,7 +1,7 @@
 // See LICENSE for license details.
 
 #include "uart.h"
-#define HW
+//#define HW
 volatile uint32_t *uart_base_ptr = (uint32_t *)(UART_BASE);
 
 void uart_init() {
