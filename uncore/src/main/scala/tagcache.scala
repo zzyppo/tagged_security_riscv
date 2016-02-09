@@ -4,6 +4,7 @@ package uncore
 import Chisel._
 import junctions._
 
+import scala.collection.immutable.::
 import scala.math._
 
 //--------------------------------------------------------------//
@@ -251,7 +252,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   require(isPow2(nWays))
 
   // states
-  val s_idle :: s_dummy_wait :: s_meta_read :: s_meta_resp :: s_data_read_hit :: s_data_resp_hit :: s_data_write_hit :: s_data_read_wb :: s_data_resp_wb :: s_data_resp_wb_done :: s_write_back :: s_mem_req :: s_data_write_refill :: s_meta_write_refill :: s_meta_write_hit :: s_gnt :: s_busy :: Nil = Enum(UInt(), 17)
+  val s_idle :: s_dummy_wait :: s_meta_read :: s_meta_resp :: s_data_read_hit :: s_data_resp_hit :: s_data_write_hit :: s_data_read_wb :: s_data_resp_wb :: s_data_resp_wb_done :: s_write_back ::s_write_back_wait_b ::s_mem_req :: s_data_write_refill :: s_meta_write_refill :: s_meta_write_hit :: s_gnt :: s_busy :: Nil = Enum(UInt(), 18)
   val state = Reg(init=s_idle)
 
   /*
@@ -569,7 +570,8 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 
 
   // nasti.b
-  io.nasti.b.ready := io.nasti.b.valid && (is_write || mem_send_tag)
+  //Set ready when it is valid and write process of original aquire or the tag shall be sent
+  io.nasti.b.ready := io.nasti.b.valid && (is_write || mem_send_tag || (state === s_write_back_wait_b))
 
   // nasti.r
   io.nasti.r.ready := io.nasti.r.valid && (is_read || mem_receive_tag)// || Tag read
@@ -713,12 +715,20 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     is(s_write_back) {
       when(!acq_data_process)
       {
-        when( io.nasti.b.valid) {
-          state := s_mem_req
+        when( mem_tag_data_write_done) {
+          state := s_write_back_wait_b
         }
       }
 
     }
+
+    is(s_write_back_wait_b)
+    {
+      when( io.nasti.b.valid) {
+        state := s_mem_req
+      }
+    }
+
     is(s_mem_req) {
       when(!acq_data_process) { // ensure the original req sent
         when(nr_finish) { state := s_data_write_refill }

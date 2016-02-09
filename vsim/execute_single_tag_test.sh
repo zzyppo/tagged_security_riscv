@@ -1,0 +1,3 @@
+./DefaultConfig-sim-debug +vcd +vcd_name=output/tag_ld_st.vcd +max-cycles=1000000 +load=/home/zaepo/iaikgit/2015_master_jantscher/code/fpga/board/kc705/examples/tag_ld_st.hex | /home/zaepo/iaikgit/2015_master_jantscher/code/riscv/bin/spike-dasm  >output/tag_ld_st.verilator.out && [ $PIPESTATUS -eq 0 ]
+
+#./DefaultConfig-sim-debug +vcd +vcd_name=/media/zaepo/USB\ DISK/log_files_new/dram_anti.vcd +max-cycles=1000000 +load=/home/zaepo/iaikgit/2015_master_jantscher/code/fpga/board/kc705/examples/dram_antibug.hex | /home/zaepo/iaikgit/2015_master_jantscher/code/riscv/bin/spike-dasm  >/media/zaepo/USB\ DISK/log_files_new/dram_anti.verilator.out && [ $PIPESTATUS -eq 0 ]
