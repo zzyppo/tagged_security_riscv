@@ -80,12 +80,14 @@ class DefaultConfig extends ChiselConfig (
       }: PF
 
       // Tag Cache
-      case TagMemSize => 20
+      case TagMemSize => 26 //64 MB for DRAM
+      case TagMemSizeBram => 12
       case TagBits => 4
       case TCBlockBits => site(MIFDataBits)
       case TCTransactors => Knob("TC_XACTORS")
       case TCBlockTags => 1 << log2Down(site(TCBlockBits) / site(TagBits))
       case TCBaseAddr => Knob("TC_BASE_ADDR")
+      case TCBaseAddrBram => 0xF000
       case TCTrackers => 1
       case TagBlockBytes => site(CacheBlockBytes)
       case TagRowBytes => site(MIFDataBits) / 8

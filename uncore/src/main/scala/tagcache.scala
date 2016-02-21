@@ -20,7 +20,9 @@ abstract trait TagCacheParameters extends UsesParameters {
 
   // the tag memory partition
   val tagMemSize = params(TagMemSize)             // the size of the tag memory partition is 2**TagMemSize bytes
+  val tagMemSizeBram = params(TagMemSizeBram)             // the size of the tag memory partition is 2**TagMemSize bytes
   val tagBaseAddr = params(TCBaseAddr)           // the base address of the tag partition
+  val tagBaseAddrBram = params(TCBaseAddrBram)           // the base address of the tag partition
 
   // the cache parameters
   val tagBlockBytes = params(TagBlockBytes)       // the cache block size in the tag cache
@@ -70,6 +72,7 @@ abstract trait TagCacheParameters extends UsesParameters {
   // the lower address not used for tag
   val tagCacheTagBits = paddrBits - tagCahceUnTagBits - blockOffBits
   // the size of a tag
+
 }
 
 // deriving classes from parameters
@@ -79,7 +82,7 @@ abstract trait TagCacheModule extends Module with TagCacheParameters
 // I/O definitions
 //--------------------------------------------------------------//
 trait TagCacheId extends Bundle with TagCacheParameters        { val id = UInt(width  = log2Up(nTrackers)) }
-trait TagCacheMetadata extends Bundle with TagCacheParameters  { val tag = Bits(width = tagCacheTagBits + 2) }
+trait TagCacheMetadata extends Bundle with TagCacheParameters  { val tag = Bits(width = tagCacheTagBits + 2 + 1) }
 trait TagCacheIdx extends Bundle with TagCacheParameters       { val idx = Bits(width = tagCacheIdxBits) }
 trait TagCacheHit extends Bundle with TagCacheParameters       { val hit = Bool() }
 
@@ -114,6 +117,8 @@ class TagCacheDataReadReq extends TagCacheId with TagCacheAddr {
 class TagCacheDataWriteReq extends TagCacheData with TagCacheAddr {
   val way_en = Bits(width = nWays)
   val wmask = Bits(width = tagRowBlocks)
+  //val wmask = Bits(width = ((tagBlockTagBits * tagRowBlocks)/8))
+ //val wmask = Bits(width = 128)
 }
 
 class TagCacheDataResp extends TagCacheId with TagCacheData
@@ -129,7 +134,14 @@ class TagCache extends TagCacheModule {
   val io = new Bundle {
     val tl = new ManagerTileLinkIO
     val nasti = new NASTIMasterIO
+    var addrConvIO = new AddressConvIO()
   }
+
+  /*
+  io.addrConvIO.req.valid := Bool(false)
+  io.addrConvIO.req.bits.core_addr := UInt(0, paddrBits)
+  io.addrConvIO.req.bits.id := UInt(0)
+  */
 
   // coherecne
   //val co = params(TLCoherence)
@@ -228,6 +240,10 @@ class TagCache extends TagCacheModule {
   outputArbitration(data.io.write, trackerList.map(_.io.data.write))
   inputRouting(data.io.resp, trackerList.map(_.io.data.resp), data.io.resp.bits.id)
 
+  //addressConverter
+  outputArbitration(io.addrConvIO.req, trackerList.map(_.io.addrConvIO.req))
+  inputRouting(io.addrConvIO.resp, trackerList.map(_.io.addrConvIO.resp),io.addrConvIO.resp.bits.id)
+
 }
 
 // the request tracker
@@ -242,7 +258,9 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     val tl_rel_match = Bool(OUTPUT)
     val na_b_match = Bool(OUTPUT)
     val na_r_match = Bool(OUTPUT)
+    var addrConvIO = new AddressConvIO()
   }
+
 
   // parameter requirements
   require(nastiXDataBits * tlDataBeats == tlDataBits * tlDataBeats)
@@ -276,19 +294,27 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   def addrToIndex(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnIndexBits)
   def addrToRowAddr(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnRowAddrBits)
   */
+  val physical_dram_start = UInt("h40000000")
+
+  val physical_addr_out = Reg(UInt(width = nastiXAddrBits))
+  val is_dram_address = Mux(((physical_addr_out.toBits & physical_dram_start.toBits) === physical_dram_start.toBits).toBool(), Bool(true), Bool(false))
+
    // tag utilities
   val tagUtil = new TagUtil(tagBits, coreDataBits)
+  def tagIsDram(meta:Bits): Bool = meta(tagCacheTagBits + 2)
   def tagIsValid(meta:Bits): Bool = meta(tagCacheTagBits+1)
   def tagIsDirty(meta:Bits): Bool = meta(tagCacheTagBits)
   def addrFromTag(tag: Bits, acq_addr: Bits): Bits =
-    Cat(tag(tag.getWidth - 2, 0), acq_addr(tagCahceUnTagBits-1, 0))
-  def addrToTag(addr: Bits, dirty: Bool): Bits = Cat(UInt(1,1), dirty, UInt(addr) >> UInt(tagCahceUnTagBits))
-  def tagAddrConv(addr:Bits): Bits = {
-    // get the fill physical addr
+    Cat(tag(tag.getWidth - 3, 0), acq_addr(tagCahceUnTagBits-1, 0))
+  def addrToTag(addr: Bits, dirty: Bool, is_dram : Bool): Bits = Cat(is_dram, UInt(1,1), dirty, UInt(addr) >> UInt(tagCahceUnTagBits))
+  def tagAddrConv(addr:Bits, is_dram : Bool): Bits = {
+    // get the full physical addr
     val full_addr = Cat(addr, Bits(0, blockOffBits))
     // shift to get tag addr
     val shifted_addr = full_addr >> UInt(tagCacheUnIndexBits)
-    val tag_addr = Cat(Bits(tagBaseAddr,paddrBits)(paddrBits-1, tagMemSize),shifted_addr(tagMemSize-1,0))
+   // val tag_addr = Mux(is_dram_address,  Cat(Bits(tagBaseAddr,paddrBits)(paddrBits-1, tagMemSize),shifted_addr(tagMemSize-1,0)), UInt("hF000"))
+   val tag_addr = Mux(is_dram,  Cat(Bits(tagBaseAddr,paddrBits)(paddrBits-1, tagMemSize),shifted_addr(tagMemSize-1,0)), Cat(Bits(tagBaseAddrBram,paddrBits)(paddrBits-1, tagMemSizeBram),shifted_addr(tagMemSizeBram-1,0)))
+
     // remove lower block offsets
     tag_addr >> UInt(blockOffBits)
   }
@@ -338,7 +364,8 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val cmd_sent = Reg(init=Bool(false))
   val is_idle = !(is_read || is_write)
 
-  val acq_addr = addr_out >> blockOffBits
+
+  val acq_addr = addr_out >> UInt(blockOffBits)
 
 
   //Tag signals and definitions
@@ -418,6 +445,25 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   io.tl.acquire.ready := is_acq && acq_data_process && (io.nasti.w.fire() || io.nasti.ar.fire())
   io.tl.release.ready := !is_acq && acq_data_process && io.nasti.w.fire()
 
+
+  val enable_addr_conv = Reg(init=Bool(false))
+  enable_addr_conv := Bool(false)
+
+  io.addrConvIO.req.valid := Bool(false)
+  io.addrConvIO.req.bits.core_addr := addr_out
+  io.addrConvIO.req.bits.id := UInt(id)
+
+  when(enable_addr_conv)
+  {
+    io.addrConvIO.req.valid := Bool(true)
+
+  }
+
+  when(io.addrConvIO.resp.valid)
+  {
+    physical_addr_out := io.addrConvIO.resp.bits.phy_addr
+  }
+
   //AQUIRE/ RELEASE RECEIVER
   when((state===s_idle) && io.tl.acquire.valid && !io.tl.release.valid) { // release take priority
     write_multiple_data := tl_acq.hasMultibeatData()
@@ -436,7 +482,9 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
       opSizeToXSize(tl_acq.op_size()))
     g_type_out := Mux(tl_acq.isBuiltInType(), tl_acq.getBuiltInGrantType(), UInt(0)) // assume MI or MEI
 
+    enable_addr_conv := Bool(true)
   }
+
 
   when((state === s_idle) && io.tl.release.valid) {
     write_multiple_data := Bool(true)
@@ -451,6 +499,9 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     len_out := UInt(tlDataBeats-1)
     size_out := bytesToXSize(UInt(tlDataBytes))
     g_type_out := Grant.voluntaryAckType
+
+    //Make conversion request
+    enable_addr_conv := Bool(true)
   }
 
   when(acq_data_done) {
@@ -508,12 +559,12 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   when(mem_send_tag)
   {
     na_aw.id := tag_out  //Insert ID bit for tag
-    na_aw.addr := tagAddrConv(addrFromTag(acq_repl_meta, acq_addr) ) << UInt(blockOffBits)
+    na_aw.addr := tagAddrConv(addrFromTag(acq_repl_meta, acq_addr), tagIsDram(io.meta.resp.bits.tag) ) << UInt(blockOffBits)
   }
   .elsewhen(mem_receive_tag)
   {
     na_aw.id := tag_out  //Insert ID bit for tag
-    na_aw.addr := tagAddrConv(acq_addr) <<  UInt(blockOffBits) //tagAddrConv(addr_out)
+    na_aw.addr := tagAddrConv(acq_addr, is_dram_address) <<  UInt(blockOffBits) //tagAddrConv(addr_out)
   }
   .otherwise
   {
@@ -580,7 +631,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   //----------------------meta interface
   io.meta.read.valid := Bool(false)
   io.meta.read.bits.id := UInt(id)
-  io.meta.read.bits.tag := addrToTag(acq_addr, Bool(false))
+  io.meta.read.bits.tag := addrToTag(acq_addr, Bool(false), Bool(false))
   io.meta.read.bits.idx := addrToIndex(acq_addr)
 
   when(state === s_meta_read) {
@@ -595,7 +646,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 
   // meta write after refill
   io.meta.write.valid := Bool(false)
-  io.meta.write.bits.tag := addrToTag(acq_addr, Bool(false))
+  io.meta.write.bits.tag := addrToTag(acq_addr, Bool(false), is_dram_address)
   io.meta.write.bits.idx := addrToIndex(acq_addr)
   io.meta.write.bits.way_en := acq_way_en
 
@@ -605,7 +656,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 
   when(state === s_meta_write_hit) {
     io.meta.write.valid := Bool(true)
-    io.meta.write.bits.tag := addrToTag(acq_addr, Bool(true))
+    io.meta.write.bits.tag := addrToTag(acq_addr, Bool(true), is_dram_address)
   }
 
   //----------------------data array interface
@@ -644,6 +695,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     )
   io.data.write.bits.addr := addrToRowAddr(acq_addr)
   io.data.write.bits.wmask := UInt(1,1) << acq_addr(tagCacheUnRowAddrBits-1, 0)
+  //io.data.write.bits.wmask := UInt("hFFFFFFFF") << (acq_addr(tagCacheUnRowAddrBits-1, 0) * UInt(tagBlockTagBits))
   io.data.write.bits.way_en := acq_way_en
 
   when(state === s_data_write_hit && !collect_acq_data) {
@@ -773,7 +825,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 class TagCacheMetadataArray extends TagCacheModule {
   val io = new TagCacheMetaRWIO().flip
   // the highest bit in the meta is the valid flag
-  val meta_bits = tagCacheTagBits+2
+  val meta_bits = tagCacheTagBits+2 + 1
 
   //val metaArray = Mem(UInt(width = meta_bits*nWays), nSets, seqRead = true)
   val metaArray = SeqMem(Vec(UInt(width = meta_bits), nWays), nSets)
@@ -839,10 +891,15 @@ class TagCacheDataArray extends TagCacheModule {
 
   val waddr = io.write.bits.addr
   val raddr = io.read.bits.addr
-  val wmask = FillInterleaved(tagBlockTagBits, io.write.bits.wmask).toBools
+  //val wmask = FillInterleaved(tagBlockTagBits, io.write.bits.wmask).toBools
+   val wmask = io.write.bits.wmask.toBools
+ //val wmask = Vec{Bool(false); Bool(true); Bool(false);Bool(true);Bool(false);Bool(true);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false)}
+ // val test_mask = Reg(Vec.fill((tagBlockTagBits * tagRowBlocks)/8){Bool(true)})
+ // test_mask(0) := Bool(false)
+  //val wmask = Vec{Bool(true); Bool(false); Bool(true); Bool(true)}
 
   val resp = (0 until nWays).map { w =>
-    val array = SeqMem(Vec(UInt(width = tagBlockTagBits * tagRowBlocks), 1), nSets*refillCycles)
+    val array = SeqMem(nSets*refillCycles, Vec( tagRowBlocks, Bits(width = tagBlockTagBits )) )
     //val array = Mem(Bits(width=tagBlockTagBits*tagRowBlocks), nSets*refillCycles, seqRead = true)
     val reg_raddr = Reg(UInt())
     when (io.write.bits.way_en(w) && io.write.valid) {

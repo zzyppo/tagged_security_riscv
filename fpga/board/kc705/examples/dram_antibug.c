@@ -25,9 +25,9 @@ unsigned long long lfsr64(unsigned long long d) {
 }
 */
 
-#define STEP_SIZE 32
+#define STEP_SIZE 1024 / 8
 //#define STEP_SIZE 1024*16
-#define VERIFY_DISTANCE 16
+#define VERIFY_DISTANCE 1
 //#define VERIFY_DISTANCE 16
 
 
@@ -56,13 +56,13 @@ int temp = 0;
     #endif
 
     for(i=0; i<STEP_SIZE; i++) {
-      *(get_ddr_base() + waddr) = wkey;
+      *(((uint64_t *)0x40000000) + waddr) = wkey;
        asm volatile ("stag %0, 0(%1)" ::"r"(0xA), "r"((get_ddr_base() + waddr)));
       waddr = (waddr + 0x01) & 0x3ffffff;
       //wkey = lfsr64(wkey);
 	
     }
-
+   /*
     if(distance < VERIFY_DISTANCE) distance++;
 
     if(distance == VERIFY_DISTANCE) {
@@ -95,7 +95,7 @@ int temp = 0;
         //rkey = lfsr64(rkey);
         if(error_cnt > 10) exit(1);
       }
-    }
+    }*/
   }
 }
 

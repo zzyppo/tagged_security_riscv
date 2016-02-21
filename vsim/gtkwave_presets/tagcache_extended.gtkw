@@ -1,18 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Tue Feb  9 13:47:36 2016
+[*] Sun Feb 21 14:18:36 2016
 [*]
 [dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/dram_anti.vcd"
-[dumpfile_mtime] "Mon Feb  8 17:35:54 2016"
-[dumpfile_size] 1225276740
+[dumpfile_mtime] "Sun Feb 21 12:50:59 2016"
+[dumpfile_size] 1285685248
 [savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/tagcache_extended.gtkw"
-[timestart] 464222
-[size] 1855 1056
-[pos] -1 -181
-*-7.000000 464343 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 0
+[size] 1615 891
+[pos] -616 -1
+*-19.213867 666910 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.v.
 [treeopen] TOP.v.Rocket.
+[treeopen] TOP.v.Rocket.L2HellaCacheBank.
+[treeopen] TOP.v.Rocket.L2HellaCacheBank.data.
 [treeopen] TOP.v.Rocket.L2HellaCacheBank.tshrfile.
 [treeopen] TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.
 [treeopen] TOP.v.Rocket.l2Network.
@@ -20,9 +22,10 @@
 [treeopen] TOP.v.Rocket.RocketTile.
 [treeopen] TOP.v.Rocket.RocketTile.core.
 [treeopen] TOP.v.Rocket.tc.
+[treeopen] TOP.v.Rocket.tc.data.
 [treeopen] TOP.v.Rocket.tcNetwork.
-[sst_width] 475
-[signals_width] 705
+[sst_width] 349
+[signals_width] 668
 [sst_expanded] 1
 [sst_vpaned_height] 397
 @24
@@ -165,6 +168,10 @@ TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_outer_release_bits_addr_block[25:0]
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_outer_release_bits_client_xact_id[1:0]
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_valid
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_ready
+@22
+TOP.v.Rocket.L2HellaCacheBank.data.io_write_bits_wmask[16:0]
+TOP.v.Rocket.L2HellaCacheBank.data.array.RW0M[135:0]
+@28
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.state[2:0]
 @22
 TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_bits_tag[20:0]
@@ -214,13 +221,6 @@ TOP.v.ram_nasti.aw_addr[31:0]
 @28
 TOP.v.ram_nasti.w_valid[0]
 TOP.v.ram_nasti.w_ready[0]
-@22
-TOP.v.ram_nasti.w_data[127:0]
-TOP.v.io_nasti_full.w_data[127:0]
-TOP.v.mem_io_nasti.w_data[255:0]
-TOP.v.mem_nasti.w_data[127:0]
-@28
-TOP.v.ram_behav.b_valid
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_w_bits_last
 @22
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_w_bits_strb[15:0]
@@ -229,7 +229,6 @@ TOP.v.Rocket.tc.TagCacheTracker.io_nasti_w_bits_strb[15:0]
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_b_valid
 [color] 1
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_b_ready
-TOP.v.Rocket.tc.TagCacheTracker.io_nasti_ar_ready
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_ar_valid
 @22
 TOP.v.Rocket.tc.TagCacheTracker.io_nasti_ar_bits_addr[31:0]
@@ -275,14 +274,38 @@ TOP.v.Rocket.tc.TagCacheTracker.gnt_data_0[135:0]
 TOP.v.Rocket.tc.TagCacheTracker.gnt_data_1[135:0]
 TOP.v.Rocket.tc.TagCacheTracker.gnt_data_2[135:0]
 TOP.v.Rocket.tc.TagCacheTracker.gnt_data_3[135:0]
+[color] 5
 TOP.v.Rocket.tc.TagCacheTracker.io_data_write_bits_data[127:0]
 @28
-TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_write_cnt[1:0]
-@29
-TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_write_done
+[color] 5
+TOP.v.Rocket.tc.data.io_write_valid
+@22
+TOP.v.Rocket.tc.data.T11.W0A[3:0]
+TOP.v.Rocket.tc.data.T11.W0M[127:0]
+TOP.v.Rocket.tc.TagCacheTracker.addr_out[31:0]
+TOP.v.Rocket.tc.TagCacheTracker.acq_addr[25:0]
+TOP.v.Rocket.tc.data.io_resp_bits_data[127:0]
+TOP.v.Rocket.tc.data.T11.R1O[127:0]
+@23
+TOP.v.Rocket.tc.data.T47.R1O[127:0]
 @28
+TOP.v.Rocket.tc.data.io_write_bits_way_en[1:0]
+TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_write_cnt[1:0]
+TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_write_done
 TOP.v.Rocket.tc.TagCacheTracker.io_data_read_valid
 @22
 TOP.v.Rocket.tc.TagCacheTracker.io_data_resp_bits_data[127:0]
+TOP.v.Rocket.tc.TagCacheTracker.addr_out[31:0]
+TOP.v.Rocket.tc.TagCacheTracker.io_addrConvIO_resp_bits_phy_addr[31:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker.io_addrConvIO_req_valid
+@22
+TOP.v.Rocket.tc.TagCacheTracker.io_addrConvIO_req_bits_core_addr[31:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker.io_addrConvIO_req_bits_id
+@22
+TOP.v.Rocket.tc.TagCacheTracker.io_addrConvIO_resp_bits_phy_addr[31:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker.io_addrConvIO_resp_valid
 [pattern_trace] 1
 [pattern_trace] 0

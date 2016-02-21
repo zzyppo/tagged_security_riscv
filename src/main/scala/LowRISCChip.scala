@@ -79,6 +79,9 @@ class Top extends Module with TopLevelParameters {
   tcNetwork.io.clients <> banks.map(_.outerTL)
 
   // tag cache
+  //Instantiate the MemorySpace
+  val memSpace = Module(new MemSpaceConstsWithIO(2))
+  memSpace.io.update := pcrControl.io.pcr_update
   val tc = Module(new TagCache, {case TLId => "L2ToTC"; case BusId => "nasti";  case CacheName => "TagCache"})
   // currently a TileLink to NASTI converter
   //val conv = Module(new NASTIMasterIOTileLinkIOConverter, {case BusId => "nasti"; case TLId => "L2ToTC"})
@@ -89,6 +92,8 @@ class Top extends Module with TopLevelParameters {
   //tcNetwork.io.managers <> Vec(conv.io.tl)
  // conv.io.nasti <> nastiPipe.io.slaves
   tc.io.nasti <> nastiPipe.io.slave
+  memSpace.io.addrConvIO <> tc.io.addrConvIO
+
   nastiPipe.io.master <> nastiAddrConv.io.slave
   nastiAddrConv.io.master <> io.nasti
   nastiAddrConv.io.update := pcrControl.io.pcr_update
