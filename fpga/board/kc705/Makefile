@@ -161,6 +161,15 @@ $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/bo
 .PHONY: search-ramb bit-update
 
 #--------------------------------------------------------------------
+# Load example program despite changes in source file (no auto-dependency) Only do this when bitsream is created and rambase searched
+#--------------------------------------------------------------------
+bit-update-only:
+	cd examples && make
+	cp examples/$(testcase).hex $(boot_mem)
+	data2mem -bm $(boot_mem) -bd $(boot_mem) -bt $(bitstream) -o b $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+
+.PHONY: bit-update-only
+#--------------------------------------------------------------------
 # Load examples
 #--------------------------------------------------------------------
 

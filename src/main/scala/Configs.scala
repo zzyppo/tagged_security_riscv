@@ -133,6 +133,7 @@ class DefaultConfig extends ChiselConfig (
       case TLDataBits => site(CacheBlockBytes)*8/site(TLDataBeats)
       case TagTLDataBits => site(TLDataBits) + site(TagBits) * (site(TLDataBits) / site(CacheBlockBytes))
       case TLWriteMaskBits => (site(TLDataBits) - 1) / 8 + 1
+      //case TLWriteMaskBits => (site(TagTLDataBits) - 1) / 8 + 1 //Correct solution?
       case TLDataBeats => 4
       case TLNetworkIsOrderedP2P => false
       case TLNManagers => findBy(TLId)

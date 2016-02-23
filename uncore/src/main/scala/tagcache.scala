@@ -901,13 +901,15 @@ class TagCacheDataArray extends TagCacheModule {
   val resp = (0 until nWays).map { w =>
     val array = SeqMem(nSets*refillCycles, Vec( tagRowBlocks, Bits(width = tagBlockTagBits )) )
     //val array = Mem(Bits(width=tagBlockTagBits*tagRowBlocks), nSets*refillCycles, seqRead = true)
-    val reg_raddr = Reg(UInt())
+    //val reg_raddr = Reg(UInt())
     when (io.write.bits.way_en(w) && io.write.valid) {
       array.write(waddr, Vec(io.write.bits.data), wmask)
-    }.elsewhen (io.read.bits.way_en(w) && io.read.valid) {
+    }
+      /*.elsewhen (io.read.bits.way_en(w) && io.read.valid) {
       reg_raddr := raddr
     }
-    array.read(reg_raddr)
+    */
+    array.read(raddr)
   }
 
   io.resp.valid := ShiftRegister(io.read.fire(), 1)
