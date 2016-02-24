@@ -81,13 +81,13 @@ class DefaultConfig extends ChiselConfig (
 
       // Tag Cache
       case TagMemSize => 26 //64 MB for DRAM
-      case TagMemSizeBram => 12
+      case TagMemSizeBram => 12 //4kB for BRAM
       case TagBits => 4
       case TCBlockBits => site(MIFDataBits)
       case TCTransactors => Knob("TC_XACTORS")
       case TCBlockTags => 1 << log2Down(site(TCBlockBits) / site(TagBits))
       case TCBaseAddr => Knob("TC_BASE_ADDR")
-      case TCBaseAddrBram => 0xF000
+      case TCBaseAddrBram => 0xFFFF
       case TCTrackers => 1
       case TagBlockBytes => site(CacheBlockBytes)
       case TagRowBytes => site(MIFDataBits) / 8
@@ -213,7 +213,7 @@ class DefaultConfig extends ChiselConfig (
     case "TC_XACTORS" => 1
     case "TC_SETS" => 4
     case "TC_WAYS" => 2
-    case "TC_BASE_ADDR" =>  0x7FF << 20 //0x7FF00000 //Strart Tag segment for DRAM
+    case "TC_BASE_ADDR" =>  0x7FFFFFFF //<< 20 //0x7FF00000 //Strart Tag segment for DRAM
 
    // case "TC_BASE_ADDR" => 15 << 28 // 0xf000_0000
   }

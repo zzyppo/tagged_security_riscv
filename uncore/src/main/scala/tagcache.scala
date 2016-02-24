@@ -117,8 +117,6 @@ class TagCacheDataReadReq extends TagCacheId with TagCacheAddr {
 class TagCacheDataWriteReq extends TagCacheData with TagCacheAddr {
   val way_en = Bits(width = nWays)
   val wmask = Bits(width = tagRowBlocks)
-  //val wmask = Bits(width = ((tagBlockTagBits * tagRowBlocks)/8))
- //val wmask = Bits(width = 128)
 }
 
 class TagCacheDataResp extends TagCacheId with TagCacheData
@@ -129,19 +127,18 @@ class TagCacheDataRWIO extends Bundle {
   val resp = Valid(new TagCacheDataResp).flip
 }
 
-
 class TagCache extends TagCacheModule {
   val io = new Bundle {
     val tl = new ManagerTileLinkIO
     val nasti = new NASTIMasterIO
-    var addrConvIO = new AddressConvIO()
+    val update = new ValidIO(new PCRUpdate).flip
   }
 
-  /*
-  io.addrConvIO.req.valid := Bool(false)
-  io.addrConvIO.req.bits.core_addr := UInt(0, paddrBits)
-  io.addrConvIO.req.bits.id := UInt(0)
-  */
+  val conv = Module(new MemSpaceConsts(2))
+  conv.io.update <> io.update
+
+  conv.io.core_addr(0) := Mux(io.tl.acquire.bits.isBuiltInType(), io.tl.acquire.bits.full_addr(), io.tl.acquire.bits.addr_block << (tlBeatAddrBits + tlByteAddrBits))
+  conv.io.core_addr(1) := io.tl.release.bits.addr_block << (tlBeatAddrBits + tlByteAddrBits)
 
   // coherecne
   //val co = params(TLCoherence)
@@ -161,6 +158,12 @@ class TagCache extends TagCacheModule {
   // the trackers for outstanding memory requests
   val trackerList = (0 until nTrackers).map { id =>
     Module(new TagCacheTracker(id))
+  }
+
+
+  (0 until nTrackers) foreach { i =>
+    trackerList(i).io.phy_addr_acq := conv.io.phy_addr(0)
+    trackerList(i).io.phy_addr_rel := conv.io.phy_addr(1)
   }
 
   val tlAcqMatches = Vec(trackerList.map(_.io.tl_acq_match)).toBits
@@ -239,11 +242,6 @@ class TagCache extends TagCacheModule {
   outputArbitration(data.io.read, trackerList.map(_.io.data.read))
   outputArbitration(data.io.write, trackerList.map(_.io.data.write))
   inputRouting(data.io.resp, trackerList.map(_.io.data.resp), data.io.resp.bits.id)
-
-  //addressConverter
-  outputArbitration(io.addrConvIO.req, trackerList.map(_.io.addrConvIO.req))
-  inputRouting(io.addrConvIO.resp, trackerList.map(_.io.addrConvIO.resp),io.addrConvIO.resp.bits.id)
-
 }
 
 // the request tracker
@@ -258,9 +256,9 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     val tl_rel_match = Bool(OUTPUT)
     val na_b_match = Bool(OUTPUT)
     val na_r_match = Bool(OUTPUT)
-    var addrConvIO = new AddressConvIO()
+    val phy_addr_acq = UInt(INPUT,width = nastiXAddrBits)
+    val phy_addr_rel = UInt(INPUT,width = nastiXAddrBits)
   }
-
 
   // parameter requirements
   require(nastiXDataBits * tlDataBeats == tlDataBits * tlDataBeats)
@@ -273,31 +271,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   val s_idle :: s_dummy_wait :: s_meta_read :: s_meta_resp :: s_data_read_hit :: s_data_resp_hit :: s_data_write_hit :: s_data_read_wb :: s_data_resp_wb :: s_data_resp_wb_done :: s_write_back ::s_write_back_wait_b ::s_mem_req :: s_data_write_refill :: s_meta_write_refill :: s_meta_write_hit :: s_gnt :: s_busy :: Nil = Enum(UInt(), 18)
   val state = Reg(init=s_idle)
 
-  /*
-  // tag utilities MODIFIED and wrong ATM
-  val tagUtil = new TagUtil(tagBits, coreDataBits)
-  def tagIsValid(meta:Bits): Bool = meta(tagCacheTagBits+1)
-  def tagIsDirty(meta:Bits): Bool = meta(tagCacheTagBits)
-  def addrFromTag(tag: Bits, acq_addr: UInt): UInt =
-    Cat(tag(tag.getWidth - 2, 0), acq_addr(tagCahceUnTagBits-1, 0) >> UInt(blockOffBits)) << UInt(blockOffBits)
-  def addrToTag(addr: Bits, dirty: Bool): Bits = Cat(UInt(1,1), dirty, UInt(addr) >> UInt(tagCahceUnTagBits))
-  def tagAddrConv(addr:UInt): UInt = {
-    // get the fill physical addr
-    //val full_addr = Cat(addr, Bits(0, blockOffBits))
-    // shift to get tag addr
-    val shifted_addr = addr >> UInt(tagCacheUnIndexBits)
-    val tag_addr = Cat(Bits(tagBaseAddr,paddrBits)(paddrBits-1, tagMemSize),shifted_addr(tagMemSize-1,0))
-    // remove lower block offsets
-    //(tag_addr >> UInt(blockOffBits))tag
-    tag_addr
-  }
-  def addrToIndex(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnIndexBits)
-  def addrToRowAddr(addr:Bits): Bits = addr(tagCahceUnTagBits-1, tagCacheUnRowAddrBits)
-  */
   val physical_dram_start = UInt("h40000000")
-
-  val physical_addr_out = Reg(UInt(width = nastiXAddrBits))
-  val is_dram_address = Mux(((physical_addr_out.toBits & physical_dram_start.toBits) === physical_dram_start.toBits).toBool(), Bool(true), Bool(false))
 
    // tag utilities
   val tagUtil = new TagUtil(tagBits, coreDataBits)
@@ -366,7 +340,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 
 
   val acq_addr = addr_out >> UInt(blockOffBits)
-
+  val is_dram_address = Mux(((addr_out.toBits & physical_dram_start.toBits) === physical_dram_start.toBits).toBool(), Bool(true), Bool(false))
 
   //Tag signals and definitions
   val collect_acq_data = Reg(init=Bool(false))
@@ -419,7 +393,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     Counter((io.nasti.r.fire() && ((read_multiple_data && acq_data_process) || (mem_receive_tag) )), tlDataBeats)
 
 
-
   // signal to handler allocator
   io.rdy := (state===s_idle)
   io.tl_acq_match := tag_out === Cat(tl_acq.client_id, tl_acq.client_xact_id) && !io.rdy
@@ -445,25 +418,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   io.tl.acquire.ready := is_acq && acq_data_process && (io.nasti.w.fire() || io.nasti.ar.fire())
   io.tl.release.ready := !is_acq && acq_data_process && io.nasti.w.fire()
 
-
-  val enable_addr_conv = Reg(init=Bool(false))
-  enable_addr_conv := Bool(false)
-
-  io.addrConvIO.req.valid := Bool(false)
-  io.addrConvIO.req.bits.core_addr := addr_out
-  io.addrConvIO.req.bits.id := UInt(id)
-
-  when(enable_addr_conv)
-  {
-    io.addrConvIO.req.valid := Bool(true)
-
-  }
-
-  when(io.addrConvIO.resp.valid)
-  {
-    physical_addr_out := io.addrConvIO.resp.bits.phy_addr
-  }
-
   //AQUIRE/ RELEASE RECEIVER
   when((state===s_idle) && io.tl.acquire.valid && !io.tl.release.valid) { // release take priority
     write_multiple_data := tl_acq.hasMultibeatData()
@@ -475,14 +429,12 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     is_acq := Bool(true)
     is_builtin := tl_acq.isBuiltInType()
     tag_out := Cat(tl_acq.client_id, tl_acq.client_xact_id)
-    addr_out := Mux(tl_acq.isBuiltInType(), tl_acq.full_addr(), tl_acq.addr_block << (tlBeatAddrBits + tlByteAddrBits))
+    addr_out := io.phy_addr_acq
     len_out := Mux(!tl_acq.isBuiltInType() || !tl_acq.isSubBlockType(), UInt(tlDataBeats-1), UInt(0))
     size_out := Mux(!tl_acq.isBuiltInType() || !tl_acq.isSubBlockType() || tl_acq.hasData(),
       bytesToXSize(UInt(tlDataBytes)),
       opSizeToXSize(tl_acq.op_size()))
     g_type_out := Mux(tl_acq.isBuiltInType(), tl_acq.getBuiltInGrantType(), UInt(0)) // assume MI or MEI
-
-    enable_addr_conv := Bool(true)
   }
 
 
@@ -495,13 +447,10 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     is_write_process := Bool(true)
     is_builtin := Bool(true)
     tag_out := Cat(tl_rel.client_id, tl_rel.client_xact_id)
-    addr_out := tl_rel.addr_block << (tlBeatAddrBits + tlByteAddrBits)
+    addr_out := io.phy_addr_rel
     len_out := UInt(tlDataBeats-1)
     size_out := bytesToXSize(UInt(tlDataBytes))
     g_type_out := Grant.voluntaryAckType
-
-    //Make conversion request
-    enable_addr_conv := Bool(true)
   }
 
   when(acq_data_done) {
@@ -589,7 +538,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   na_w.strb := Mux(is_acq && tl_acq.isSubBlockType() && !mem_send_tag, tl_acq.wmask(), SInt(-1, nastiWStrobeBits).toUInt)
   na_w.data := Mux(mem_send_tag, mem_tag_data_write(mem_tag_data_write_cnt), acq_rel_input_data_without_tag)
   na_w.last := Mux(mem_send_tag, mem_tag_data_write_done, nw_finish || (is_acq && !tl_acq.hasMultibeatData()))
-    //(mem_send_tag && mem_tag_data_write_done) || ( !mem_send_tagnw_finish || (is_acq && !tl_acq.hasMultibeatData()))
 
   //Original request is handled if data is fully written or read from nasti
   when((io.nasti.b.fire() && acq_data_process && is_write) || (nr_finish && acq_data_process && is_read))
@@ -606,7 +554,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   {
     when(acq_data_process && is_read)
     {
-      //gnt_data(nr_cnt) := tagUtil.insertTag(io.nasti.r.bits.data)
       mem_acq_data_read(nr_cnt) := io.nasti.r.bits.data
     }
 
@@ -615,7 +562,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
       mem_tag_data_read(nr_cnt) := io.nasti.r.bits.data
     }
 
-   // when(nr_finish && mem_receive_tag) { mem_tag_refill_ready := Bool(true) }
   }
 
 
@@ -695,7 +641,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     )
   io.data.write.bits.addr := addrToRowAddr(acq_addr)
   io.data.write.bits.wmask := UInt(1,1) << acq_addr(tagCacheUnRowAddrBits-1, 0)
-  //io.data.write.bits.wmask := UInt("hFFFFFFFF") << (acq_addr(tagCacheUnRowAddrBits-1, 0) * UInt(tagBlockTagBits))
   io.data.write.bits.way_en := acq_way_en
 
   when(state === s_data_write_hit && !collect_acq_data) {
@@ -716,8 +661,6 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
   switch (state) {
     is(s_idle) {
       when(io.tl.acquire.valid || io.tl.release.valid) {
-        // acq_src := c_acq.bits.payload.client_xact_id
-        // acq_addr := c_acq.bits.payload.addr
         if (tlDataBeats > 1)
           collect_acq_data := (tl_acq.isBuiltInType() && tl_acq.hasData()) || io.tl.release.valid
         acq_data_process := Bool(true)
@@ -891,12 +834,7 @@ class TagCacheDataArray extends TagCacheModule {
 
   val waddr = io.write.bits.addr
   val raddr = io.read.bits.addr
-  //val wmask = FillInterleaved(tagBlockTagBits, io.write.bits.wmask).toBools
-   val wmask = io.write.bits.wmask.toBools
- //val wmask = Vec{Bool(false); Bool(true); Bool(false);Bool(true);Bool(false);Bool(true);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false);Bool(false)}
- // val test_mask = Reg(Vec.fill((tagBlockTagBits * tagRowBlocks)/8){Bool(true)})
- // test_mask(0) := Bool(false)
-  //val wmask = Vec{Bool(true); Bool(false); Bool(true); Bool(true)}
+  val wmask = io.write.bits.wmask.toBools
 
   val resp = (0 until nWays).map { w =>
     val array = SeqMem(nSets*refillCycles, Vec( tagRowBlocks, Bits(width = tagBlockTagBits )) )

@@ -25,9 +25,9 @@ unsigned long long lfsr64(unsigned long long d) {
 }
 
 
-#define STEP_SIZE 1024 / 8
+//#define STEP_SIZE 1024 / 8
 //#define STEP_SIZE 32
-//#define STEP_SIZE 1024*16
+#define STEP_SIZE 1024*16
 //#define VERIFY_DISTANCE 1
 #define VERIFY_DISTANCE 16
 
