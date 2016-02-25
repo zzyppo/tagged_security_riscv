@@ -11,13 +11,15 @@
 
 ## Documentation
 
-Build Rocket Core / Creating VIVADO project and synthesis:
-
+Environment Setup:
 -cd to code/
 -source set_riscv_env.sh
 -export RISCV=$TOP/riscv
 -export XILINX_VIVADO=/path_to_xilinx_vivado (e.g /opt/Xilinx/Vivado/2014.4/)
 -source your xilinx tools (Vivado 64-Bit)
+
+Build Rocket Core / Creating VIVADO project and synthesis:
+
 -cd to fpga/board/kc705
 
 -make verilog : Will compile the rocket sources into verilog sources
@@ -32,6 +34,21 @@ Build Rocket Core / Creating VIVADO project and synthesis:
 -make vivado : Opens the Vivasdo project.
 -Run synthesis from GUI
 
+Build Rocket Core / Simulation using Verilator:
+
+-cd to fpga/board/kc705/examples
+-make
+-cd to $TOP
+-cd to vsim
+-make verilog : Will compile the rocket sources into verilog sources
+-make sim-debug: Will build Verilator simulator and outputs $CONFIG_sim_debug executeable
+
+-./execute_single_{TESTFILE}: Execute single will execute a test file, defined in the shell script
+
+-Alternatively you can use the command ./DefaultConfig-sim-debug +vcd +vcd_name=output {name}.vcd +max-cycles=1000000 +load=$TOP/fpga/board/kc705/examples/{name}.hex | $TOP/riscv/bin/spike-dasm  >output/{name}.verilator.out && [ $PIPESTATUS -eq 0 ]
+
+This will create a .out file, which is the log of the executed testcase and a waveform .vcd file. This file is viewable in gtkwave.
+
 ## Status
 
-Currently implementing Tag Cache, Linux Boots
+Tag Cache working, now implementing tag check/propagation unit
