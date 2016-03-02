@@ -10,6 +10,7 @@ import Util._
 
 abstract trait CoreParameters extends UsesParameters {
   val xLen = params(XLen)
+  //val tagBits = params(TagBits)
   val paddrBits = params(PAddrBits)
   val vaddrBits = params(VAddrBits)
   val pgIdxBits = params(PgIdxBits)
@@ -102,6 +103,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val wb_reg_inst            = Reg(Bits())
   val wb_reg_wdata           = Reg(Bits())
   val wb_reg_rs2             = Reg(Bits())
+  val wb_reg_tagdata         = Reg(Bits())
   val take_pc_wb             = Wire(Bool())
 
   val take_pc_mem_wb = take_pc_wb || take_pc_mem
@@ -122,6 +124,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val rf = new RegFile
   val id_rs = id_raddr.map(rf.read _)
   val ctrl_killd = Wire(Bool())
+  val trf = new TagRegFile
+  val id_tags = id_raddr.map(trf.read _)
 
   val csr = Module(new CSRFile(id))
   val id_csr_en = id_ctrl.csr != CSR.N
@@ -175,6 +179,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val ex_reg_rs_bypass = Reg(Vec(Bool(), id_raddr.size))
   val ex_reg_rs_lsb = Reg(Vec(UInt(), id_raddr.size))
   val ex_reg_rs_msb = Reg(Vec(UInt(), id_raddr.size))
+  val ex_tags = Reg(Vec(UInt(), id_raddr.size))
   val ex_rs = for (i <- 0 until id_raddr.size)
     yield Mux(ex_reg_rs_bypass(i), bypass_mux(ex_reg_rs_lsb(i)), Cat(ex_reg_rs_msb(i), ex_reg_rs_lsb(i)))
   val ex_imm = imm(ex_ctrl.sel_imm, ex_reg_inst)
@@ -185,6 +190,9 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     A2_RS2 -> ex_rs(1).toSInt,
     A2_IMM -> ex_imm,
     A2_FOUR -> SInt(4)))
+
+  //Dummy tag operation
+  val dummy_tag_op = ex_tags(0) | ex_tags(1)
 
   val alu = Module(new ALU)
   alu.io.dw := ex_ctrl.alu_dw
@@ -225,6 +233,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
         ex_reg_rs_msb(i) := id_rs(i) >> bypass_src.getWidth
       }
     }
+    ex_tags := id_tags
   }
   when (!ctrl_killd || csr.io.interrupt) {
     ex_reg_inst := id_inst
@@ -246,6 +255,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     (ex_ctrl.fp && io.fpu.illegal_rm,      UInt(Causes.illegal_instruction))))
 
   // memory stage
+  val mem_tag_wb = Reg(UInt())
   val mem_br_taken = mem_reg_wdata(0)
   val mem_br_target = mem_reg_pc.toSInt +
     Mux(mem_ctrl.branch && mem_br_taken, imm(IMM_SB, mem_reg_inst),
@@ -266,6 +276,9 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
 
   when (ex_reg_valid || ex_reg_xcpt_interrupt) {
     mem_ctrl := ex_ctrl
+    //Dummy tag propagation-----
+    mem_tag_wb := dummy_tag_op
+    ///---
     mem_reg_btb_hit := ex_reg_btb_hit
     when (ex_reg_btb_hit) { mem_reg_btb_resp := ex_reg_btb_resp }
     mem_reg_flush_pipe := ex_reg_flush_pipe
@@ -307,6 +320,9 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     }
     wb_reg_inst := mem_reg_inst
     wb_reg_pc := mem_reg_pc
+
+    wb_reg_tagdata := mem_tag_wb
+
   }
 
   val wb_set_sboard = wb_ctrl.div || wb_dcache_miss || wb_ctrl.rocc
@@ -357,6 +373,14 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
                  Mux(wb_ctrl.csr != CSR.N, csr.io.rw.rdata,
                  wb_reg_wdata)))
   when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
+
+  val tag_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, UInt(15),
+    Mux(ll_wen, UInt(14),
+      Mux(wb_ctrl.csr != CSR.N, UInt(13),
+        wb_reg_tagdata)))
+
+  //Writeback Tags
+  when(rf_wen) {trf.write(rf_waddr,tag_wdata)}
 
   // hook up control/status regfile
   csr.io.exception := wb_reg_xcpt
@@ -515,7 +539,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     }
   }
   else {
-    printf("C%d: %d [%d] pc=[%x] W[r%d=%x][%d] R[r%d=%x] R[r%d=%x] inst=[%x] DASM(%x)\n",
+    printf("C%d: %d [%d] pc=[%x] W[r%d=%x][%d] R[r%d=%x] R[r%d=%x] inst=[%x] DASM(%x) write tagaddr %x, tag data %x\n",
          UInt(id),
       csr.io.time(32,0),
       wb_valid,
@@ -528,7 +552,9 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
          wb_reg_inst(24,20),
       Reg(next=Reg(next=ex_rs(1))),
          wb_reg_inst,
-      wb_reg_inst)
+      wb_reg_inst,
+      rf_wdata,
+      tag_wdata)
   }
 
   def checkExceptions(x: Seq[(Bool, UInt)]) =
@@ -579,6 +605,26 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
       canRead = false
       when (addr != UInt(0)) {
         rf(~addr) := data
+        for ((raddr, rdata) <- reads)
+          when (addr === raddr) { rdata := data }
+      }
+    }
+  }
+
+  class TagRegFile{
+    private val trf = Mem(UInt(width=params(TagBits)), 31)
+    private val reads = collection.mutable.ArrayBuffer[(UInt,UInt)]()
+    private var canRead = true
+    def read(addr: UInt) = {
+      require(canRead)
+      reads += addr -> Wire(UInt())
+      reads.last._2 := trf(~addr)
+      reads.last._2
+    }
+    def write(addr: UInt, data: UInt) = {
+      canRead = false
+      when (addr != UInt(0)) {
+        trf(~addr) := data
         for ((raddr, rdata) <- reads)
           when (addr === raddr) { rdata := data }
       }

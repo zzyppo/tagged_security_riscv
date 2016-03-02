@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Sun Feb 28 10:22:36 2016
+[*] Wed Mar  2 13:08:43 2016
 [*]
 [dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/dram_anti.vcd"
-[dumpfile_mtime] "Thu Feb 25 17:34:10 2016"
-[dumpfile_size] 51628718
+[dumpfile_mtime] "Wed Mar  2 13:02:10 2016"
+[dumpfile_size] 78695646
 [savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/pipeline.gtkw"
 [timestart] 0
 [size] 1615 891
-[pos] -616 -264
-*-11.388599 13841 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -616 -1
+*-11.388599 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.v.
 [treeopen] TOP.v.Rocket.
@@ -97,9 +97,7 @@ TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
 -group_end
 @28
 TOP.v.Rocket.RocketTile.core.ctrl_stalld
-@29
 TOP.v.Rocket.RocketTile.core.ctrl_killd
-@28
 TOP.v.Rocket.RocketTile.core.ctrl_killx
 TOP.v.Rocket.RocketTile.core.ctrl_killm
 [color] 3
@@ -208,6 +206,10 @@ TOP.v.Rocket.RocketTile.core.id_ctrl_rxs1
 TOP.v.Rocket.RocketTile.core.id_ctrl_rxs2
 @22
 [color] 3
+TOP.v.Rocket.RocketTile.core.id_tags_0[3:0]
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_tags_1[3:0]
+[color] 3
 TOP.v.Rocket.RocketTile.core.id_waddr[4:0]
 [color] 3
 TOP.v.Rocket.RocketTile.core.id_raddr_0[4:0]
@@ -286,6 +288,12 @@ TOP.v.Rocket.RocketTile.core.ex_imm[31:0]
 TOP.v.Rocket.RocketTile.core.ex_rs_0[63:0]
 [color] 5
 TOP.v.Rocket.RocketTile.core.ex_rs_1[63:0]
+@23
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_tags_0[3:0]
+@22
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_tags_1[3:0]
 [color] 5
 TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_addr[39:0]
 @28
