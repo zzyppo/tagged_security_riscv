@@ -92,6 +92,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val mem_reg_inst            = Reg(Bits())
   val mem_reg_wdata           = Reg(Bits())
   val mem_reg_rs2             = Reg(Bits())
+  val mem_reg_tagr2           = Reg(Bits())
   val take_pc_mem             = Wire(Bool())
 
   val wb_reg_valid           = Reg(Bool())
@@ -159,7 +160,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     (id_illegal_insn,           UInt(Causes.illegal_instruction))))
 
   val dcache_bypass_data =
-    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword
+    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(63,0) // without tag
     else if(params(FastLoadWord)) io.dmem.resp.bits.data
     else wb_reg_wdata
 
@@ -289,6 +290,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     mem_reg_wdata := alu.io.out
     when (ex_ctrl.rxs2 && (ex_ctrl.mem || ex_ctrl.rocc)) {
       mem_reg_rs2 := ex_rs(1)
+      mem_reg_tagr2 := ex_tags(1)
     }
   }
 
@@ -368,15 +370,15 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val wb_wen = wb_valid && wb_ctrl.wxd
   val rf_wen = wb_wen || ll_wen 
   val rf_waddr = Mux(ll_wen, ll_waddr, wb_waddr)
-  val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword,
+  val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(63,0),
                  Mux(ll_wen, ll_wdata,
                  Mux(wb_ctrl.csr != CSR.N, csr.io.rw.rdata,
                  wb_reg_wdata)))
   when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
 
-  val tag_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, UInt(15),
-    Mux(ll_wen, UInt(14),
-      Mux(wb_ctrl.csr != CSR.N, UInt(13),
+  val tag_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(67,64),
+    Mux(ll_wen, UInt(0),
+      Mux(wb_ctrl.csr != CSR.N, UInt(0),
         wb_reg_tagdata)))
 
   //Writeback Tags
@@ -498,7 +500,9 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   io.dmem.req.bits.phys := Bool(false)
   io.dmem.req.bits.addr := Cat(vaSign(ex_rs(0), alu.io.adder_out), alu.io.adder_out(vaddrBits-1,0)).toUInt
   io.dmem.req.bits.tag := Cat(ex_waddr, ex_ctrl.fp)
-  io.dmem.req.bits.data := Mux(mem_ctrl.fp, io.fpu.store_data, mem_reg_rs2)
+  //io.dmem.req.bits.data := Mux(mem_ctrl.fp, io.fpu.store_data, mem_reg_rs2)
+  io.dmem.req.bits.data := Mux(mem_ctrl.fp, io.fpu.store_data, Cat(mem_reg_tagr2, mem_reg_rs2))
+
   require(params(CoreDCacheReqTagBits) >= 6)
   io.dmem.invalidate_lr := wb_xcpt
 
@@ -553,7 +557,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
       Reg(next=Reg(next=ex_rs(1))),
          wb_reg_inst,
       wb_reg_inst,
-      rf_wdata,
+      rf_waddr,
       tag_wdata)
   }
 

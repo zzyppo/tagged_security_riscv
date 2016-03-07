@@ -39,7 +39,7 @@ trait HasCoreMemOp extends CoreBundle {
 }
 
 trait HasCoreData extends CoreBundle {
-  val data = Bits(width = coreDataBits)
+  val data = Bits(width = coreDataBits + params(TagBits))
 }
 
 trait HasSDQId extends CoreBundle with L1HellaCacheParameters {
@@ -63,8 +63,8 @@ class HellaCacheResp extends HasCoreMemOp with HasCoreData {
   val nack = Bool() // comes 2 cycles after req.fire
   val replay = Bool()
   val has_data = Bool()
-  val data_subword = Bits(width = coreDataBits)
-  val store_data = Bits(width = coreDataBits)
+  val data_subword = Bits(width = coreDataBits + params(TagBits))
+  val store_data = Bits(width = coreDataBits + params(TagBits))
 }
 
 class AlignmentExceptions extends Bundle {
@@ -151,7 +151,7 @@ class L1StoreGen(typ: Bits, addr: Bits, dat: Bits, tagWidth: Int) {
     Mux(tag,  dat(tagWidth-1,0) << 64,
       Mux(byte, Fill(8, dat( 7,0)),
         Mux(half, Fill(4, dat(15,0)),
-          wordData)))
+          wordData)))//Append the tag to all data
 
   lazy val wordData =
     Mux(word, Fill(2, dat(31,0)),
@@ -168,7 +168,9 @@ class L1LoadGen(typ: Bits, addr: Bits, dat: Bits, zero: Bool, tagWidth: Int) {
   val half = Cat(Mux(t.half, Fill(48, sign && halfShift(15)), word(63,16)), halfShift)
   val byteShift = Mux(zero, UInt(0), Mux(addr(0), half(15,8), half(7,0)))
   val tag = Cat(Bits(0,64-tagWidth), dat(63+tagWidth, 64))
-  val byte = Mux(t.tag,  tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift))
+  //val byte = Mux(t.tag,  tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift))
+  //Version for core tag support
+   val byte = Mux(t.tag,  tag, Cat(tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift)))
 }
 
 
@@ -744,7 +746,7 @@ class L1AMOALU extends L1HellaCacheModule {
 
   //val wmask = FillInterleaved(8, storegen.mask)
   val wmask = storegen.mask
-  io.out := wmask & out | ~wmask & io.lhs
+  io.out := Cat(io.rhs(67,64), wmask & out | ~wmask & io.lhs) //append tag
 }
 
 class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal) {
