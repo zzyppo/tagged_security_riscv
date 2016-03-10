@@ -91,6 +91,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val mem_reg_pc              = Reg(UInt())
   val mem_reg_inst            = Reg(Bits())
   val mem_reg_wdata           = Reg(Bits())
+  val mem_tag_wb =              Reg(UInt())
   val mem_reg_rs2             = Reg(Bits())
   val mem_reg_tagr2           = Reg(Bits())
   val take_pc_mem             = Wire(Bool())
@@ -161,8 +162,13 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
 
   val dcache_bypass_data =
     if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(63,0) // without tag
-    else if(params(FastLoadWord)) io.dmem.resp.bits.data
+    else if(params(FastLoadWord)) io.dmem.resp.bits.data(63,0)
     else wb_reg_wdata
+
+  val dcache_bypass_data_tag =
+    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(67,64) // only tag
+    else if(params(FastLoadWord)) io.dmem.resp.bits.data(67,64)
+    else wb_reg_tagdata
 
   // detect bypass opportunities
   val ex_waddr = ex_reg_inst(11,7)
@@ -173,14 +179,26 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     (ex_reg_valid && ex_ctrl.wxd, ex_waddr, mem_reg_wdata),
     (mem_reg_valid && mem_ctrl.wxd && !mem_ctrl.mem, mem_waddr, wb_reg_wdata),
     (mem_reg_valid && mem_ctrl.wxd, mem_waddr, dcache_bypass_data))
+
+  val bypass_sources_tags = IndexedSeq(
+    (Bool(true), UInt(0), UInt(0)), // treat reading x0 as a bypass
+    (ex_reg_valid && ex_ctrl.wxd, ex_waddr, mem_tag_wb),
+    (mem_reg_valid && mem_ctrl.wxd && !mem_ctrl.mem, mem_waddr, wb_reg_tagdata),
+    (mem_reg_valid && mem_ctrl.wxd, mem_waddr, dcache_bypass_data_tag))
+
   val id_bypass_src = id_raddr.map(raddr => bypass_sources.map(s => s._1 && s._2 === raddr))
 
   // execute stage
   val bypass_mux = Vec(bypass_sources.map(_._3))
+  val bypass_mux_tags = Vec(bypass_sources_tags.map(_._3))
   val ex_reg_rs_bypass = Reg(Vec(Bool(), id_raddr.size))
   val ex_reg_rs_lsb = Reg(Vec(UInt(), id_raddr.size))
   val ex_reg_rs_msb = Reg(Vec(UInt(), id_raddr.size))
-  val ex_tags = Reg(Vec(UInt(), id_raddr.size))
+  val ex_reg_tags_pre = Reg(Vec(UInt(), id_raddr.size))
+
+  val ex_tags = for (i <- 0 until id_raddr.size)
+    yield Mux(ex_reg_rs_bypass(i), bypass_mux_tags(ex_reg_rs_lsb(i)), ex_reg_tags_pre(i))
+
   val ex_rs = for (i <- 0 until id_raddr.size)
     yield Mux(ex_reg_rs_bypass(i), bypass_mux(ex_reg_rs_lsb(i)), Cat(ex_reg_rs_msb(i), ex_reg_rs_lsb(i)))
   val ex_imm = imm(ex_ctrl.sel_imm, ex_reg_inst)
@@ -232,9 +250,10 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
       when (id_ren(i) && !do_bypass) {
         ex_reg_rs_lsb(i) := id_rs(i)(bypass_src.getWidth-1,0)
         ex_reg_rs_msb(i) := id_rs(i) >> bypass_src.getWidth
+        ex_reg_tags_pre(i) := id_tags(i)
       }
     }
-    ex_tags := id_tags
+    //ex_tags := id_tags now done with bypass logic
   }
   when (!ctrl_killd || csr.io.interrupt) {
     ex_reg_inst := id_inst
@@ -256,7 +275,6 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     (ex_ctrl.fp && io.fpu.illegal_rm,      UInt(Causes.illegal_instruction))))
 
   // memory stage
-  val mem_tag_wb = Reg(UInt())
   val mem_br_taken = mem_reg_wdata(0)
   val mem_br_target = mem_reg_pc.toSInt +
     Mux(mem_ctrl.branch && mem_br_taken, imm(IMM_SB, mem_reg_inst),
@@ -277,8 +295,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
 
   when (ex_reg_valid || ex_reg_xcpt_interrupt) {
     mem_ctrl := ex_ctrl
-    //Dummy tag propagation-----
-    mem_tag_wb := dummy_tag_op
+
     ///---
     mem_reg_btb_hit := ex_reg_btb_hit
     when (ex_reg_btb_hit) { mem_reg_btb_resp := ex_reg_btb_resp }
@@ -288,6 +305,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     mem_reg_inst := ex_reg_inst
     mem_reg_pc := ex_reg_pc
     mem_reg_wdata := alu.io.out
+    //Dummy tag propagation-----
+    mem_tag_wb := dummy_tag_op
     when (ex_ctrl.rxs2 && (ex_ctrl.mem || ex_ctrl.rocc)) {
       mem_reg_rs2 := ex_rs(1)
       mem_reg_tagr2 := ex_tags(1)
@@ -376,12 +395,12 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
                  wb_reg_wdata)))
   when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
 
+  //Writeback Tags
   val tag_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(67,64),
     Mux(ll_wen, UInt(0),
       Mux(wb_ctrl.csr != CSR.N, UInt(0),
         wb_reg_tagdata)))
 
-  //Writeback Tags
   when(rf_wen) {trf.write(rf_waddr,tag_wdata)}
 
   // hook up control/status regfile
@@ -489,7 +508,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   io.fpu.inst := id_inst
   io.fpu.fromint_data := ex_rs(0)
   io.fpu.dmem_resp_val := dmem_resp_valid && dmem_resp_fpu
-  io.fpu.dmem_resp_data := io.dmem.resp.bits.data
+  io.fpu.dmem_resp_data := io.dmem.resp.bits.data(63,0)
   io.fpu.dmem_resp_type := io.dmem.resp.bits.typ
   io.fpu.dmem_resp_tag := dmem_resp_waddr
 

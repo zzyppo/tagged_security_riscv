@@ -162,15 +162,16 @@ class L1LoadGen(typ: Bits, addr: Bits, dat: Bits, zero: Bool, tagWidth: Int) {
   val t = new L1StoreGen(typ, addr, dat, tagWidth)
   val sign = typ === MT_B || typ === MT_H || typ === MT_W || typ === MT_D
 
+  val tag = Cat(Bits(0,64-tagWidth), dat(63+tagWidth, 64))
+
   val wordShift = Mux(addr(2), dat(63,32), dat(31,0))
-  val word = Cat(Mux(t.word, Fill(32, sign && wordShift(31)), dat(63,32)), wordShift)
+  val word = Cat(tag, Cat(Mux(t.word, Fill(32, sign && wordShift(31)), dat(63,32)), wordShift))
   val halfShift = Mux(addr(1), word(31,16), word(15,0))
   val half = Cat(Mux(t.half, Fill(48, sign && halfShift(15)), word(63,16)), halfShift)
   val byteShift = Mux(zero, UInt(0), Mux(addr(0), half(15,8), half(7,0)))
-  val tag = Cat(Bits(0,64-tagWidth), dat(63+tagWidth, 64))
   //val byte = Mux(t.tag,  tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift))
   //Version for core tag support
-   val byte = Mux(t.tag,  tag, Cat(tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift)))
+   val byte = Mux(t.tag, tag << 64 | tag, Cat(tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift)))
 }
 
 
@@ -746,7 +747,8 @@ class L1AMOALU extends L1HellaCacheModule {
 
   //val wmask = FillInterleaved(8, storegen.mask)
   val wmask = storegen.mask
-  io.out := Cat(io.rhs(67,64), wmask & out | ~wmask & io.lhs) //append tag
+  io.out := wmask & out | ~wmask & io.lhs | Mux(storegen.tag, UInt(0), io.rhs(67,64) << 64)
+  //sio.out := Cat(io.rhs(67,64), wmask & out | ~wmask & io.lhs) //append tag
 }
 
 class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal) {

@@ -23,8 +23,8 @@ int tag_in = 0x08;
 long bla = 0x00000aaaa;
 
 
-asm volatile ("stag %0, 0(%1)" ::"r"(tag_in), "r"(a));
 a[0] = 0xBBBBBBFEFEEFFFFF;
+asm volatile ("stag %0, 0(%1)" ::"r"(tag_in), "r"(a));
 a[1] = a[0] - 0xF;
 if(a[0] != 0xBBBBBBFEFEEFFFFF)
 {
@@ -34,7 +34,7 @@ if(a[1] != 0xBBBBBBFEFEEFFFF0)
 {
   return -1;
 }
-asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(a[1]));
+asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"((a + 1)));
 if(temp != 0x8)
   return -1;
 
