@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="10357834-08aa-4d38-a5ea-77dc4c8e21ed" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fpga/board/kc705/examples/tag_instructions.c" afterPath="$PROJECT_DIR$/fpga/board/kc705/examples/tag_instructions.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rocket/src/main/scala/nbdcache.scala" afterPath="$PROJECT_DIR$/rocket/src/main/scala/nbdcache.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rocket/src/main/scala/rocket.scala" afterPath="$PROJECT_DIR$/rocket/src/main/scala/rocket.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vsim/gtkwave_presets/pipeline.gtkw" afterPath="$PROJECT_DIR$/vsim/gtkwave_presets/pipeline.gtkw" />
     </list>
     <ignored path="RSICV_Tagged_Sec.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="rocket.scala" pinned="false" current-in-tab="false">
+      <file leaf-file-name="rocket.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/rocket.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-17.064516">
-              <caret line="542" column="32" selection-start-line="542" selection-start-column="32" selection-end-line="542" selection-end-column="32" />
+            <state vertical-scroll-proportion="0.16371077">
+              <caret line="120" column="14" selection-start-line="120" selection-start-column="6" selection-end-line="120" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -63,9 +59,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="32" column="21" selection-start-line="32" selection-start-column="21" selection-end-line="32" selection-end-column="21" />
-              <folding>
-                <element signature="e#59#74#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -90,26 +84,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="multiplier.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/multiplier.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="49" column="49" selection-start-line="49" selection-start-column="49" selection-end-line="49" selection-end-column="49" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tag_ld_st.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fpga/board/kc705/examples/tag_ld_st.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="nbdcache.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/nbdcache.scala">
           <provider selected="true" editor-type-id="text-editor">
@@ -120,11 +94,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tag_instructions.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tag_instructions.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fpga/board/kc705/examples/tag_instructions.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.64659685">
+            <state vertical-scroll-proportion="0.0">
               <caret line="49" column="13" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="crt.S" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fpga/board/kc705/driver/crt.S">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="66" column="21" selection-start-line="66" selection-start-column="9" selection-end-line="66" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="encoding.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fpga/board/kc705/driver/encoding.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="104" column="14" selection-start-line="104" selection-start-column="7" selection-end-line="104" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -163,8 +157,8 @@
         <option value="$PROJECT_DIR$/src/main/scala/Configs.scala" />
         <option value="$PROJECT_DIR$/fpga/board/kc705/examples/dram_antibug.c" />
         <option value="$PROJECT_DIR$/fpga/board/kc705/examples/tag_instructions.c" />
-        <option value="$PROJECT_DIR$/rocket/src/main/scala/rocket.scala" />
         <option value="$PROJECT_DIR$/rocket/src/main/scala/nbdcache.scala" />
+        <option value="$PROJECT_DIR$/rocket/src/main/scala/rocket.scala" />
       </list>
     </option>
   </component>
@@ -351,6 +345,28 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="scala" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RSICV_Tagged_Sec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="code" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rocket" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rocket.scala" />
+              <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$ScalaFileTreeNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -866,13 +882,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/test/cxx/common/dpi_host_behav.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/cxx/common/dpi_ram_behav.h">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -947,13 +956,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="234" column="6" selection-start-line="234" selection-start-column="6" selection-end-line="234" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fpga/board/kc705/driver/encoding.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1183,16 +1185,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/LowRISCChip.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="21" selection-start-line="32" selection-start-column="21" selection-end-line="32" selection-end-column="21" />
-          <folding>
-            <element signature="e#59#74#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/tile.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1225,14 +1217,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/rocket.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-17.064516">
-          <caret line="542" column="32" selection-start-line="542" selection-start-column="32" selection-end-line="542" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/nbdcache.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-15.129032">
@@ -1243,8 +1227,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fpga/board/kc705/examples/tag_instructions.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.64659685">
+        <state vertical-scroll-proportion="0.0">
           <caret line="49" column="13" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fpga/board/kc705/driver/encoding.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="104" column="14" selection-start-line="104" selection-start-column="7" selection-end-line="104" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fpga/board/kc705/driver/crt.S">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="66" column="21" selection-start-line="66" selection-start-column="9" selection-end-line="66" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/LowRISCChip.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="21" selection-start-line="32" selection-start-column="21" selection-end-line="32" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rocket/src/main/scala/rocket.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.16371077">
+          <caret line="120" column="14" selection-start-line="120" selection-start-column="6" selection-end-line="120" selection-end-column="14" />
           <folding />
         </state>
       </provider>
