@@ -30,6 +30,8 @@ abstract trait CoreParameters extends UsesParameters {
   val coreMaxAddrBits = math.max(ppnBits,vpnBits+1) + pgIdxBits
   val vaddrBitsExtended = vaddrBits + (vaddrBits < xLen).toInt
 
+  val tagLen = params(TagBits)
+
   // Print out log of committed instructions and their writeback values.
   // Requires post-processing due to out-of-order writebacks.
   val EnableCommitLog = false
@@ -211,14 +213,24 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     A2_FOUR -> SInt(4)))
 
   //Dummy tag operation
-  val dummy_tag_op = ex_tags(0) | ex_tags(1)
+  //val dummy_tag_op = ex_tags(0) | ex_tags(1)
 
   val alu = Module(new ALU)
   alu.io.dw := ex_ctrl.alu_dw
   alu.io.fn := ex_ctrl.alu_fn
   alu.io.in2 := ex_op2.toUInt
   alu.io.in1 := ex_op1.toUInt
-  
+
+  val tagALU = Module(new TagALU)
+  tagALU.io.fn := ex_ctrl.alu_fn
+  tagALU.io.in2 := ex_tags(1)
+  tagALU.io.in1 := ex_tags(0)
+  tagALU.io.jal := ex_ctrl.jal
+  tagALU.io.jalr := ex_ctrl.jalr
+
+  val dummy_tag_op = tagALU.io.out
+
+
   // multiplier and divider
   val div = Module(new MulDiv(mulUnroll = if(params(FastMulDiv)) 8 else 1,
                        earlyOut = params(FastMulDiv)))

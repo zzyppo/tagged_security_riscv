@@ -6,7 +6,32 @@
 
  long a[10];
 
+int dummy2(int bla)
+{
+  bla += 2;
+
+  return bla;
+}
+
+
+int dummyfunc()
+{
+
+  int tester = 0;
+  tester = dummy2(2);
+
+  return tester;
+
+
+}
+
+
 int main() {
+
+ int dummy_var = 5;
+
+  dummy_var = dummyfunc();
+
  a[0] = 0xDDDDDDFEFEEFFFFF;
  a[1] = 0x02;
  a[2] = 0x03;
