@@ -25,9 +25,9 @@ unsigned long long lfsr64(unsigned long long d) {
 }
 
 
-//#define STEP_SIZE 1024 / 8
+#define STEP_SIZE 1024 / 8
 //#define STEP_SIZE 32
-#define STEP_SIZE 1024*16
+//#define STEP_SIZE 1024*16
 //#define VERIFY_DISTANCE 1
 #define VERIFY_DISTANCE 16
 
@@ -46,14 +46,14 @@ int temp = 0;
 
 #ifndef IS_SIMULATION
   uart_init();
-  printf("DRAM test program.\n");
+  //printf("DRAM test program.\n");
   #endif
 
   long loop_cnt = 0;
   while(1) {
 	loop_cnt++;
 	#ifndef IS_SIMULATION
-    printf("Write block @%lx using key %llx\n", waddr, wkey);
+    //printf("Write block @%lx using key %llx\n", waddr, wkey);
     #endif
 
     for(i=0; i<STEP_SIZE; i++) {
@@ -68,7 +68,7 @@ int temp = 0;
 
     if(distance == VERIFY_DISTANCE) {
   	//asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
-      printf("Check block @%lx \n", raddr);
+     // printf("Check block @%lx \n", raddr);
 
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);

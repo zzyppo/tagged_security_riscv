@@ -20,9 +20,7 @@ RISCV_GCC_OPTS = -static -Wa,-march=RVIMAFD -std=gnu99 -g -ffast-math -fno-commo
 RISCV_DUMP_OPTS = -D -S -l
 RISCV_LINK = $(RISCV_GCC) -T $(DRIVER_DIR)/test.ld
 RISCV_LINK_OPTS = -nostdlib -nostartfiles -ffast-math -lc -lgcc
-RISCV_LINUX_PREFIX=riscv-linux-
-RISCV_LINUX_GCC = $(RISCV_LINUX_PREFIX)gcc
-RISCV_LINUX_GCC_OPTS = -I.. -O3 -static
+
 
 
 #--------------------------------------------------------------------
@@ -73,11 +71,6 @@ dump: $(addsuffix .dump, $(TARGETS))
 
 $(addsuffix .riscv, $(TARGETS)): %.riscv:%.c $(HEADERS) $(DRIVER_OBJS) crt.o $(DRIVER_DIR)/test.ld
 	$(RISCV_LINK) $(RISCV_GCC_OPTS) -o $@ $< $(DRIVER_OBJS) crt.o $(RISCV_LINK_OPTS)
-
-$(addsuffix .linux, $(TARGETS)): %.linux:%.c $(HEADERS) $(DRIVER_OBJS) crt.o $(DRIVER_DIR)/test.ld
-	$(RISCV_LINUX_GCC) $(RISCV_LINUX_GCC_OPTS) $< -o $@ $< $(DRIVER_OBJS) crt.o $(RISCV_LINK_OPTS)
-
-	
 
 $(addsuffix .hex, $(TARGETS)): %.hex:%.riscv
 	elf2hex 16 4096 $< > $@

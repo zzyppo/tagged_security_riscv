@@ -82,7 +82,8 @@ class Top extends Module with TopLevelParameters {
   val tc = Module(new TagCache, {case TLId => "L2ToTC"; case BusId => "nasti";  case CacheName => "TagCache"})
   tc.io.update := pcrControl.io.pcr_update
   // currently a TileLink to NASTI converter
-  //val conv = Module(new NASTIMasterIOTileLinkIOConverter, {case BusId => "nasti"; case TLId => "L2ToTC"})
+  val conv = Module(new NASTIMasterIOTileLinkIOConverter, {case BusId => "nasti"; case TLId => "L2ToTC"})
+  conv.io.tl <> TileLinkIOWrapper( tc.io.tl_out, params.alterPartial({case TLId => "L1ToL2"}))
   val nastiPipe = Module(new NASTIPipe, {case BusId => "nasti"})
   //val nastiAddrConv = Module(new NASTIAddrConv, {case BusId => "nasti"})
 

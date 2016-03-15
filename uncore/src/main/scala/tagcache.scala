@@ -132,6 +132,7 @@ class TagCache extends TagCacheModule {
     val tl = new ManagerTileLinkIO
     val nasti = new NASTIMasterIO
     val update = new ValidIO(new PCRUpdate).flip
+    val tl_out = new ClientUncachedTileLinkIO()
   }
 
   val conv = Module(new MemSpaceConsts(2))
@@ -242,6 +243,13 @@ class TagCache extends TagCacheModule {
   outputArbitration(data.io.read, trackerList.map(_.io.data.read))
   outputArbitration(data.io.write, trackerList.map(_.io.data.write))
   inputRouting(data.io.resp, trackerList.map(_.io.data.resp), data.io.resp.bits.id)
+
+  //UncachedTilelinkoutput
+  val outerList = trackerList.map(_.io.tl_out)
+  val outer_arb = Module(new ClientUncachedTileLinkIOArbiter(outerList.size))
+  outer_arb.io.in <> outerList
+  io.tl_out <> outer_arb.io.out
+
 }
 
 // the request tracker
@@ -258,6 +266,7 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
     val na_r_match = Bool(OUTPUT)
     val phy_addr_acq = UInt(INPUT,width = nastiXAddrBits)
     val phy_addr_rel = UInt(INPUT,width = nastiXAddrBits)
+    val tl_out = new ClientUncachedTileLinkIO()
   }
 
   // parameter requirements
@@ -572,6 +581,49 @@ class TagCacheTracker(id: Int) extends TagCacheModule with NASTIParameters{
 
   // nasti.r
   io.nasti.r.ready := io.nasti.r.valid && (is_read || mem_receive_tag)// || Tag read
+
+
+  //New ClientTileLink Output
+  val acq_out_send_mem = PutBlock(tag_out, addr_out >> (tlBeatAddrBits + tlByteAddrBits), UInt(0)/*beat_id*/, UInt(acq_rel_input_data_without_tag) , Bool(true))
+  val acq_out_reveive_mem = GetBlock(tag_out, addr_out >> (tlBeatAddrBits + tlByteAddrBits), Bool(true))
+  val acq_out_send_tag = PutBlock(tag_out, (tagAddrConv(addrFromTag(acq_repl_meta, acq_addr), tagIsDram(io.meta.resp.bits.tag) ).toUInt() << UInt(blockOffBits)) >> (tlBeatAddrBits + tlByteAddrBits), UInt(0)/*beat_id*/, UInt(mem_tag_data_write(mem_tag_data_write_cnt)) , Bool(true))
+  val acq_out_reveive_tag = GetBlock(tag_out, (tagAddrConv(acq_addr, is_dram_address) <<  UInt(blockOffBits)).toUInt() >> (tlBeatAddrBits + tlByteAddrBits), Bool(true))
+
+ //Default
+  io.tl_out.acquire.bits := acq_out_reveive_mem
+
+   when(mem_send_tag)
+   {
+     io.tl_out.acquire.bits := acq_out_send_tag
+    }
+    .elsewhen(mem_receive_tag)
+    {
+
+      io.tl_out.acquire.bits := acq_out_reveive_tag
+    }
+    .otherwise
+    {
+      na_aw.id := tag_out  //Insert ID bit for tag
+      na_aw.addr := addr_out
+      when(is_write_process)
+      {
+        io.tl_out.acquire.bits := acq_out_send_mem
+      }
+      .otherwise
+      {
+        io.tl_out.acquire.bits := acq_out_reveive_mem
+      }
+
+    }
+
+  io.tl_out.acquire.valid := (((io.tl.acquire.valid && is_acq) || (io.tl.release.valid && !is_acq)) && is_write) || mem_send_tag ||  //Write valids
+                              ((acq_data_process && is_read) || mem_receive_tag )   //read valids
+  io.tl_out.grant.ready := (is_write || mem_send_tag || (state === s_write_back_wait_b)) || //Write readys
+                           (is_read || mem_receive_tag)
+
+
+  //io.tl_out.acquire.bits = Acquire(Bool(false),  UInt("b001"), id, addr_out >> (tlBeatAddrBits + tlByteAddrBits),  )
+
 
 
   //----------------------meta interface
