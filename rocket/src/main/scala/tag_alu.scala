@@ -37,5 +37,5 @@ class TagALU extends Module
                 /* all comparisons */                  UInt(0) << UInt(1) |  (io.in1(0) | io.in2(0))))))))
 
 
-  io.out := Mux(io.jalr || io.jal, UInt("b10"), tag_out_alu)
+  io.out := Mux(io.jalr || io.jal, UInt("b10"), tag_out_alu) | ((io.in1(3,2) | io.in2(3,2)) << UInt(2)) // Temporary output function
 }

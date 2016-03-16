@@ -209,6 +209,7 @@ object Causes {
   val supervisor_ecall = 0x9
   val hypervisor_ecall = 0xa
   val machine_ecall = 0xb
+  val tag_trap      = 0xc
   val all = {
     val res = collection.mutable.ArrayBuffer[Int]()
     res += misaligned_fetch
@@ -223,6 +224,7 @@ object Causes {
     res += supervisor_ecall
     res += hypervisor_ecall
     res += machine_ecall
+    res += tag_trap
     res.toArray
   }
 }

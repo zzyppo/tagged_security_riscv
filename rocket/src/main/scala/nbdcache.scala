@@ -151,7 +151,7 @@ class L1StoreGen(typ: Bits, addr: Bits, dat: Bits, tagWidth: Int) {
     Mux(tag,  dat(tagWidth-1,0) << 64,
       Mux(byte, Fill(8, dat( 7,0)),
         Mux(half, Fill(4, dat(15,0)),
-          wordData)))//Append the tag to all data
+          wordData)))
 
   lazy val wordData =
     Mux(word, Fill(2, dat(31,0)),
@@ -747,7 +747,9 @@ class L1AMOALU extends L1HellaCacheModule {
 
   //val wmask = FillInterleaved(8, storegen.mask)
   val wmask = storegen.mask
-  io.out := wmask & out | ~wmask & io.lhs | Mux(storegen.tag, UInt(0), io.rhs(67,64) << 64)
+  //Currently the tag form store operation frome core is used and the previeos tag is dicarded
+  // (could be set up with mask in future for writing tags per 32 bit)
+  io.out := wmask & out(coreDataBits - 1 , 0) | ~wmask & io.lhs(coreDataBits -1,0) | (Mux(storegen.tag, io.rhs(memTagBits-1,0), io.rhs(67,64)) << 64)
   //sio.out := Cat(io.rhs(67,64), wmask & out | ~wmask & io.lhs) //append tag
 }
 

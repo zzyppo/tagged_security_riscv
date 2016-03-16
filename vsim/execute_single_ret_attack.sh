@@ -1,0 +1,1 @@
+./DefaultConfig-sim-debug +vcd +vcd_name=output/hello_ret_addr_attack.vcd +max-cycles=1000000 +load=/home/zaepo/iaikgit/2015_master_jantscher/code/fpga/board/kc705/examples/hello_ret_addr_attack.hex | /home/zaepo/iaikgit/2015_master_jantscher/code/riscv/bin/spike-dasm  >output/hello_ret_addr_attack.verilator.out && [ $PIPESTATUS -eq 0 ]

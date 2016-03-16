@@ -44,7 +44,7 @@ int temp = 0;
 
 #ifndef IS_SIMULATION
   uart_init();
-  printf("DRAM test program.\n");
+ // printf("DRAM test program.\n");
   #endif
 
 #ifdef USE_IO_SPACE
@@ -60,7 +60,7 @@ int temp = 0;
   while(1) {
 	loop_cnt++;
 	#ifndef IS_SIMULATION
-    printf("Write block @%lx using key %llx\n", waddr, wkey);
+ //   printf("Write block @%lx using key %llx\n", waddr, wkey);
     #endif
     for(i=0; i<STEP_SIZE; i++) {
       *(get_ddr_base() + waddr) = wkey;
@@ -73,7 +73,7 @@ int temp = 0;
     if(distance == VERIFY_DISTANCE) {
   	asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(array));
   	#ifndef IS_SIMULATION
-      printf("Check block @%lx using key %llx\n", raddr, rkey);
+  //    printf("Check block @%lx using key %llx\n", raddr, rkey);
       #endif
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);

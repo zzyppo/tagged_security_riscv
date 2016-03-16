@@ -1,4 +1,4 @@
-// A hello world program
+// A hello world stack ret adress attack program
 
 #include <stdio.h>
 #include "uart.h"
@@ -19,9 +19,14 @@ int y = 4;
 }
 
 int main() {
+long a[2];
+int test_tag = 0;
+
+asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
 //  uart_init();
   //printf("Hello World!\n");
   test(1111);
+  asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
   return 0;
 }
 

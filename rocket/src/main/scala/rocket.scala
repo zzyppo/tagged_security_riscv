@@ -231,6 +231,16 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val dummy_tag_op = tagALU.io.out
 
 
+  //Tag checking unit
+  val tagCheckUint = Module(new TagCheckUnit)
+
+  tagCheckUint.io.tag_in := ex_tags(0)
+  tagCheckUint.io.jalr := ex_ctrl.jalr
+  tagCheckUint.io.jump_register := ex_reg_inst(19,15) //Indirect Jump Register address is always rx1
+  val tag_exception = tagCheckUint.io.invalid_jump
+
+
+
   // multiplier and divider
   val div = Module(new MulDiv(mulUnroll = if(params(FastMulDiv)) 8 else 1,
                        earlyOut = params(FastMulDiv)))
@@ -272,6 +282,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     ex_reg_pc := id_pc
   }
 
+
+
   // replay inst in ex stage?
   val wb_dcache_miss = wb_ctrl.mem && !io.dmem.resp.valid
   val replay_ex_structural = ex_ctrl.mem && !io.dmem.req.ready ||
@@ -284,7 +296,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
 
   val (ex_xcpt, ex_cause) = checkExceptions(List(
     (ex_reg_xcpt_interrupt || ex_reg_xcpt, ex_reg_cause),
-    (ex_ctrl.fp && io.fpu.illegal_rm,      UInt(Causes.illegal_instruction))))
+    (ex_ctrl.fp && io.fpu.illegal_rm,      UInt(Causes.illegal_instruction)),
+    (tag_exception,                         UInt(Causes.tag_trap)))) //add tag trap type to the list
 
   // memory stage
   val mem_br_taken = mem_reg_wdata(0)
