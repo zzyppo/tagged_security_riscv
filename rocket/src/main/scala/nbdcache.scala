@@ -174,7 +174,7 @@ class L1LoadGen(typ: Bits, addr: Bits, dat: Bits, zero: Bool, tagWidth: Int) {
    val byte = Mux(t.tag, tag << 64 | tag, Cat(tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift)))
 }
 
-
+//ToDo: Adapt for tagged data size and insertion of tag from io
 /** IO miss handler */
 class IOMSHR extends L1HellaCacheModule {
   val io = new Bundle {

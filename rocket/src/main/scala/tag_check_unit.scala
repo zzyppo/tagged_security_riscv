@@ -39,5 +39,6 @@ class TagCheckUnit extends Module {
   val is_valid = (hasRetTag(io.tag_in) && registerIsRA(io.jump_register)) || (!hasInvTag(io.tag_in) && !registerIsRA(io.jump_register))
 
   io.invalid_jump := Mux(io.jalr, !is_valid, Bool(false) ) //If no jalr instrunction output is always valid, otherwise check valid condition
+  //io.invalid_jump := Bool(false)
 
 }

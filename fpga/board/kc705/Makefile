@@ -173,7 +173,7 @@ bit-update-only:
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello boot dram sdcard memory_read_write dram_antibug tag_ld_st
+EXAMPLES = hello boot dram sdcard memory_read_write dram_antibug tag_ld_st hello_ret_addr_attack
 
 $(EXAMPLES):
 	cd examples && make
