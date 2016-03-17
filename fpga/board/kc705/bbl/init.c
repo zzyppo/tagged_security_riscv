@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "driver/uart.h"
 
 elf_info current;
 int have_vm = 1;
@@ -30,7 +31,9 @@ void boot_loader()
   long phdrs[128];
   current.phdr = (uintptr_t)phdrs;
   current.phdr_size = sizeof(phdrs);
+  uart_send_string("Loadng linux ELF\n");
   load_elf("vmlinux", &current);
 
+  uart_send_string("Linux ELF loaded\n");
   run_loaded_program();
 }

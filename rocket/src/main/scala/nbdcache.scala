@@ -182,14 +182,14 @@ class IOMSHR extends L1HellaCacheModule {
     val replay = Decoupled(new Replay)          // replay request for load IO
     val outer_req = Decoupled(new Acquire)      // uncached acquire to the outer IO TileLink controller
     val outer_gnt = Decoupled(new Grant).flip   // grant from the outer IO TileLink controller
-    val io_data = Bits(OUTPUT,coreDataBits)     // write out the data read back
+    val io_data = Bits(OUTPUT,coreDataBits + params(TagBits))     // write out the data read back
     val fence_rdy = Bool(OUTPUT)
   }
 
   val s_invalid :: s_io_req :: s_io_resp :: s_replay :: Nil = Enum(UInt(), 4)
   val state = Reg(init = s_invalid)
   val req = Reg(new MSHRReq)
-  val io_data = Reg(Bits(width = coreDataBits))
+  val io_data = Reg(Bits(width = coreDataBits ))
 
   // assembly the Acquire
   val addr_block = req.addr >> blockOffBits
@@ -197,13 +197,13 @@ class IOMSHR extends L1HellaCacheModule {
   val addr_byte = req.addr(log2Up(outerDataBits/8)-1,0)
 
   // form the write data and write mask
-  val storegen = new StoreGen(req.typ, req.addr, req.data)
+  val storegen = new StoreGen(req.typ, req.addr, req.data(coreDataBits - 1, 0))
   val outerDWords = outerDataBits/64
   require(outerDWords > 0)
   val acq_wdata = (Vec.fill(outerDWords){storegen.data}).toBits
-  val acq_wmask = Vec((0 until outerDWords).map(i => 
+  val acq_wmask = Vec((0 until outerDWords).map(i =>
     Mux(UInt(i)===(addr_byte >> UInt(3)), storegen.mask(7,0), UInt("b00000000"))
-    )).toBits
+  )).toBits
 
   val acq = Mux(req.cmd === M_XWR,
     Put(UInt(0), addr_block, addr_beat, acq_wdata, acq_wmask),
@@ -224,7 +224,7 @@ class IOMSHR extends L1HellaCacheModule {
   when(state === s_io_resp && io.outer_gnt.fire() && req.cmd === M_XRD) {
     io_data := io.outer_gnt.bits.data
   }
-  io.io_data := io_data
+  io.io_data := Cat(UInt("b0000"),io_data)
 
   // replay
   io.replay.valid := state === s_replay
@@ -250,7 +250,7 @@ class IOMSHR extends L1HellaCacheModule {
   when(state === s_replay) {
     when(io.replay.fire()) {
       state := s_invalid // TODO: check whether it is safe for replay that
-                         // the buf will not be overwritten by another pipelined IO load
+      // the buf will not be overwritten by another pipelined IO load
     }
   }
 }

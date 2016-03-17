@@ -35,7 +35,7 @@ static void mstatus_init()
 static void memory_init()
 {
   // set memory size
-  uintptr_t mem_mb = 1024;      /* 1GB DDR3 */
+  uintptr_t mem_mb = 956;      /* 1GB DDR3 (orig 1024)  - Tag partition*/
   mem_size = mem_mb << 20;
   if ((mem_size >> 20) < mem_mb)
     mem_size = (typeof(mem_size))-1 & -RISCV_PGSIZE;
@@ -99,15 +99,19 @@ FATFS FatFs;   /* Work area (file system object) for logical drive */
 void machine_init(uint32_t hart_id)
 {
   uart_init();
+  uart_send_string("Hier\n");
   /* Register work area to the default drive */
   f_mount(&FatFs, "", 0);
 
   hls_init(hart_id);
   mstatus_init();
   fp_init();
+  uart_send_string("Hier1\n");
 
   if (hart_id == 0) {
+    uart_send_string("Hier hart0\n");
     init_first_hart();
   } else
+    uart_send_string("Hier hart 1\n");
     init_other_hart();
 }

@@ -29,7 +29,7 @@ int dummyfunc()
 int main() {
 
  int dummy_var = 5;
-
+ uart_init();
   dummy_var = dummyfunc();
 
  a[0] = 0xDDDDDDFEFEEFFFFF;

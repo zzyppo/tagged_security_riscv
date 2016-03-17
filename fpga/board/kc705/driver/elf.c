@@ -56,6 +56,15 @@
 
 #include <string.h>
 
+void *mymemset(void *s, int c, size_t n)
+{
+    unsigned char* p=s;
+    while(n--)
+        *p++ = (unsigned char)c;
+        return s;
+}
+
+
 #define IS_ELF(hdr) \
   ((hdr).e_ident[0] == 0x7f && (hdr).e_ident[1] == 'E' && \
    (hdr).e_ident[2] == 'L'  && (hdr).e_ident[3] == 'F')
@@ -138,7 +147,9 @@ int load_elf(uint8_t *target_base, const uint8_t *elf, const uint32_t elf_size) 
         memcpy(target_base + ph[i].p_paddr, elf + ph[i].p_offset, ph[i].p_filesz);
       }
       if(ph[i].p_memsz > ph[i].p_filesz) { /* zero padding */
-        memset(target_base + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+        //printf("start addr: %x, Size:  %d\n", target_base + ph[i].p_paddr + ph[i].p_filesz, ph[i].p_memsz - ph[i].p_filesz );
+        //memset(target_base + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+        mymemset(target_base  + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz); //Why is the original memset triggering a tag trap????
       }
     }
   }

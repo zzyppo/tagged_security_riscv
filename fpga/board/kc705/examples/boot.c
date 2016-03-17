@@ -66,6 +66,7 @@ int main (void)
   if(br = load_elf(memory_base, boot_file_buf, fil.fsize))
     printf("elf read failed with code %0d", br);
 
+
   /* Close the file */
   if(f_close(&fil)) {
     printf("fail to close file!");
@@ -78,6 +79,7 @@ int main (void)
 
   spi_disable();
 
+
   // remap DDR3 to memory space
   syscall(SYS_set_membase, 0x0, 0x7fffffff, 0x0); /* BRAM, 0x00000000 - 0x3fffffff */
   syscall(SYS_set_membase+5, 0, 0, 0);            /* update memory space */
@@ -85,6 +87,7 @@ int main (void)
   syscall(SYS_set_iobase, 0x80000000, 0x7fffffff, 0); /* IO devices, 0x80000000 - 0xffffffff */
   syscall(SYS_set_iobase+1, 0, 0, 0);                 /* clear prevvious mapping */
   syscall(SYS_set_iobase+5, 0, 0, 0);                 /* update io space */
+
 
   printf("Boot the loaded program...\n");
   // map DDR3 to address 0
