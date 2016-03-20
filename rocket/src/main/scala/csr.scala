@@ -276,6 +276,10 @@ class CSRFile(id:Int) extends CoreModule
     pcr_mapping += addr+1 -> (addr+1)
   }
 
+  //Tag Control
+  read_mapping += PCRs.ptagctrl -> io.pcr.resp.bits.data //Anyway retruns only 0 at the moment
+  pcr_mapping += PCRs.ptagctrl -> PCRs.ptagctrl
+
   val addr = io.rw.addr
   val decoded_addr = read_mapping map { case (k, v) => k -> (addr === k) }
   val addr_valid = decoded_addr.values.reduce(_||_)

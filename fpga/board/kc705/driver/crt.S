@@ -288,6 +288,11 @@ asm_update_memspace:
   csrw    0x7af, a0
   ret
 
+  .global asm_set_tagctrl
+asm_set_tagctrl:
+  csrw    0x783, a0
+  ret
+
   .align 6
   .globl asm_soft_reset
 asm_soft_reset:

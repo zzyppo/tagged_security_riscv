@@ -12,6 +12,7 @@ object PCRs {
   val ptohost   = 0x780
   val pfromhost = 0x781
   val preset    = 0x782
+  val ptagctrl  = 0x783 //New control register to switch on/ off tag check and/or propagation
   val pmem_map  = 0x7a0
   val pmem_map_update = 0x7af
   val pio_map   = 0x7b0
@@ -80,6 +81,9 @@ class PCRControl extends PCRModule {
   val reg_int_en = Reg(Vec(UInt(0,xLen), nCores))
   val reg_int_pending = Reg(init = UInt(0,xLen))
 
+  //Tag Control
+  val reg_tag_ctrl = Reg(UInt(width=xLen))
+
   when(this.reset) {
     reg_mem_map_core_base(0) := UInt(params(InitMemBase))
     reg_mem_map_mask(0) := UInt(params(InitMemMask))
@@ -100,6 +104,10 @@ class PCRControl extends PCRModule {
         reg_io_map_mask(i) := UInt(0)
       }
     }
+
+    //Set default tag control
+    reg_tag_ctrl := UInt(params(InitTagCtrl))
+
   }
 
   // request arbitration
@@ -113,7 +121,8 @@ class PCRControl extends PCRModule {
   val read_mapping = collection.mutable.LinkedHashMap[Int,Bits](
     PCRs.ptime -> reg_time,
     PCRs.ptohost -> UInt(0),
-    PCRs.preset -> UInt(0)
+    PCRs.preset -> UInt(0),
+    PCRs.ptagctrl -> UInt(0)  //Always read 0
   )
 
   // memory map
@@ -245,6 +254,12 @@ class PCRControl extends PCRModule {
 
   when(wen && decoded_addr(PCRs.pio_map_update)) {
     update_arb.io.in(0).valid := Bool(true)
+  }
+
+  //Tag Control
+  when(wen && decoded_addr(PCRs.ptagctrl)) {
+    update_arb.io.in(0).valid := Bool(true)
+    reg_tag_ctrl := wdata
   }
 
   // interrupt

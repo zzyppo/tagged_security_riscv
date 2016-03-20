@@ -17,6 +17,9 @@ case object InitMemBase extends Field[String]
 case object InitMemMask extends Field[String]
 case object InitPhyBase extends Field[String]
 
+//Tag Control
+case object InitTagCtrl extends Field[String]
+
 //Params used by all caches
 case object NSets extends Field[Int]
 case object NWays extends Field[Int]

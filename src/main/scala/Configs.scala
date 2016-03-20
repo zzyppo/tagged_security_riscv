@@ -39,6 +39,9 @@ class DefaultConfig extends ChiselConfig (
       case InitMemMask => "h7fffffff"               // Memory space mask address after reset
       case InitPhyBase => "h00000000"               // Memory physical base address after reset
 
+      //Initial Tag Cotrol
+      case InitTagCtrl => "h00000001"             //Tag control register after reset (Tag check on)
+
       //Params used by all caches
       case NSets => findBy(CacheName)
       case NWays => findBy(CacheName)

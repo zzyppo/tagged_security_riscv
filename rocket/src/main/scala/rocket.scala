@@ -237,6 +237,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   tagCheckUint.io.tag_in := ex_tags(0)
   tagCheckUint.io.jalr := ex_ctrl.jalr
   tagCheckUint.io.jump_register := ex_reg_inst(19,15) //Indirect Jump Register address is always rx1
+  tagCheckUint.io.update <> io.pcr.update //Need the pcr upadate for the tag control register
   val tag_exception = tagCheckUint.io.invalid_jump
 
 

@@ -15,6 +15,7 @@
 #define SYS_soft_reset 617
 #define SYS_set_iobase 0x12200
 #define SYS_set_membase 0x2100
+#define SYS_set_tagctrl 0x3100
 
 extern void asm_soft_reset();
 extern void asm_set_iobase0(long base, long mask);
@@ -27,6 +28,8 @@ extern void asm_set_membase1(long cbase, long mask, long pbase);
 extern void asm_set_membase2(long cbase, long mask, long pbase);
 extern void asm_set_membase3(long cbase, long mask, long pbase);
 extern void asm_update_memspace();
+
+extern void asm_set_tagctrl(long tag_ctrl);
 
 #define static_assert(cond) switch(0) { case 0: case !!(long)(cond): ; }
 
@@ -127,8 +130,10 @@ long handle_trap(long cause, long epc, long regs[32])
     sprintf(trap_rpt_buf, "tp=%0x\n", regs[4]);
     uart_send_string(trap_rpt_buf);
     tohost_exit(1337);
-  }
-  else if ((regs[17] & SYS_set_iobase) == SYS_set_iobase) {
+  }else if(regs[17] == SYS_set_tagctrl){
+        asm_set_tagctrl(regs[10]); //Update the tag control
+
+  }else if ((regs[17] & SYS_set_iobase) == SYS_set_iobase) {
     switch(regs[17] & 0x7) {
     case 0: asm_set_iobase0(regs[10], regs[11]); break;
     case 1: asm_set_iobase1(regs[10], regs[11]); break;
@@ -144,7 +149,7 @@ long handle_trap(long cause, long epc, long regs[32])
     case 3: asm_set_membase3(regs[10], regs[11], regs[12]); break;
     default: asm_update_memspace(); break;
     }
-  } else if (regs[17] == SYS_exit)
+  }else if (regs[17] == SYS_exit)
     tohost_exit(regs[10]);
   else if (regs[17] == SYS_stats)
     sys_ret = handle_stats(regs[10]);
