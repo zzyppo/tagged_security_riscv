@@ -148,8 +148,8 @@ int load_elf(uint8_t *target_base, const uint8_t *elf, const uint32_t elf_size) 
       }
       if(ph[i].p_memsz > ph[i].p_filesz) { /* zero padding */
         //printf("start addr: %x, Size:  %d\n", target_base + ph[i].p_paddr + ph[i].p_filesz, ph[i].p_memsz - ph[i].p_filesz );
-        //memset(target_base + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
-        mymemset(target_base  + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz); //Why is the original memset triggering a tag trap????
+        memset(target_base + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+        //mymemset(target_base  + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz); //Why is the original memset triggering a tag trap????
       }
     }
   }

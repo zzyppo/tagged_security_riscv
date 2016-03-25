@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include "memory.h"
 
-#define VECT_SIZE 1<<20
+#define VECT_SIZE 1<<10
 #define TAG_WIDTH 4
 
 int main() {
-
-  long a[VECT_SIZE], i;
+  long a[VECT_SIZE];
+  long i;
   printf("Tag load and store tests starts.\n");
   for(i=0; i<VECT_SIZE; i++) {
     *(a+i) = rand();

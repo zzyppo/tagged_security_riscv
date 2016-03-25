@@ -16,6 +16,8 @@ FATFS FatFs;   /* Work area (file system object) for logical drive */
 #define SYS_soft_reset 617
 #define SYS_set_iobase 0x12200
 #define SYS_set_membase 0x2100
+#define SYS_set_tagctrl 0x3100
+
 extern long syscall(long num, long arg0, long arg1, long arg2);
 
 int main (void)
@@ -90,6 +92,7 @@ int main (void)
 
 
   printf("Boot the loaded program...\n");
+  //syscall(SYS_set_tagctrl, 0x0000000, 0x0, 0x0); //Switch off the tag control
   // map DDR3 to address 0
   syscall(SYS_set_membase, 0x0, 0x3fffffff, 0x40000000); /* map DDR to 0x0 */
   syscall(SYS_soft_reset, 0, 0, 0);                      /* soft reset */

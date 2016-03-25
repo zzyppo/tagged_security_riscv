@@ -64,6 +64,9 @@ _start:
   li  x30,0
   li  x31,0
 
+  #li t0, 0x0
+  #csrw    0x400, t0
+
   li t0, MSTATUS_PRV1; csrc mstatus, t0    # run tests in user mode
   li t0, MSTATUS_IE1;  csrs mstatus, t0    # enable interrupts in user mode
   li t0, MSTATUS_FS;   csrs mstatus, t0    # enable FPU
@@ -290,7 +293,7 @@ asm_update_memspace:
 
   .global asm_set_tagctrl
 asm_set_tagctrl:
-  csrw    0x783, a0
+  csrw    0x400, a0
   ret
 
   .align 6

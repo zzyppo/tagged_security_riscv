@@ -22,7 +22,7 @@ class TAGCHECKIO extends CoreBundle {
 /**
   * Created by zaepo on 16.03.16.
   */
-class TagCheckUnit extends Module with CoreParameters {
+class TagCheckUnit(resetSignal:Bool = null) extends Module(_reset = resetSignal) with CoreParameters {
 
   val io = new TAGCHECKIO
 

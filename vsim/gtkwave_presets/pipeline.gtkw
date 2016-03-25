@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Sun Mar 20 12:10:38 2016
+[*] Wed Mar 23 17:34:56 2016
 [*]
-[dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/hello_ret_addr_attack.vcd"
-[dumpfile_mtime] "Sun Mar 20 12:10:38 2016"
-[dumpfile_size] 38233287
+[dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/tag.vcd"
+[dumpfile_mtime] "Wed Mar 23 17:34:56 2016"
+[dumpfile_size] 69623124
 [savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/pipeline.gtkw"
-[timestart] 17500
-[size] 1615 891
-[pos] -616 -264
-*-11.388599 29249 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 32756
+[size] 1855 978
+[pos] -1 -351
+*-4.388599 32780 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.v.
 [treeopen] TOP.v.Rocket.
@@ -314,7 +314,22 @@ TOP.v.Rocket.RocketTile.core.ex_reg_valid
 TOP.v.Rocket.RocketTile.core.ex_ctrl_wxd
 TOP.v.Rocket.RocketTile.core.mem_reg_valid
 TOP.v.Rocket.RocketTile.core.mem_ctrl_wxd
+@29
 TOP.v.Rocket.RocketTile.core.mem_ctrl_mem
+@22
+TOP.v.Rocket.RocketTile.core.tagALU.io_fn[3:0]
+TOP.v.Rocket.RocketTile.core.tagALU.io_out[3:0]
+TOP.v.Rocket.RocketTile.core.tagALU.io_in1[3:0]
+TOP.v.Rocket.RocketTile.core.tagALU.io_in2[3:0]
+@28
+TOP.v.Rocket.RocketTile.core.ex_ctrl_sel_alu1[1:0]
+TOP.v.Rocket.RocketTile.core.ex_ctrl_sel_alu2[1:0]
+@22
+TOP.v.Rocket.RocketTile.core.alu.sum[63:0]
+TOP.v.Rocket.RocketTile.core.alu.out64[63:0]
+@28
+TOP.v.Rocket.RocketTile.core.tagALU.io_jal
+TOP.v.Rocket.RocketTile.core.tagALU.io_jalr
 @22
 TOP.v.Rocket.RocketTile.core.bypass_mux_1[63:0]
 TOP.v.Rocket.RocketTile.core.bypass_mux_2[63:0]
@@ -326,9 +341,8 @@ TOP.v.Rocket.RocketTile.core.dcache_bypass_data_tag[3:0]
 TOP.v.Rocket.RocketTile.core.bypass_mux_1[63:0]
 @28
 TOP.v.Rocket.RocketTile.core.tagCheckUint.io_invalid_jump
-@23
-TOP.v.Rocket.RocketTile.core.tagCheckUint.reg_tag_ctrl[63:0]
 @22
+TOP.v.Rocket.RocketTile.core.tagCheckUint.reg_tag_ctrl[63:0]
 TOP.v.Rocket.RocketTile.core.bypass_mux_2[63:0]
 TOP.v.Rocket.RocketTile.core.mem_reg_tagr2[3:0]
 TOP.v.Rocket.RocketTile.core.bypass_mux_tags_2[3:0]

@@ -7,6 +7,7 @@ import junctions._
 import uncore._
 import uncore.constants._
 import Util._
+import ALU._
 
 abstract trait CoreParameters extends UsesParameters {
   val xLen = params(XLen)
@@ -58,6 +59,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     val rocc = new RoCCInterface().flip
     val pcr = new PCRIO
     val irq = Bool(INPUT)
+    val power_on_reset = Bool(INPUT)
   }
 
   var decode_table = XDecode.table
@@ -221,8 +223,12 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   alu.io.in2 := ex_op2.toUInt
   alu.io.in1 := ex_op1.toUInt
 
-  val tagALU = Module(new TagALU)
+  //When an immidiate ADD with immidate and 0 input , is is a move instruction
+  val is_mv = ((ex_ctrl.sel_alu2) === A2_IMM) &&  (ex_imm === UInt(0)) && (ex_ctrl.alu_fn === FN_ADD)
+
+  val tagALU = Module(new TagALU(resetSignal = io.power_on_reset))
   tagALU.io.fn := ex_ctrl.alu_fn
+  tagALU.io.is_mv := is_mv
   tagALU.io.in2 := ex_tags(1)
   tagALU.io.in1 := ex_tags(0)
   tagALU.io.jal := ex_ctrl.jal
@@ -230,9 +236,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
 
   val dummy_tag_op = tagALU.io.out
 
-
   //Tag checking unit
-  val tagCheckUint = Module(new TagCheckUnit)
+  val tagCheckUint = Module(new TagCheckUnit(resetSignal = io.power_on_reset))
 
   tagCheckUint.io.tag_in := ex_tags(0)
   tagCheckUint.io.jalr := ex_ctrl.jalr

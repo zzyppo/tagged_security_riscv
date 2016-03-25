@@ -167,6 +167,8 @@ mentry:
   li x30, 0
   li x31, 0
 
+
+  #csrw 0x400, x3
   # sp <- end of first full page after the end of the binary
   la sp, _end + 2*RISCV_PGSIZE - 1
   li t0, -RISCV_PGSIZE

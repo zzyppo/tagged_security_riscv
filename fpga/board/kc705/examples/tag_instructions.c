@@ -4,6 +4,13 @@
 #include "uart.h"
 #include "tag.h"
 
+
+#define SYS_soft_reset 617
+#define SYS_set_iobase 0x12200
+#define SYS_set_membase 0x2100
+extern long syscall(long num, long arg0, long arg1, long arg2);
+
+
  long a[10];
 
 int dummy2(int bla)
@@ -46,7 +53,6 @@ int tag_in = 0x08;
 
 //Do some other stuff to flush the registers
 long bla = 0x00000aaaa;
-
 
 a[0] = 0xBBBBBBFEFEEFFFFF;
 asm volatile ("stag %0, 0(%1)" ::"r"(tag_in), "r"(a));

@@ -6,7 +6,9 @@ volatile int elf_loaded;
 static void enter_entry_point()
 {
 
+    //long tag_reg = 0x0;
     write_csr(mepc, current.entry);
+  //  write_csr(ptagctrl, 0);
      uart_send_string("Perform eret to linux\n");
     asm volatile("eret");
     __builtin_unreachable();
