@@ -96,10 +96,38 @@ static void init_other_hart()
 
 FATFS FatFs;   /* Work area (file system object) for logical drive */
 
+
+//TEST USER CODE in supervisor mode
+void test_code()
+{
+    long a[2];
+    int test_tag = 0;
+    asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
+
+    register long a7 asm("a7") = 0;
+  register long a0 asm("a0") = 0;
+  register long a1 asm("a1") = 0;
+  register long a2 asm("a2") = 0;
+
+    asm volatile ("scall" : "+r"(a0) : "r"(a1), "r"(a2), "r"(a7));
+
+
+    return;
+
+}
+
+
 void machine_init(uint32_t hart_id)
 {
   uart_init();
-  uart_send_string("Hier\n");
+  //TEST ToDO REMOVE
+  mstatus_init();
+  //size_t entry = (size_t)test_code;
+  //write_csr(mepc, entry);
+  //asm volatile("eret");
+  //return;
+  /////////
+
   /* Register work area to the default drive */
   f_mount(&FatFs, "", 0);
 

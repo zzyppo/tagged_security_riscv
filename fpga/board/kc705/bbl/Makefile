@@ -91,6 +91,7 @@ $(DRIVER_OBJS): %.o:$(DRIVER_DIR)/%.c $(DRIVER_HEADERS)
 
 $(TARGET): $(C_OBJS) $(S_OBJS) $(DRIVER_OBJS) ../softfloat/libsoftfloat.a
 	$(RISCV_GCC) -o $@ $(C_OBJS) $(S_OBJS) $(DRIVER_OBJS) $(RISCV_LINK_OPTS)
+	elf2hex 16 32768 bbl > bbl.hex
 
 dump: $(TARGET).dump
 $(TARGET).dump: $(TARGET)
