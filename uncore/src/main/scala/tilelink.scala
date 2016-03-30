@@ -1566,7 +1566,7 @@ class NASTIMasterIOTileLinkIOConverterHandler(id: Int) extends TLModule with NAS
   when(is_idle && io.tl.acquire.valid && !io.tl.release.valid) { // release take priority
     write_multiple_data := tl_acq.hasMultibeatData()
     read_multiple_data := !tl_acq.isBuiltInType() || tl_acq.isBuiltInType(Acquire.getBlockType)
-    is_read := tl_acq.isBuiltInType() || !tl_acq.hasData()
+    is_read := tl_acq.isBuiltInType() && !tl_acq.hasData() //was || which is wrong i believe
     is_write := tl_acq.isBuiltInType() && tl_acq.hasData()
     is_acq := Bool(true)
     is_builtin := tl_acq.isBuiltInType()

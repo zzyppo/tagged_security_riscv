@@ -1,0 +1,307 @@
+[*]
+[*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
+[*] Wed Mar 30 16:16:32 2016
+[*]
+[dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/dram_anti.vcd"
+[dumpfile_mtime] "Wed Mar 30 16:13:34 2016"
+[dumpfile_size] 1110759461
+[savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/tagcache_new.gtkw"
+[timestart] 20587
+[size] 1615 891
+[pos] -616 -1
+*-6.000000 20660 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.v.
+[treeopen] TOP.v.Rocket.
+[treeopen] TOP.v.Rocket.conv.
+[treeopen] TOP.v.Rocket.L2HellaCacheBank.tshrfile.
+[treeopen] TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.
+[treeopen] TOP.v.Rocket.RocketTile.core.
+[treeopen] TOP.v.Rocket.tc.
+[sst_width] 328
+[signals_width] 592
+[sst_expanded] 1
+[sst_vpaned_height] 562
+@24
+TOP.v.Rocket.RocketTile.core.csr_io_time[63:0]
+@22
+TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_valid
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_ready
+@22
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_tag[7:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_cmd[4:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_addr[39:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_data[63:0]
+TOP.v.Rocket.RocketTile.dcache.io_cpu_req_bits_typ[3:0]
+@28
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_valid
+@22
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_tag[7:0]
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_cmd[4:0]
+@c00022
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+@28
+(0)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(1)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(2)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(3)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(4)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(5)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(6)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(7)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(8)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(9)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(10)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(11)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(12)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(13)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(14)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(15)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(16)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(17)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(18)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(19)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(20)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(21)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(22)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(23)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(24)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(25)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(26)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(27)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(28)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(29)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(30)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(31)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(32)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(33)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(34)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(35)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(36)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(37)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(38)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+(39)TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_addr[39:0]
+@1401200
+-group_end
+@22
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_data[63:0]
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_data_subword[63:0]
+@28
+[color] 1
+TOP.v.Rocket.RocketTile.dcache.io_cpu_resp_bits_has_data
+TOP.v.Rocket.RocketTile.icache.icache_io_mem_acquire_valid
+TOP.v.Rocket.RocketTile.icache.icache_io_mem_grant_ready
+@22
+TOP.v.Rocket.RocketTile.icache.icache_io_mem_acquire_bits_addr_block[25:0]
+@28
+TOP.v.Rocket.RocketTile.icache.io_mem_grant_valid
+TOP.v.Rocket.RocketTile.icache.io_mem_grant_bits_manager_xact_id[1:0]
+@22
+TOP.v.Rocket.RocketTile.icache.io_mem_grant_bits_data[135:0]
+@28
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_ready
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_valid
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_bits_a_type[2:0]
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_bits_addr_beat[1:0]
+@22
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_bits_addr_block[25:0]
+@28
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_bits_client_xact_id
+@22
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_acquire_bits_data[135:0]
+@28
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_grant_ready
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_grant_valid
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_grant_bits_addr_beat[1:0]
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_grant_bits_client_xact_id
+@c00028
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_grant_bits_manager_xact_id[1:0]
+@28
+(0)TOP.v.Rocket.RocketTile.io_cached_grant_bits_manager_xact_id[1:0]
+(1)TOP.v.Rocket.RocketTile.io_cached_grant_bits_manager_xact_id[1:0]
+@1401200
+-group_end
+@22
+[color] 2
+TOP.v.Rocket.RocketTile.io_cached_grant_bits_data[135:0]
+@28
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_acquire_valid
+TOP.v.Rocket.L2HellaCacheBank.io_outer_acquire_ready
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_acquire_bits_a_type[2:0]
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_acquire_bits_addr_beat[1:0]
+@22
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_acquire_bits_addr_block[25:0]
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_acquire_bits_data[135:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_outer_release_bits_addr_block[25:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_outer_release_bits_client_xact_id[1:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_valid
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_ready
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.state[2:0]
+@22
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_bits_tag[20:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.wb.io_wb_req_bits_way_en[1:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_tag_match
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.io_meta_resp_bits_meta_coh_outer_state[1:0]
+@22
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker.state[3:0]
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2AcquireTracker_1.state[3:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.tshrfile.L2VoluntaryReleaseTracker.state[2:0]
+TOP.v.Rocket.L2HellaCacheBank.io_outer_release_valid
+@22
+TOP.v.Rocket.tc.io_tl_release_bits_addr_block[25:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.io_outer_release_ready
+@22
+TOP.v.Rocket.L2HellaCacheBank.io_outer_release_bits_data[135:0]
+@28
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_grant_valid
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_grant_bits_addr_beat[1:0]
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_grant_bits_client_xact_id[1:0]
+@22
+[color] 3
+TOP.v.Rocket.L2HellaCacheBank.io_outer_grant_bits_data[135:0]
+@28
+TOP.v.Rocket.L2HellaCacheBank.io_outer_grant_ready
+TOP.v.Rocket.tc.TagCacheTracker.is_read
+TOP.v.Rocket.tc.TagCacheTracker.is_write
+TOP.v.Rocket.tc.TagCacheTracker.collect_acq_data
+TOP.v.Rocket.tc.TagCacheTracker.acq_data_process
+TOP.v.Rocket.tc.TagCacheTracker.is_write_process
+TOP.v.Rocket.tc.TagCacheTracker.is_acq
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_acquire_valid
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_acquire_bits_is_builtin_type
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_acquire_bits_a_type[2:0]
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_acquire_ready
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_acquire_ready
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_grant_ready
+TOP.v.Rocket.tc.TagCacheTracker.nw_finish
+TOP.v.Rocket.tc.TagCacheTracker.nw_cnt[1:0]
+TOP.v.Rocket.tc.TagCacheTracker.acq_data_process
+@c00024
+TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
+@28
+(0)TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
+(1)TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
+(2)TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
+(3)TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
+(4)TOP.v.Rocket.tc.TagCacheTracker.state[4:0]
+@1401200
+-group_end
+@28
+TOP.v.Rocket.tc.TagCacheTracker.nr_cnt[1:0]
+TOP.v.Rocket.tc.TagCacheTracker.mem_receive_tag
+TOP.v.Rocket.tc.TagCacheTracker.mem_send_tag
+TOP.v.Rocket.tc.TagCacheTracker.io_meta_read_ready
+TOP.v.Rocket.tc.TagCacheTracker.nr_finish
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_out_acquire_valid
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_ready
+@c00028
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_bits_a_type[2:0]
+@28
+(0)TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_bits_a_type[2:0]
+(1)TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_bits_a_type[2:0]
+(2)TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_bits_a_type[2:0]
+@1401200
+-group_end
+@22
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_out_acquire_bits_addr_block[25:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_out_acquire_bits_addr_beat[1:0]
+@22
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_bits_data[135:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_acquire_bits_is_builtin_type
+TOP.v.Rocket.tc.io_tl_grant_valid
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_grant_valid
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_grant_ready
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_grant_valid
+TOP.v.Rocket.tc.TagCacheTracker.read_multiple_data
+@22
+TOP.v.Rocket.tc.TagCacheTracker.io_tl_out_grant_bits_g_type[3:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker.acq_data_process
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_out_grant_ready
+@22
+TOP.v.Rocket.tc.TagCacheTracker_io_tl_grant_bits_data[135:0]
+@28
+TOP.v.Rocket.conv.io_tl_grant_ready
+@22
+TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_read_0[127:0]
+TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_read_1[127:0]
+@23
+TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_read_2[127:0]
+@22
+TOP.v.Rocket.tc.TagCacheTracker.mem_tag_data_read_3[127:0]
+TOP.v.Rocket.tc.TagCacheTracker.gnt_data_0[135:0]
+TOP.v.Rocket.tc.TagCacheTracker.gnt_data_1[135:0]
+TOP.v.Rocket.tc.TagCacheTracker.gnt_data_2[135:0]
+TOP.v.Rocket.tc.TagCacheTracker.gnt_data_3[135:0]
+TOP.v.Rocket.tc.TagCacheTracker.io_data_write_bits_data[127:0]
+@28
+TOP.v.Rocket.tc.TagCacheTracker.io_data_read_valid
+@22
+TOP.v.Rocket.tc.TagCacheTracker.io_data_resp_bits_data[127:0]
+@28
+TOP.v.Rocket.conv.io_tl_grant_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_nasti_ar_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler_io_tl_grant_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_nasti_r_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_nasti_b_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler_1_io_nasti_b_ready
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler_1_io_na_b_match
+TOP.v.Rocket.conv.io_nasti_b_valid
+@22
+TOP.v.Rocket.conv.io_nasti_ar_bits_addr[31:0]
+TOP.v.Rocket.conv.io_nasti_aw_bits_addr[31:0]
+@28
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_tl_acq_match
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_nasti_ar_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_nasti_aw_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.is_idle
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_tl_acquire_valid
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_tl_acquire_bits_is_builtin_type
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_tl_acquire_bits_a_type[2:0]
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.is_acq
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.is_read
+@22
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_tl_acquire_bits_addr_block[25:0]
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.io_tl_acquire_bits_data[135:0]
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.addr_out[31:0]
+@28
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.read_multiple_data
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.write_multiple_data
+TOP.v.Rocket.conv.NASTIMasterIOTileLinkIOConverterHandler.is_write
+TOP.v.Rocket.conv.io_nasti_r_valid
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,10 +1,9 @@
 // A hello world program
 
 #include <stdio.h>
-#include "uart.h"
 //A simple test
 int main() {
-  uart_init();
-  printf("H\n");
+  //uart_init();
+  printf("Hello in Linux\n");
 }
 

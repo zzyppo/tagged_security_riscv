@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
-#include "uart.h"
-
 #define VECT_SIZE 1<<10
 #define TAG_WIDTH 4
 
