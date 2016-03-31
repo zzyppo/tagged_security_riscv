@@ -2,15 +2,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "memory.h"
-#define VECT_SIZE 1<<10
+#define VECT_SIZE 1<<20
 #define TAG_WIDTH 4
 
 int main() {
 
-  long a[VECT_SIZE], i;
+  long *a;
+  long i;
+    printf("Tag test program\n");
 
-  printf("Tag test program");
+
+   a = (long *)malloc(sizeof(long) * VECT_SIZE);
+
+   if(a == NULL) {
+       printf("Error! Can not malloc for the root table\n");
+       exit(1);
+     }
 
   for(i=0; i<VECT_SIZE; i++) {
     *(a+i) = rand();
