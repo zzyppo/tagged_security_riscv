@@ -1,5 +1,4 @@
 // See LICENSE for license details.
-//Adaptation for untethered Rocket by Philipp Jantscher
 
 package uncore
 import Chisel._
