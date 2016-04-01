@@ -288,6 +288,8 @@ mentry:
 #endif
   STORE x0, (sp) # Zero x0's save slot.
 
+
+
   # Invoke the handler.
   jalr t0
 
@@ -331,6 +333,15 @@ mentry:
   # Go back whence we came.
   LOAD a0, 10*REGBYTES(sp)
   LOAD sp, 2*REGBYTES(sp)
+
+   li t1, 0
+       csrw 0x400, t1
+        nop
+        nop
+        nop
+        nop
+        nop
+
   eret
 
 1:# Redirect the trap to the supervisor.

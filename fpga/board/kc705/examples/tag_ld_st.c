@@ -13,11 +13,11 @@ int main() {
   printf("Tag load and store tests starts.\n");
   for(i=0; i<VECT_SIZE; i++) {
     *(a+i) = rand();
-   asm volatile ("stag %0, 0(%1)" ::"r"(*(a+i)), "r"((a+i)));
+   asm volatile ("stag %0, 0(%1)" ::"r"(i %( 1 << TAG_WIDTH)), "r"((a+i)));
   }
   
   for(i=0; i<VECT_SIZE; i++) {
-    int value = *(a+i);
+    int value = i;
     int tag;
     asm volatile ("ltag %0, 0(%1)":"=r"(tag):"r"((a+i)));
   //  int tag = load_tag(a+i);
