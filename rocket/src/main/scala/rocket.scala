@@ -231,6 +231,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   tagALU.io.is_mv := is_mv
   tagALU.io.in2 := ex_tags(1)
   tagALU.io.in1 := ex_tags(0)
+  tagALU.io.no_input_registers := (!ex_ctrl.rxs1 && !ex_ctrl.rxs2)
   tagALU.io.jal := ex_ctrl.jal
   tagALU.io.jalr := ex_ctrl.jalr
 

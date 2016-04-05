@@ -64,6 +64,11 @@ void __attribute__((noreturn)) bad_trap()
   panic("machine mode: unhandlable trap %d @ %p", read_csr(mcause), read_csr(mepc));
 }
 
+void __attribute__((noreturn)) tag_trap()
+{
+  panic("machine mode: tag trap triggered [%d] @ %p", read_csr(mcause), read_csr(mepc));
+}
+
 uintptr_t htif_interrupt(uintptr_t mcause, uintptr_t* regs)
 {
   panic("htif_interrupt(): no record");
@@ -432,6 +437,8 @@ uintptr_t trap_from_machine_mode(uintptr_t dummy, uintptr_t* regs)
       return machine_illegal_instruction(mcause, regs, mepc);
     case CAUSE_MACHINE_ECALL:
       return mcall_trap(mcause, regs);
+    case CAUSE_TAG_TRAP:
+      tag_trap();
     default:
       bad_trap();
   }

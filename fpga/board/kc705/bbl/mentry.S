@@ -17,11 +17,12 @@ trap_table:
   .word mcall_trap
   .word bad_trap
   .word bad_trap
-#define HTIF_INTERRUPT_VECTOR 12
+  .word tag_trap
+#define HTIF_INTERRUPT_VECTOR 13
   .word htif_interrupt
-#define TRAP_FROM_MACHINE_MODE_VECTOR 13
+#define TRAP_FROM_MACHINE_MODE_VECTOR 14
   .word trap_from_machine_mode
-#define IO_INTERRUPT_VECTOR 14
+#define IO_INTERRUPT_VECTOR 15
   .word io_irq_service
   .word bad_trap
 
@@ -36,6 +37,7 @@ trap_table:
   | (0 << (31- 7)) /* store fault */             \
   | (0 << (31- 8)) /* user environment call */   \
   | (0 << (31- 9)) /* super environment call */  \
+  | (1 << (31- 12)) /* tag trap */               \
 
 #define HANDLE_SUPERVISOR_TRAP_IN_MACHINE_MODE 0 \
   | (0 << (31- 0)) /* IF misaligned */           \
@@ -48,6 +50,7 @@ trap_table:
   | (0 << (31- 7)) /* store fault */             \
   | (0 << (31- 8)) /* user environment call */   \
   | (1 << (31- 9)) /* super environment call */  \
+  | (1 << (31- 12)) /* tag trap */               \
 
   .option norvc
   .section .text.init,"ax",@progbits
@@ -334,8 +337,8 @@ mentry:
   LOAD a0, 10*REGBYTES(sp)
   LOAD sp, 2*REGBYTES(sp)
 
-   li t1, 0
-       csrw 0x400, t1
+  # li t1, 0
+  #     csrw 0x400, t1
         nop
         nop
         nop

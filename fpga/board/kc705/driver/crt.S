@@ -11,7 +11,7 @@
 # define SREG sw
 # define REGBYTES 4
 #endif
-
+.comm zaehler, 8
   .text
   .align 6
 user_trap_entry:
@@ -64,7 +64,7 @@ _start:
   li  x30,0
   li  x31,0
 
-  #li t0, 0x0
+  #li t0, 0x1
   #csrw    0x400, t0
 
   li t0, MSTATUS_PRV1; csrc mstatus, t0    # run tests in user mode
@@ -149,8 +149,16 @@ _start:
   sll sp, sp, STKSHIFT
   add sp, sp, tp
 
+ # la t0, _init
+ # la a3, zaehler
+ # sd t0, (a3)
+ # li t0, 1
+ # stag t0, (a3)
+ # ld t0, (a3)
+
   la t0, _init
   csrw mepc, t0
+  #jalr t0
   eret
 
 trap_entry:

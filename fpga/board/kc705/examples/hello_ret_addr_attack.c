@@ -1,17 +1,17 @@
 // A hello world stack ret adress attack program
 
 #include <stdio.h>
-#include "uart.h"
-
+//#include "uart.h"
+/*
 extern void asm_set_tagctrl(long tag_ctrl);
 
 #define SYS_soft_reset 617
 #define SYS_set_tagctrl 0x3100
 extern long syscall(long num, long arg0, long arg1, long arg2);
-
+*/
 void attack_sucessful()
 {
- // printf("Attack Sucessful!\n");
+  printf("Attack Sucessful!\n");
  return;
 }
 
@@ -35,14 +35,14 @@ int y = 4;
 int main() {
   long a[2];
   int test_tag = 0;
-  //printf("Try To perform RET attack!\n");
+  printf("Try To perform RET attack!\n");
   asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
-  asm_set_tagctrl(0);
+  //asm_set_tagctrl(2);
   //syscall(SYS_soft_reset, 0, 0, 0);                      /* soft reset */
  //syscall(SYS_set_tagctrl, 0x0000001, 0x0, 0x0); //Switch on the tag control
   // syscall(SYS_set_tagctrl, 0x0000000, 0x0, 0x0); //Switch off the tag control
-  uart_init();
-  // printf("Hello World!\n");
+ // uart_init();
+   //printf("Hello World!\n");
   test(1111);
   asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
   return 0;

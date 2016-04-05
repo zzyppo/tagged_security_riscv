@@ -49,17 +49,27 @@ class TagCheckUnit(resetSignal:Bool = null) extends Module(_reset = resetSignal)
     adress === UInt(1)
   }
 
-  def tagCheckActivated(tag_ctrl:UInt) : Bool = {
-    (tag_ctrl & UInt(1)) === UInt(1)
-  }
-
   //Rules
   //1) Register is RA -> check if RET tag is set to be valid
   //2) Register is not RA -> check if INV tag is not set to be valid
 
-  val is_valid = (hasRetTag(io.tag_in) && registerIsRA(io.jump_register)) || (!hasInvTag(io.tag_in) && !registerIsRA(io.jump_register))
+  def rule1CheckActivated(tag_ctrl:UInt) : Bool = {
+    (tag_ctrl & UInt(1)) === UInt(1)
+  }
 
-  io.invalid_jump := Mux(tagCheckActivated(reg_tag_ctrl),  Mux(io.jalr, !is_valid, Bool(false)) , Bool(false)) //If no jalr instrunction output is always valid, otherwise check valid condition
+  def rule2CheckActivated(tag_ctrl:UInt) : Bool = {
+    (tag_ctrl & UInt(2)) === UInt(2)
+  }
+
+  //val is_valid = (hasRetTag(io.tag_in) && registerIsRA(io.jump_register)) || (!hasInvTag(io.tag_in) && !registerIsRA(io.jump_register))
+
+  val rule1_invalid = (!hasRetTag(io.tag_in) && registerIsRA(io.jump_register) && rule1CheckActivated(reg_tag_ctrl))
+  val rule2_invalid = (hasInvTag(io.tag_in) && !registerIsRA(io.jump_register) && rule2CheckActivated(reg_tag_ctrl))
+
+  val is_invalid = rule1_invalid || rule2_invalid
+  //io.invalid_jump := Mux(rule1CheckActivated(reg_tag_ctrl),  Mux(io.jalr, !is_valid, Bool(false)) , Bool(false)) //If no jalr instrunction output is always valid, otherwise check valid condition
+  io.invalid_jump :=  Mux(io.jalr, is_invalid, Bool(false))  //If no jalr instrunction output is always valid, otherwise check valid condition
+
   //io.invalid_jump := Bool(false)
 
 }
