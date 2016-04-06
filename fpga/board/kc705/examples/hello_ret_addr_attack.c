@@ -40,7 +40,7 @@ int main() {
   int test_tag = 0;
   printf("Try To perform RET attack!\n");
   asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
-  write_csr(0x400, 3); //atack should be performed
+ // write_csr(0x400, 3); //atack should be performed
   //asm_set_tagctrl(2);
   //syscall(SYS_soft_reset, 0, 0, 0);                      /* soft reset */
  //syscall(SYS_set_tagctrl, 0x0000001, 0x0, 0x0); //Switch on the tag control

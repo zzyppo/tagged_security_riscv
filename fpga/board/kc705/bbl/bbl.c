@@ -9,7 +9,7 @@ static void enter_entry_point()
     //long tag_reg = 0x0;
     write_csr(mepc, current.entry);
   //  write_csr(ptagctrl, 0);
-     uart_send_string("Perform eret to linux\n");
+    uart_send_string("Start Linux\n");
     asm volatile("eret");
     __builtin_unreachable();
 }
@@ -23,9 +23,7 @@ void run_loaded_program()
 
   supervisor_vm_init();
   mb();
-   uart_send_string("supervisor init + mb done\n");
   elf_loaded = 1;
-   uart_send_string("enter entry point\n");
   enter_entry_point();
 }
 

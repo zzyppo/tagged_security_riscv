@@ -170,8 +170,6 @@ mentry:
   li x30, 0
   li x31, 0
 
-
-  #csrw 0x400, x3
   # sp <- end of first full page after the end of the binary
   la sp, _end + 2*RISCV_PGSIZE - 1
   li t0, -RISCV_PGSIZE
@@ -336,14 +334,6 @@ mentry:
   # Go back whence we came.
   LOAD a0, 10*REGBYTES(sp)
   LOAD sp, 2*REGBYTES(sp)
-
-  # li t1, 0
-  #     csrw 0x400, t1
-        nop
-        nop
-        nop
-        nop
-        nop
 
   eret
 

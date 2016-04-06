@@ -134,12 +134,9 @@ void machine_init(uint32_t hart_id)
   hls_init(hart_id);
   mstatus_init();
   fp_init();
-  uart_send_string("Hier1\n");
 
   if (hart_id == 0) {
-    uart_send_string("Hier hart0\n");
     init_first_hart();
   } else
-    uart_send_string("Hier hart 1\n");
     init_other_hart();
 }
