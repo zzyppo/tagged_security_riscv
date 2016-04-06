@@ -334,7 +334,11 @@ mentry:
   # Go back whence we came.
   LOAD a0, 10*REGBYTES(sp)
   LOAD sp, 2*REGBYTES(sp)
-
+  nop
+  nop
+  nop
+  nop
+  nop
   eret
 
 1:# Redirect the trap to the supervisor.
