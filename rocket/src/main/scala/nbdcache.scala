@@ -184,6 +184,7 @@ class IOMSHR extends L1HellaCacheModule {
     val outer_gnt = Decoupled(new Grant).flip   // grant from the outer IO TileLink controller
     val io_data = Bits(OUTPUT,coreDataBits + params(TagBits))     // write out the data read back
     val fence_rdy = Bool(OUTPUT)
+    val tag_enfore_on = Bool(INPUT) // If the Invalid tag shall be generated or not (generated if true)
   }
 
   val s_invalid :: s_io_req :: s_io_resp :: s_replay :: Nil = Enum(UInt(), 4)
@@ -224,7 +225,8 @@ class IOMSHR extends L1HellaCacheModule {
   when(state === s_io_resp && io.outer_gnt.fire() && req.cmd === M_XRD) {
     io_data := io.outer_gnt.bits.data
   }
-  io.io_data := Cat(UInt("b0000"),io_data)
+  //io.io_data := Cat(UInt("b0000"),io_data) //Insert tag INALID if enabled
+  io.io_data := Cat(Mux(io.tag_enfore_on, UInt("b0001"), UInt("b0000")),io_data)
 
   // replay
   io.replay.valid := state === s_replay
@@ -760,6 +762,7 @@ class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal
     val mem = new ClientTileLinkIO
     val io = new ClientUncachedTileLinkIO
     val pcr_update = new ValidIO(new PCRUpdate).flip
+    val power_on_reset = Bool(INPUT)
   }
  
   require(params(LRSCCycles) >= 32) // ISA requires 16-insn LRSC sequences to succeed
@@ -769,11 +772,26 @@ class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal
   require(paddrBits-blockOffBits == params(TLBlockAddrBits) )
   require(untagBits <= pgIdxBits)
 
+  val reg_tag_ctrl = Reg(UInt(width=xLen))
+  when(io.power_on_reset) {
+    reg_tag_ctrl := UInt(params(InitTagCtrl))
+  }
+
+  //Update the tag control register
+  when(io.pcr_update.valid && io.pcr_update.bits.addr === UInt(PCRs.ptagctrl)) {
+    reg_tag_ctrl := io.pcr_update.bits.data
+  }
+
+  def ioTagEnfoceOn(tag_ctrl:UInt) : Bool = {
+    (tag_ctrl & UInt(4)) === UInt(4)
+  }
+
   val wb = Module(new WritebackUnit)
   val prober = Module(new ProbeUnit)
   val mshrs = Module(new MSHRFile)
   val iomshr = Module(new IOMSHR) // IO space miss handler
-  val ioaddr = Module(new IOSpaceConsts(1))
+  iomshr.io.tag_enfore_on := ioTagEnfoceOn(reg_tag_ctrl)
+  val ioaddr = Module(new IOSpaceConsts(ch = 1, resetSignal = io.power_on_reset))
 
   io.cpu.req.ready := Bool(true)
   val s1_valid = Reg(next=io.cpu.req.fire(), init=Bool(false))

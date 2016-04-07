@@ -18,6 +18,9 @@ FATFS FatFs;   /* Work area (file system object) for logical drive */
 #define SYS_set_membase 0x2100
 #define SYS_set_tagctrl 0x3100
 
+#define write_csr(reg, val) \
+  asm volatile ("csrw " #reg ", %0" :: "r"(val))
+
 extern long syscall(long num, long arg0, long arg1, long arg2);
 
 int main (void)
@@ -26,6 +29,9 @@ int main (void)
   FRESULT fr;             /* FatFs return code */
   uint8_t *boot_file_buf = (uint8_t *)(get_ddr_base()) + 0x38000000; // 0x8000000 (128M)
   uint8_t *memory_base = (uint8_t *)(get_ddr_base());
+
+  //Modify tag control register (testing purpose)
+  write_csr(0x400,3); //Checks on / io invalid tag generation off
 
   // map DDR3 to IO
   syscall(SYS_set_membase, 0x0, 0x3fffffff, 0x0); /* BRAM, 0x00000000 - 0x3fffffff */
@@ -38,6 +44,20 @@ int main (void)
   uart_init();
 
   printf("lowRISC boot program\n=====================================\n");
+
+
+  //Dram output of tag partition
+ /*
+  printf("Content of Tag Partition\n");
+  for (uint32_t i = 0x7c000000; i < 0x7fffffff; i++)
+       printf("%x,", (*(uint8_t*)i));
+  printf("\n");
+*/
+
+ //Delete Tag partition
+ printf("Formatting Tag partition in DRAM\n");
+ for (uint32_t i = 0x7c000000; i < 0x7fffffff; i++)
+     (*(uint8_t*)i) = 0x00;
 
   /* Register work area to the default drive */
   if(f_mount(&FatFs, "", 1)) {

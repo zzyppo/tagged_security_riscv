@@ -27,6 +27,8 @@ class RocketTile(id: Int = 0) extends Tile {
   val core = Module(new Rocket(id = id, resetSignal = soft_reset), { case CoreName => "Rocket" })
 
   core.io.power_on_reset := reset //Tell the core also when a real power on reset occured
+  dcache.io.power_on_reset := reset  //Tell the dcache also when a real power on reset occured
+
   dcache.io.cpu.invalidate_lr := core.io.dmem.invalidate_lr // Bypass signal to dcache
   val dcArb = Module(new HellaCacheArbiter(params(NDCachePorts)))
   dcArb.io.requestor(0) <> ptw.io.mem

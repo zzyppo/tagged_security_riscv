@@ -8,7 +8,7 @@ static void enter_entry_point()
 
     //long tag_reg = 0x0;
     write_csr(mepc, current.entry);
-    write_csr(0x400, 1);
+    //write_csr(0x400, 1);
     uart_send_string("Start Linux\n");
     asm volatile("eret");
     __builtin_unreachable();

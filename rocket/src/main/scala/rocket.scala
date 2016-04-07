@@ -214,9 +214,6 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     A2_IMM -> ex_imm,
     A2_FOUR -> SInt(4)))
 
-  //Dummy tag operation
-  //val dummy_tag_op = ex_tags(0) | ex_tags(1)
-
   val alu = Module(new ALU)
   alu.io.dw := ex_ctrl.alu_dw
   alu.io.fn := ex_ctrl.alu_fn
@@ -229,9 +226,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val tagALU = Module(new TagALU(resetSignal = io.power_on_reset))
   tagALU.io.fn := ex_ctrl.alu_fn
   tagALU.io.is_mv := is_mv
-  tagALU.io.in2 := ex_tags(1)
-  tagALU.io.in1 := ex_tags(0)
-  tagALU.io.no_input_registers := (!ex_ctrl.rxs1 && !ex_ctrl.rxs2)
+  tagALU.io.in1 := Mux(ex_ctrl.rxs1, ex_tags(0), UInt("b0000")) //Only take input tag if there was a register read
+  tagALU.io.in2 := Mux(ex_ctrl.rxs2, ex_tags(1), UInt("b0000")) //Only take input tag if there was a register read
   tagALU.io.jal := ex_ctrl.jal
   tagALU.io.jalr := ex_ctrl.jalr
 

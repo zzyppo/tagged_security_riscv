@@ -11,7 +11,7 @@ abstract trait IOSpaceParameters extends UsesParameters {
   require(xLen >= pALen) // TODO: support pALen > xLen
 }
 
-class IOSpaceConsts(ch: Int) extends Module with IOSpaceParameters {
+class IOSpaceConsts(ch: Int, resetSignal:Bool = null) extends Module(_reset = resetSignal) with IOSpaceParameters {
   val io = new Bundle {
     val update = new ValidIO(new PCRUpdate).flip
     val paddr = Vec(UInt(INPUT, pALen), ch)  // physical address for IO check
