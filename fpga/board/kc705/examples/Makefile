@@ -30,6 +30,8 @@ default: all
 
 TARGETS = boot dram hello reset sdcard tag_instructions memory_read_write dram_antibug tag_ld_st hello_ret_addr_attack
 
+LINUX_TARGETS = jop_attack hello_ret_addr_attack
+
 DRIVER_OBJS += \
 	$(DRIVER_DIR)/syscalls.o \
 	$(DRIVER_DIR)/spi.o \
@@ -77,7 +79,12 @@ $(addsuffix .hex, $(TARGETS)): %.hex:%.riscv
 $(addsuffix .dump, $(TARGETS)): %.dump:%.riscv
 	$(RISCV_DUMP) $(RISCV_DUMP_OPTS) $< > $@
 
-.PHONY: all dump
+linux: $(addsuffix .linux, $(LINUX_TARGETS))
+
+$(addsuffix .linux, $(LINUX_TARGETS)): %.linux:%.c
+	riscv64-unknown-linux-gnu-gcc -static $< -o $@
+
+.PHONY: all dump linux
 
 #--------------------------------------------------------------------
 # clean up

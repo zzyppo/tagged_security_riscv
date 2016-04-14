@@ -147,8 +147,10 @@ int load_elf(uint8_t *target_base, const uint8_t *elf, const uint32_t elf_size) 
         memcpy(target_base + ph[i].p_paddr, elf + ph[i].p_offset, ph[i].p_filesz);
       }
       if(ph[i].p_memsz > ph[i].p_filesz) { /* zero padding */
+        uint8_t* start_adress = target_base + ph[i].p_paddr + ph[i].p_filesz;
+        //asm volatile ("stag %0, 0(%1)" ::"r"(0), "r"(&start_adress));
         //printf("start addr: %x, Size:  %d\n", target_base + ph[i].p_paddr + ph[i].p_filesz, ph[i].p_memsz - ph[i].p_filesz );
-        memset(target_base + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+        memset(start_adress, 0, ph[i].p_memsz - ph[i].p_filesz);
         //mymemset(target_base  + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz); //Why is the original memset triggering a tag trap????
       }
     }

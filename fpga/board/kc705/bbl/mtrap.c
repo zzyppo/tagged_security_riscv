@@ -251,6 +251,7 @@ static uintptr_t mcall_dev_req(sbi_device_message *m)
         }
       case HTIF_CMD_READ:       /* disk read */
         {
+         // printk("Read file .%x..\n");
           disk_request_t *req = (disk_request_t *)m->data;
           if(file_pread(ramdisk, (void *)req->addr, req->size, req->offset) != req->size) {
             panic("disk cannot read %d bytes @%d!", req->size, req->offset);
@@ -260,6 +261,7 @@ static uintptr_t mcall_dev_req(sbi_device_message *m)
         }
       case HTIF_CMD_WRITE:       /* disk write */
         {
+         // printk("write file ...\n");
           disk_request_t *req = (disk_request_t *)m->data;
           if(file_pwrite(ramdisk, (const void *)req->addr, req->size, req->offset) != req->size) {
             panic("disk cannot write %d bytes @%d!", req->size, req->offset);

@@ -56,9 +56,24 @@ int main (void)
 
  //Delete Tag partition
  printf("Formatting Tag partition in DRAM\n");
- for (uint32_t i = 0x7c000000; i < 0x7fffffff; i++)
-     (*(uint8_t*)i) = 0x00;
+ unsigned long waddr = 0;
+ for (waddr = 0x0; waddr < 0x3fffff; waddr++)
+    *(((uint64_t *)0x7C000000) + waddr) = 0x0;
 
+
+ //REMOVE
+ //asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((&memory_base)));
+/*
+  uint8_t dat[10];
+  //for(int i=0; i<1; i++)
+    boot_file_buf[0] = *(((uint64_t *)0x80010000));
+  load_elf(memory_base, boot_file_buf, 2);
+    dat[0] = 5;
+
+  memset(*((uint64_t *)0x40000000), 0, 20);
+
+  while(1);
+*/
   /* Register work area to the default drive */
   if(f_mount(&FatFs, "", 1)) {
     printf("Fail to mount SD driver!\n");
@@ -75,6 +90,14 @@ int main (void)
 
   /* Read file into memory */
   uint8_t *buf = boot_file_buf;
+    //TAG DEBUG
+   // long tag_debug[2];
+    int debug_tag = 0;
+    asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((memory_base)));
+    printf("Tag memory base %x\n", debug_tag);
+    asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((boot_file_buf)));
+    printf("Tag boot_file_buf %x\n", debug_tag);
+
   uint32_t br;                  /* Read count */
   do {
     fr = f_read(&fil, buf, SD_READ_SIZE, &br);  /* Read a chunk of source file */
@@ -82,6 +105,22 @@ int main (void)
   } while(!(fr || br == 0));
 
   printf("Load %0x bytes to memory.\n", fil.fsize);
+
+
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((&memory_base)));
+  printf("Tag memory base %x\n", debug_tag);
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((&boot_file_buf)));
+  printf("Tag boot_file_buf %x\n", debug_tag);
+    asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(fil.fsize)));
+    printf("Tag fil.fsize %x\n", debug_tag);
+
+   //  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(fil.fsize)));
+     debug_tag = 0;
+     asm volatile ("stag %0, 0(%1)" ::"r"(debug_tag), "r"(&(fil.fsize)));
+
+         asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(fil.fsize)));
+         printf("Tag fil.fsize %x\n", debug_tag);
+
 
   /* read elf */
   printf("Read boot and load elf to DDR memory\n");
