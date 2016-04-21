@@ -22,17 +22,47 @@ struct foo {
   int (*function_pointer)(int);
 };
 
+#define read_csr(reg) ({ unsigned long __tmp; \
+  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+  __tmp; })
+
 int main(int argc, char** argv, char** envp) 
 {
   struct foo *f = malloc(sizeof(*f));
   f->function_pointer = &valid_function;
 
   char string[256];
-  scanf( "%s" , string );
-  printf("Read  %s form IO\n");
+
+  int debug_tag = 0;
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((string)));
+  printf("String tag before scanf %x\n", debug_tag);
+
+  printf("plase type some string\n");
+  printf("CSR is %x\n", read_csr(0x400));
+  scanf( "%s" , &string[0]);
+   printf("CSR is %x\n", read_csr(0x400));
+  printf("Read  %s form IO\n", string);
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((string)));
+  printf("String tag after scanf %x\n", debug_tag);
+
+asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((f->buffer)));
+printf("\nf-buffer before strcpy %x\n", debug_tag);
+
+  printf("Function pointer value before %x\n", f->function_pointer);
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(f->function_pointer)));
+  printf("\nFunction pointer tag before %x\n", debug_tag);
 
   strcpy(f->buffer, string);
+   printf("Function pointer value after %x\n", f->function_pointer);
+   asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(f->function_pointer)));
+   printf("\nFunction pointer tag after %x\n", debug_tag);
+
   //strcpy(f->buffer, argv[1]); //Variant with arguments passed
+
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((f->buffer)));
+  printf("\nf-buffer after strcpy %x\n", debug_tag);
+
+  printf("\n\n");
 
   int testvar = 5;
   int ret = 0;

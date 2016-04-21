@@ -1,6 +1,7 @@
 // A hello world stack ret adress attack program
 
 #include <stdio.h>
+#include <string.h>
 //#include "uart.h"
 /*
 extern void asm_set_tagctrl(long tag_ctrl);
@@ -22,11 +23,17 @@ void nix()
 
 int test(int var)
 {
+  //char test[2];
+  //test[0] = 0xdE;
+  //test[1] = 0xBF;
 int y = 4;
   y += var;
   long x[10];
   nix();
-  //x[12] =  (0xdeadbeef);
+ // x[12] =  (0xdeadbeef);
+ // memcpy(x + 12, test, sizeof(char) * 2);
+  //x[12] =  bla;
+
   x[12] =  &attack_sucessful;
 
   return y;

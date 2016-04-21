@@ -749,10 +749,23 @@ class L1AMOALU extends L1HellaCacheModule {
 
   //val wmask = FillInterleaved(8, storegen.mask)
   val wmask = storegen.mask
+
+
+  //Now there is a workaround. In order to propagate the invalid tag over byte or word writes,
+  //The saved tags are also copied into the result. However for the return adress tag this rule can not apply.
+  //Like this byte writes with tag 0 would not reset the tag of the 64-bit field , therefore this tag is masked out
+  ///-----------------------------------------------------------------------------
+  val tag_out = Mux(word, io.rhs(67,64) | (io.lhs(67,64) & UInt(13)), io.rhs(67,64) )
+  io.out := wmask & out(coreDataBits - 1 , 0) | ~wmask & io.lhs(coreDataBits -1,0) | (Mux(storegen.tag, io.rhs(memTagBits-1,0), tag_out) << 64)
+  ///-----------------------------------------------------------------------------
+
+
+  ///-----------------------------------------------------------------------------
   //Currently the tag form store operation frome core is used and the previeos tag is dicarded
   // (could be set up with mask in future for writing tags per 32 bit)
-  io.out := wmask & out(coreDataBits - 1 , 0) | ~wmask & io.lhs(coreDataBits -1,0) | (Mux(storegen.tag, io.rhs(memTagBits-1,0), io.rhs(67,64)) << 64)
-  //sio.out := Cat(io.rhs(67,64), wmask & out | ~wmask & io.lhs) //append tag
+
+  //io.out := wmask & out(coreDataBits - 1 , 0) | ~wmask & io.lhs(coreDataBits -1,0) | (Mux(storegen.tag, io.rhs(memTagBits-1,0), io.rhs(67,64)) << 64)
+  ///-----------------------------------------------------------------------------
 }
 
 class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal) {
