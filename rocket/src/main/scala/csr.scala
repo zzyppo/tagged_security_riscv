@@ -277,7 +277,7 @@ class CSRFile(id:Int) extends CoreModule
   }
 
   //Tag Control
-  read_mapping += PCRs.ptagctrl -> io.pcr.resp.bits.data //Anyway retruns only 0 at the moment
+  read_mapping += PCRs.ptagctrl -> io.pcr.resp.bits.data
   pcr_mapping += PCRs.ptagctrl -> PCRs.ptagctrl
 
   val addr = io.rw.addr

@@ -122,7 +122,7 @@ class PCRControl extends PCRModule {
     PCRs.ptime -> reg_time,
     PCRs.ptohost -> UInt(0),
     PCRs.preset -> UInt(0),
-    PCRs.ptagctrl -> UInt(0)  //Always read 0
+    PCRs.ptagctrl -> reg_tag_ctrl  //Read tag control register [Switch to 0 if this is a security issue]
   )
 
   // memory map

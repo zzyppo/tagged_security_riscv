@@ -10,6 +10,10 @@ extern void asm_set_tagctrl(long tag_ctrl);
 extern long syscall(long num, long arg0, long arg1, long arg2);
 */
 
+int used = 0;
+char buffer[100];
+
+
 typedef struct {
   unsigned long dev;
   unsigned long cmd;
@@ -23,8 +27,12 @@ __attribute__((always_inline)) static int test_func(unsigned char ch)
    int test_tag = 0;
    unsigned long temp = 0;
    temp = ch;
+   *(buffer + used) = ch;
+   used++;
    asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((&temp)));
-   
+
+   if(used == 100)
+     used = 0;
    return 0;
 }
 
@@ -43,7 +51,7 @@ int main() {
   //long a[2];
   int test_tag = 0;
   unsigned long uart_data = 0;
-  write_csr(0x400,7);
+  write_csr(0x400,0xF);
 
   sbi_device_message m;
   
@@ -60,8 +68,8 @@ int main() {
   char test2 = 0xb;
   char test3 = 0xc;
  
-  
-  transmitt(&m);
+  while(1)
+    transmitt(&m);
   
   return 0;
 }

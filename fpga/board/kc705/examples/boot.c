@@ -31,7 +31,9 @@ int main (void)
   uint8_t *memory_base = (uint8_t *)(get_ddr_base());
 
   //Modify tag control register (testing purpose)
-  write_csr(0x400,3); //Checks on / io invalid tag generation off
+ // write_csr(0x400,3); //Checks on / io invalid tag generation off
+  write_csr(0x400,0xB); //Checks on / io invalid tag generation off
+  //write_csr(0x400,0xD); //Checks on / io invalid tag generation off
 
   // map DDR3 to IO
   syscall(SYS_set_membase, 0x0, 0x3fffffff, 0x0); /* BRAM, 0x00000000 - 0x3fffffff */

@@ -18,11 +18,12 @@ trap_table:
   .word bad_trap
   .word bad_trap
   .word tag_trap
-#define HTIF_INTERRUPT_VECTOR 13
+  .word debug_tag_trap
+#define HTIF_INTERRUPT_VECTOR 14
   .word htif_interrupt
-#define TRAP_FROM_MACHINE_MODE_VECTOR 14
+#define TRAP_FROM_MACHINE_MODE_VECTOR 15
   .word trap_from_machine_mode
-#define IO_INTERRUPT_VECTOR 15
+#define IO_INTERRUPT_VECTOR 16
   .word io_irq_service
   .word bad_trap
 
@@ -38,6 +39,7 @@ trap_table:
   | (0 << (31- 8)) /* user environment call */   \
   | (0 << (31- 9)) /* super environment call */  \
   | (1 << (31- 12)) /* tag trap */               \
+  | (1 << (31- 13)) /* debug tag trap */         \
 
 #define HANDLE_SUPERVISOR_TRAP_IN_MACHINE_MODE 0 \
   | (0 << (31- 0)) /* IF misaligned */           \
@@ -51,6 +53,7 @@ trap_table:
   | (0 << (31- 8)) /* user environment call */   \
   | (1 << (31- 9)) /* super environment call */  \
   | (1 << (31- 12)) /* tag trap */               \
+  | (1 << (31- 13)) /* debug tag trap */         \
 
   .option norvc
   .section .text.init,"ax",@progbits

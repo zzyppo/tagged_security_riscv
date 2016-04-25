@@ -69,6 +69,19 @@ void __attribute__((noreturn)) tag_trap()
   panic("machine mode: tag trap triggered [%d] @ %p", read_csr(mcause), read_csr(mepc));
 }
 
+void __attribute__((noreturn)) debug_tag_trap()
+{
+/*
+  printk("Content of Tag Partition\n");
+
+  for (uint64_t i = 0x3c000000; i < 0x3fffffff; i+=8)
+       printk("%x,", (*(uint64_t*)i));
+  printk("\n");
+  */
+
+  panic("machine mode: debug tag trap triggered [%d] @ %p", read_csr(mcause), read_csr(mepc));
+}
+
 uintptr_t htif_interrupt(uintptr_t mcause, uintptr_t* regs)
 {
   panic("htif_interrupt(): no record");
@@ -448,6 +461,8 @@ uintptr_t trap_from_machine_mode(uintptr_t dummy, uintptr_t* regs)
       return mcall_trap(mcause, regs);
     case CAUSE_TAG_TRAP:
       tag_trap();
+    case CAUSE_DEBUG_TAG_TRAP:
+       debug_tag_trap();
     default:
       bad_trap();
   }

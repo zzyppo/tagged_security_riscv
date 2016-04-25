@@ -1,0 +1,465 @@
+[*]
+[*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
+[*] Thu Apr 21 15:28:38 2016
+[*]
+[dumpfile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/output/tag.vcd"
+[dumpfile_mtime] "Thu Apr 21 15:23:31 2016"
+[dumpfile_size] 341703936
+[savefile] "/home/zaepo/iaikgit/2015_master_jantscher/code/vsim/gtkwave_presets/pipeline_debug_tag_trap.gtkw"
+[timestart] 16966
+[size] 1855 978
+[pos] -1 -1
+*-4.388599 17020 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.v.
+[treeopen] TOP.v.Rocket.
+[treeopen] TOP.v.Rocket.RocketTile.
+[treeopen] TOP.v.Rocket.RocketTile.core.
+[treeopen] TOP.v.Rocket.RocketTile.dcache.
+[treeopen] TOP.v.Rocket.RocketTile.dcache.data.
+[treeopen] TOP.v.Rocket.RocketTile.dcache.dtlb.
+[sst_width] 373
+[signals_width] 461
+[sst_expanded] 1
+[sst_vpaned_height] 487
+@28
+[color] 2
+TOP.v.clk
+@c00024
+[color] 2
+TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+@28
+(0)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(1)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(2)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(3)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(4)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(5)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(6)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(7)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(8)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(9)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(10)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(11)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(12)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(13)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(14)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(15)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(16)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(17)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(18)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(19)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(20)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(21)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(22)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(23)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(24)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(25)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(26)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(27)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(28)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(29)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(30)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(31)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(32)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(33)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(34)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(35)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(36)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(37)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(38)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(39)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(40)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(41)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(42)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(43)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(44)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(45)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(46)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(47)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(48)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(49)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(50)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(51)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(52)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(53)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(54)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(55)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(56)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(57)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(58)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(59)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(60)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(61)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(62)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+(63)TOP.v.Rocket.RocketTile.core.csr.io_time[63:0]
+@1401200
+-group_end
+@28
+TOP.v.Rocket.RocketTile.core.ctrl_stalld
+TOP.v.Rocket.RocketTile.core.ctrl_killd
+TOP.v.Rocket.RocketTile.core.ctrl_killx
+TOP.v.Rocket.RocketTile.core.ctrl_killm
+[color] 3
+TOP.v.Rocket.RocketTile.core.io_imem_resp_valid
+@c00022
+[color] 3
+TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+@28
+[color] 2
+(0)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(1)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(2)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(3)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(4)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(5)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(6)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(7)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(8)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(9)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(10)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(11)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(12)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(13)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(14)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(15)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(16)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(17)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(18)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(19)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(20)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(21)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(22)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(23)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(24)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(25)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(26)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(27)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(28)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(29)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(30)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(31)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(32)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(33)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(34)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(35)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(36)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(37)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(38)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+[color] 2
+(39)TOP.v.Rocket.RocketTile.core.io_imem_resp_bits_pc[39:0]
+@1401200
+-group_end
+@22
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_mem_cmd[4:0]
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_mem_type[3:0]
+@c00028
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_sel_imm[2:0]
+@28
+[color] 3
+(0)TOP.v.Rocket.RocketTile.core.id_ctrl_sel_imm[2:0]
+[color] 3
+(1)TOP.v.Rocket.RocketTile.core.id_ctrl_sel_imm[2:0]
+[color] 3
+(2)TOP.v.Rocket.RocketTile.core.id_ctrl_sel_imm[2:0]
+@1401200
+-group_end
+@28
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_branch
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_mem
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_rxs1
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_rxs2
+@22
+TOP.v.Rocket.RocketTile.core.id_rs_0[63:0]
+TOP.v.Rocket.RocketTile.core.id_rs_1[63:0]
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_tags_0[3:0]
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_tags_1[3:0]
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_waddr[4:0]
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_raddr_0[4:0]
+@c00022
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_raddr_1[4:0]
+@28
+[color] 3
+(0)TOP.v.Rocket.RocketTile.core.id_raddr_1[4:0]
+[color] 3
+(1)TOP.v.Rocket.RocketTile.core.id_raddr_1[4:0]
+[color] 3
+(2)TOP.v.Rocket.RocketTile.core.id_raddr_1[4:0]
+[color] 3
+(3)TOP.v.Rocket.RocketTile.core.id_raddr_1[4:0]
+[color] 3
+(4)TOP.v.Rocket.RocketTile.core.id_raddr_1[4:0]
+@1401200
+-group_end
+@22
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_raddr3[4:0]
+@28
+[color] 3
+TOP.v.Rocket.RocketTile.core.id_ctrl_wxd
+@c00022
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+@28
+(0)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(1)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(2)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(3)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(4)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(5)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(6)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(7)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(8)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(9)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(10)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(11)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(12)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(13)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(14)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(15)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(16)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(17)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(18)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(19)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(20)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(21)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(22)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(23)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(24)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(25)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(26)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(27)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(28)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(29)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(30)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(31)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(32)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(33)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(34)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(35)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(36)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(37)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(38)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+(39)TOP.v.Rocket.RocketTile.core.ex_reg_pc[39:0]
+@1401200
+-group_end
+@28
+TOP.v.Rocket.RocketTile.core.ex_ctrl_rxs1
+TOP.v.Rocket.RocketTile.core.ex_ctrl_rxs2
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_reg_rs_bypass_0
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_reg_rs_bypass_1
+@22
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_rs_0[63:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_rs_1[63:0]
+@28
+TOP.v.Rocket.RocketTile.core.ex_reg_rs_lsb_0[1:0]
+TOP.v.Rocket.RocketTile.core.ex_reg_rs_lsb_0[1:0]
+@22
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_imm[31:0]
+@28
+TOP.v.Rocket.RocketTile.core.ex_reg_valid
+TOP.v.Rocket.RocketTile.core.ex_ctrl_wxd
+TOP.v.Rocket.RocketTile.core.mem_reg_valid
+TOP.v.Rocket.RocketTile.core.mem_ctrl_wxd
+TOP.v.Rocket.RocketTile.core.mem_ctrl_mem
+@22
+TOP.v.Rocket.RocketTile.core.tagALU.io_fn[3:0]
+TOP.v.Rocket.RocketTile.core.tagALU.io_out[3:0]
+TOP.v.Rocket.RocketTile.core.tagALU.io_in1[3:0]
+TOP.v.Rocket.RocketTile.core.tagALU.io_in2[3:0]
+@28
+TOP.v.Rocket.RocketTile.core.ex_ctrl_sel_alu1[1:0]
+TOP.v.Rocket.RocketTile.core.ex_ctrl_sel_alu2[1:0]
+@22
+TOP.v.Rocket.RocketTile.core.alu.sum[63:0]
+TOP.v.Rocket.RocketTile.core.alu.out64[63:0]
+@28
+TOP.v.Rocket.RocketTile.core.tagALU.io_jal
+TOP.v.Rocket.RocketTile.core.tagALU.io_jalr
+@22
+TOP.v.Rocket.RocketTile.core.bypass_mux_1[63:0]
+TOP.v.Rocket.RocketTile.core.bypass_mux_2[63:0]
+TOP.v.Rocket.RocketTile.core.dcache_bypass_data[63:0]
+TOP.v.Rocket.RocketTile.core.bypass_mux_tags_1[3:0]
+TOP.v.Rocket.RocketTile.core.tagCheckUint.reg_tag_ctrl[63:0]
+TOP.v.Rocket.RocketTile.core.bypass_mux_tags_2[3:0]
+TOP.v.Rocket.RocketTile.core.dcache_bypass_data_tag[3:0]
+TOP.v.Rocket.RocketTile.core.bypass_mux_1[63:0]
+@28
+TOP.v.Rocket.RocketTile.core.tagCheckUint.io_invalid_jump
+TOP.v.Rocket.RocketTile.core.tagCheckUint.io_debug_trap
+@22
+TOP.v.Rocket.RocketTile.core.tagCheckUint.reg_tag_ctrl[63:0]
+TOP.v.Rocket.RocketTile.core.bypass_mux_2[63:0]
+TOP.v.Rocket.RocketTile.core.mem_reg_tagr2[3:0]
+TOP.v.Rocket.RocketTile.core.bypass_mux_tags_2[3:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_tags_0[3:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_tags_1[3:0]
+TOP.v.Rocket.RocketTile.core.alu.io_in1[63:0]
+@28
+TOP.v.Rocket.RocketTile.core.tagCheckUint.io_invalid_jump
+@22
+TOP.v.Rocket.RocketTile.core.alu.io_in2[63:0]
+TOP.v.Rocket.RocketTile.core.alu.io_adder_out[63:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_addr[39:0]
+@28
+[color] 5
+TOP.v.Rocket.RocketTile.core.ex_slow_bypass
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_valid
+@22
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_tag[7:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_typ[3:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_cmd[4:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_addr[39:0]
+[color] 5
+TOP.v.Rocket.RocketTile.core.io_dmem_req_bits_data[67:0]
+[color] 1
+TOP.v.Rocket.RocketTile.core.mem_reg_pc[39:0]
+[color] 1
+TOP.v.Rocket.RocketTile.core.mem_reg_tagr2[3:0]
+[color] 7
+TOP.v.Rocket.RocketTile.core.wb_reg_pc[39:0]
+@28
+[color] 7
+TOP.v.Rocket.RocketTile.core.dmem_resp_valid
+@22
+[color] 7
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_tag[7:0]
+[color] 7
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_typ[3:0]
+[color] 7
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_addr[39:0]
+[color] 7
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_cmd[4:0]
+@28
+[color] 7
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_has_data
+@22
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_data_subword[67:0]
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_data[67:0]
+TOP.v.Rocket.RocketTile.core.io_dmem_resp_bits_store_data[67:0]
+[color] 7
+TOP.v.Rocket.RocketTile.core.dmem_resp_waddr[4:0]
+@28
+[color] 7
+TOP.v.Rocket.RocketTile.core.wb_wen
+[color] 7
+TOP.v.Rocket.RocketTile.core.wb_valid
+@22
+[color] 7
+TOP.v.Rocket.RocketTile.core.wb_waddr[4:0]
+@28
+[color] 7
+TOP.v.Rocket.RocketTile.core.wb_ctrl_wxd
+[color] 7
+TOP.v.Rocket.RocketTile.core.rf_wen
+@22
+[color] 7
+TOP.v.Rocket.RocketTile.core.rf_waddr[4:0]
+[color] 7
+TOP.v.Rocket.RocketTile.core.rf_wdata[63:0]
+@23
+TOP.v.Rocket.RocketTile.core.tag_wdata[3:0]
+@22
+TOP.v.Rocket.RocketTile.dcache.data.io_write_bits_data[135:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.data.io_read_valid
+@22
+TOP.v.Rocket.RocketTile.dcache.data.io_read_bits_addr[10:0]
+TOP.v.Rocket.RocketTile.dcache.data.io_resp_0[135:0]
+TOP.v.Rocket.RocketTile.dcache.data.io_resp_1[135:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.data.io_read_ready
+TOP.v.Rocket.RocketTile.dcache.data.io_write_ready
+TOP.v.Rocket.RocketTile.dcache.data.io_write_valid
+@22
+TOP.v.Rocket.RocketTile.dcache.data.io_write_bits_data[135:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.data.io_write_valid
+@22
+TOP.v.Rocket.RocketTile.dcache.s1_req_data[67:0]
+TOP.v.Rocket.RocketTile.dcache.s2_data_0[135:0]
+TOP.v.Rocket.RocketTile.dcache.s2_data_1[135:0]
+TOP.v.Rocket.RocketTile.dcache.s2_req_addr[39:0]
+TOP.v.Rocket.RocketTile.dcache.s2_req_data[67:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.s2_data_correctable
+TOP.v.Rocket.RocketTile.dcache.s2_data_correctable
+TOP.v.Rocket.RocketTile.dcache.data.io_write_valid
+@22
+TOP.v.Rocket.RocketTile.dcache.data.io_write_bits_data[135:0]
+TOP.v.Rocket.RocketTile.dcache.amoalu_io_out[67:0]
+TOP.v.Rocket.RocketTile.dcache.s3_req_data_[67:0]
+TOP.v.Rocket.RocketTile.dcache.amoalu.io_typ[3:0]
+TOP.v.Rocket.RocketTile.dcache.amoalu.io_rhs[67:0]
+TOP.v.Rocket.RocketTile.dcache.amoalu.io_lhs[67:0]
+@28
+TOP.v.Rocket.RocketTile.dcache.s2_store_bypass
+@22
+TOP.v.Rocket.RocketTile.dcache.s2_store_bypass_data[67:0]
+TOP.v.Rocket.RocketTile.dcache.amoalu.io_rhs[67:0]
+[pattern_trace] 1
+[pattern_trace] 0

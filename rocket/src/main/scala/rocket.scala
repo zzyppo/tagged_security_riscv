@@ -242,6 +242,12 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   tagCheckUint.io.update <> io.pcr.update //Need the pcr upadate for the tag control register
   val tag_exception = tagCheckUint.io.invalid_jump
 
+  //Debug(Remove)
+  tagCheckUint.io.debug_tag_in1 := Mux(ex_ctrl.rxs1, ex_tags(0), UInt("b0000"))
+  tagCheckUint.io.debug_tag_in2 := Mux(ex_ctrl.rxs2, ex_tags(1), UInt("b0000"))
+
+  val debug_tag_exception = tagCheckUint.io.debug_trap
+
 
 
   // multiplier and divider
@@ -300,7 +306,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val (ex_xcpt, ex_cause) = checkExceptions(List(
     (ex_reg_xcpt_interrupt || ex_reg_xcpt, ex_reg_cause),
     (ex_ctrl.fp && io.fpu.illegal_rm,      UInt(Causes.illegal_instruction)),
-    (tag_exception,                         UInt(Causes.tag_trap)))) //add tag trap type to the list
+    (tag_exception,                         UInt(Causes.tag_trap)),
+    (debug_tag_exception,                   UInt(Causes.debug_tag_trap)))) //add tag trap type to the list
 
   // memory stage
   val mem_br_taken = mem_reg_wdata(0)

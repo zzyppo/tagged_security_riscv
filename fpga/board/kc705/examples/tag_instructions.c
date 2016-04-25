@@ -32,11 +32,14 @@ int dummyfunc()
 
 }
 
+#define write_csr(reg, val) \
+  asm volatile ("csrw " #reg ", %0" :: "r"(val))
 
 int main() {
 
+ write_csr(0x400, 0xF); // Activate al checks + dummy trap check
  int dummy_var = 5;
- uart_init();
+
   dummy_var = dummyfunc();
 
  a[0] = 0xDDDDDDFEFEEFFFFF;
@@ -56,6 +59,7 @@ long bla = 0x00000aaaa;
 
 a[0] = 0xBBBBBBFEFEEFFFFF;
 asm volatile ("stag %0, 0(%1)" ::"r"(tag_in), "r"(a));
+asm volatile ("ltag %0, 0(%1)":"=r"(temp):"r"(a));
 a[1] = a[0] - 0xF;
 if(a[0] != 0xBBBBBBFEFEEFFFFF)
 {
