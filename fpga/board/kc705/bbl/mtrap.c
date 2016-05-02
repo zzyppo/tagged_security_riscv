@@ -71,14 +71,6 @@ void __attribute__((noreturn)) tag_trap()
 
 void __attribute__((noreturn)) debug_tag_trap()
 {
-/*
-  printk("Content of Tag Partition\n");
-
-  for (uint64_t i = 0x3c000000; i < 0x3fffffff; i+=8)
-       printk("%x,", (*(uint64_t*)i));
-  printk("\n");
-  */
-
   panic("machine mode: debug tag trap triggered [%d] @ %p", read_csr(mcause), read_csr(mepc));
 }
 
@@ -105,11 +97,6 @@ uintptr_t io_irq_service(uintptr_t mcause, uintptr_t* regs)
     if (m->dev == 0 && m->cmd == HTIF_CMD_READ) {
       uint8_t ch = uart_read_irq();
       m->data = 0x100 | ch;
-      int tag = 0;
-      printk("char is %c", ch);
-     // unsigned long message = m->data;
-      asm volatile ("ltag %0, 0(%1)":"=r"(tag):"r"((&(m->data))));
-      printk("tag is %x", tag);
 
       // dequeue from request queue
       if (prev)
@@ -221,7 +208,7 @@ static uintptr_t mcall_dev_req(sbi_device_message *m)
         }
       case HTIF_CMD_READ:       /* uart read */
         {
-        printk("Uart read\n");
+         // printk("Uart read\n");
           write_csr(0x7c0, 0x01); /* enable irq0 */
 
           // store the message in request queue
@@ -271,7 +258,7 @@ static uintptr_t mcall_dev_req(sbi_device_message *m)
         }
       case HTIF_CMD_READ:       /* disk read */
         {
-          printk("Read file..\n");
+          //printk("Read file..\n");
           disk_request_t *req = (disk_request_t *)m->data;
           if(file_pread(ramdisk, (void *)req->addr, req->size, req->offset) != req->size) {
             panic("disk cannot read %d bytes @%d!", req->size, req->offset);

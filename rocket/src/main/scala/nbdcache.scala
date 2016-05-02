@@ -226,7 +226,7 @@ class IOMSHR extends L1HellaCacheModule {
     io_data := io.outer_gnt.bits.data
   }
   //io.io_data := Cat(UInt("b0000"),io_data) //Insert tag INALID if enabled
-  io.io_data := Cat(Mux(io.tag_enfore_on, UInt("b0001"), UInt("b0000")),io_data)
+  io.io_data := Cat(Mux(io.tag_enfore_on, UInt(INV_TAG, width = memTagBits), UInt(0, width = memTagBits)), io_data)
 
   // replay
   io.replay.valid := state === s_replay
@@ -751,12 +751,16 @@ class L1AMOALU extends L1HellaCacheModule {
   val wmask = storegen.mask
 
 
+  val word_tag_mask = ~UInt(RET_TAG, width = memTagBits) //Use all tags exept the RET_TAG
+
   //Now there is a workaround. In order to propagate the invalid tag over byte or word writes,
   //The saved tags are also copied into the result. However for the return adress tag this rule can not apply.
   //Like this byte writes with tag 0 would not reset the tag of the 64-bit field , therefore this tag is masked out
   ///-----------------------------------------------------------------------------
-  val tag_out = Mux(word, io.rhs(67,64) | (io.lhs(67,64) & UInt(13)), io.rhs(67,64) )
-  io.out := wmask & out(coreDataBits - 1 , 0) | ~wmask & io.lhs(coreDataBits -1,0) | (Mux(storegen.tag, io.rhs(memTagBits-1,0), tag_out) << 64)
+  val tag_out = Mux(word, io.rhs(taggedDataBits -1,coreDataBits) | (io.lhs(taggedDataBits-1,coreDataBits) & word_tag_mask),
+                    io.rhs(taggedDataBits -1,coreDataBits))
+
+  io.out := wmask & out(coreDataBits - 1 , 0) | ~wmask & io.lhs(coreDataBits -1,0) | (Mux(storegen.tag, io.rhs(memTagBits-1,0), tag_out) << coreDataBits)
   ///-----------------------------------------------------------------------------
 
 
@@ -796,7 +800,7 @@ class HellaCache(resetSignal:Bool = null) extends L1HellaCacheModule(resetSignal
   }
 
   def ioTagEnfoceOn(tag_ctrl:UInt) : Bool = {
-    (tag_ctrl & UInt(4)) === UInt(4)
+    (tag_ctrl & INV_TAG_GENEARTION) === INV_TAG_GENEARTION
   }
 
   val wb = Module(new WritebackUnit)

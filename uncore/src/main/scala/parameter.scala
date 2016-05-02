@@ -61,7 +61,6 @@ case object TagBlockTagBits extends Field[Int]
 
 
 
-
 // Rocket Core Constants
 case object XLen extends Field[Int]
 

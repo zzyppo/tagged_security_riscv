@@ -32,6 +32,9 @@ unsigned long long lfsr64(unsigned long long d) {
 #define VERIFY_DISTANCE 16
 
 
+#define write_csr(reg, val) \
+  asm volatile ("csrw " #reg ", %0" :: "r"(val))
+
 int main() {
   unsigned long waddr = 0;
   unsigned long raddr = 0;
@@ -44,6 +47,7 @@ int main() {
 int temp = 0;
   long array[2];
 
+ write_csr(0x400,0x0);
 #ifndef IS_SIMULATION
   uart_init();
   printf("DRAM test program.\n");

@@ -60,6 +60,7 @@
 #define IRQ_TIMER  1
 #define IRQ_HOST   2
 #define IRQ_COP    3
+#define IRQ_IO     4
 
 #define IMPL_ROCKET 1
 

@@ -55,9 +55,9 @@ int main() {
 
   sbi_device_message m;
   
- // uart_data = *(((unsigned long *)0x80000000));
-   uart_data = 0x0f;
-   asm volatile ("stag %0, 0(%1)" ::"r"(1), "r"(&uart_data));
+  uart_data = *(((unsigned long *)0x80000000));
+  // uart_data = 0x0f;
+ //  asm volatile ("stag %0, 0(%1)" ::"r"(1), "r"(&uart_data));
 
   m.data = uart_data;
  
@@ -67,8 +67,8 @@ int main() {
   char test1 = 0xa;
   char test2 = 0xb;
   char test3 = 0xc;
- 
-  while(1)
+
+
     transmitt(&m);
   
   return 0;

@@ -165,13 +165,13 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
     (id_illegal_insn,           UInt(Causes.illegal_instruction))))
 
   val dcache_bypass_data =
-    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(63,0) // without tag
-    else if(params(FastLoadWord)) io.dmem.resp.bits.data(63,0)
+    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(xLen - 1, 0) // without tag
+    else if(params(FastLoadWord)) io.dmem.resp.bits.data(xLen - 1, 0)
     else wb_reg_wdata
 
   val dcache_bypass_data_tag =
-    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(67,64) // only tag
-    else if(params(FastLoadWord)) io.dmem.resp.bits.data(67,64)
+    if(params(FastLoadByte)) io.dmem.resp.bits.data_subword(xLen + tagLen - 1, xLen) // only tag
+    else if(params(FastLoadWord)) io.dmem.resp.bits.data(xLen + tagLen - 1, xLen)
     else wb_reg_tagdata
 
   // detect bypass opportunities
@@ -226,8 +226,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val tagALU = Module(new TagALU(resetSignal = io.power_on_reset))
   tagALU.io.fn := ex_ctrl.alu_fn
   tagALU.io.is_mv := is_mv
-  tagALU.io.in1 := Mux(ex_ctrl.rxs1, ex_tags(0), UInt("b0000")) //Only take input tag if there was a register read
-  tagALU.io.in2 := Mux(ex_ctrl.rxs2, ex_tags(1), UInt("b0000")) //Only take input tag if there was a register read
+  tagALU.io.in1 := Mux(ex_ctrl.rxs1, ex_tags(0), UInt(0, width = tagLen)) //Only take input tag if there was a register read
+  tagALU.io.in2 := Mux(ex_ctrl.rxs2, ex_tags(1), UInt(0, width = tagLen)) //Only take input tag if there was a register read
   tagALU.io.jal := ex_ctrl.jal
   tagALU.io.jalr := ex_ctrl.jalr
 
@@ -243,8 +243,8 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val tag_exception = tagCheckUint.io.invalid_jump
 
   //Debug(Remove)
-  tagCheckUint.io.debug_tag_in1 := Mux(ex_ctrl.rxs1, ex_tags(0), UInt("b0000"))
-  tagCheckUint.io.debug_tag_in2 := Mux(ex_ctrl.rxs2, ex_tags(1), UInt("b0000"))
+  tagCheckUint.io.debug_tag_in1 := Mux(ex_ctrl.rxs1, ex_tags(0), UInt(0, width = tagLen))
+  tagCheckUint.io.debug_tag_in2 := Mux(ex_ctrl.rxs2, ex_tags(1), UInt(0, width = tagLen))
 
   val debug_tag_exception = tagCheckUint.io.debug_trap
 
@@ -424,16 +424,16 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   val wb_wen = wb_valid && wb_ctrl.wxd
   val rf_wen = wb_wen || ll_wen 
   val rf_waddr = Mux(ll_wen, ll_waddr, wb_waddr)
-  val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(63,0),
+  val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(xLen-1,0),
                  Mux(ll_wen, ll_wdata,
                  Mux(wb_ctrl.csr != CSR.N, csr.io.rw.rdata,
                  wb_reg_wdata)))
   when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
 
   //Writeback Tags
-  val tag_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(67,64),
-    Mux(ll_wen, UInt(0),
-      Mux(wb_ctrl.csr != CSR.N, UInt(0),
+  val tag_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data_subword(xLen + tagLen-1, xLen),
+    Mux(ll_wen, UInt(0, width = tagLen),
+      Mux(wb_ctrl.csr != CSR.N, UInt(0, width = tagLen),
         wb_reg_tagdata)))
 
   when(rf_wen) {trf.write(rf_waddr,tag_wdata)}
@@ -543,7 +543,7 @@ class Rocket (id:Int, resetSignal:Bool = null) extends CoreModule(resetSignal)
   io.fpu.inst := id_inst
   io.fpu.fromint_data := ex_rs(0)
   io.fpu.dmem_resp_val := dmem_resp_valid && dmem_resp_fpu
-  io.fpu.dmem_resp_data := io.dmem.resp.bits.data(63,0)
+  io.fpu.dmem_resp_data := io.dmem.resp.bits.data(xLen-1,0)
   io.fpu.dmem_resp_type := io.dmem.resp.bits.typ
   io.fpu.dmem_resp_tag := dmem_resp_waddr
 

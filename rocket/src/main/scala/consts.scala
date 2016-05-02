@@ -52,4 +52,16 @@ trait ScalarOpConstants {
   val PRV_S = 1
   val PRV_H = 2
   val PRV_M = 3
+
+  //Tag policy Constants
+  val INV_TAG = 1
+  val RET_TAG = 2
+
+  val USER_TAG_OFFS = 2 //bit 0 and 1 are used policy tags every bit afterwards is user tag
+
+  val RET_TAG_CHECK = UInt(1)
+  val INV_TAG_CHECK = UInt(2)
+  val INV_TAG_GENEARTION = UInt(4)
+  val DEBUG_TAG_CHECK = UInt(8)
+
 }

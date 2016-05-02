@@ -10,6 +10,7 @@
 #include "uart.h"
 
 #define SYS_write 64
+#define SYS_read 65
 #define SYS_exit 93
 #define SYS_stats 1234
 #define SYS_soft_reset 617
@@ -47,10 +48,19 @@ static long handle_frontend_syscall(long which, long arg0, long arg1, long arg2)
   return magic_mem[0];
   */
 
-  // currently it must be SYS_write
-  char *s = (char *)arg1;
-  while(arg2--) {
-    uart_send(*s++);
+  if(which == SYS_write)
+  {
+    // currently it must be SYS_write
+    char *s = (char *)arg1;
+    while(arg2--) {
+      uart_send(*s++);
+    }
+  }
+  else if(which == SYS_read)
+  {
+    char *s = (char *)arg1;
+    *s = uart_recv();
+    uart_send(*s);
   }
 
   return 0;
@@ -484,4 +494,119 @@ int sprintf(char* str, const char* fmt, ...)
 
   va_end(ap);
   return str - str0;
+}
+
+//This is a very cheap scanf
+int scanf(const char* fmt, ...)
+{
+  int d;
+  char c, *s;
+  int len = 0;
+  uint8_t receive = 1;
+
+  va_list ap;
+  va_start(ap, fmt);
+
+
+  while (*fmt){
+    switch (*fmt++) {
+      case 's':              /* string */
+        s = va_arg(ap, char *);
+        while(receive == 1)
+        {
+          //Read string form frontend (UART)
+
+          syscall(SYS_read, 0, (long)(s + len), 0);
+          char recchar = *(s + len);
+          if(recchar == 13)
+          {
+            s[len] = 0;
+            receive = 0;
+          }
+          else
+          {
+            len++;
+          }
+        }
+        break;
+      case 'c':              /* char */
+        /* need a cast here since va_arg only
+        takes fully promoted types */
+        c = (char) va_arg(ap, int);
+        syscall(SYS_read, 0, (long)(c), 0);
+        break;
+    }
+    va_end(ap);
+  }
+    return 0;
+}
+
+
+void htif_interrupt(uintptr_t mcause, uintptr_t* regs)
+{
+  printf("htif_interrupt(): no record");
+}
+
+void __attribute__((noreturn)) bad_trap()
+{
+  printf("machine mode: unhandlable trap %d @ %p", read_csr(mcause), read_csr(mepc));
+}
+
+uintptr_t trap_from_machine_mode(uintptr_t dummy, uintptr_t* regs)
+{
+ printf("machine mode: trap from machine mode %d @ %p", read_csr(mcause), read_csr(mepc));
+}
+
+uintptr_t io_irq_service(uintptr_t mcause, uintptr_t* regs)
+{
+/*
+  // right now, it must be uart read
+  if(!uart_check_read_irq())
+    panic("io_irq_service() with no uart recv buf available!");
+
+  // get the message from request queue
+  sbi_device_message* m = HLS()->device_request_queue_head;
+  sbi_device_message* prev = NULL;
+  for (size_t i = 0, n = HLS()->device_request_queue_size; i < n; i++) {
+    if (!supervisor_paddr_valid(m, sizeof(*m))
+        && EXTRACT_FIELD(read_csr(mstatus), MSTATUS_PRV1) != PRV_M)
+      panic("io_irq_service(): page fault");
+
+    sbi_device_message* next = (void*)m->sbi_private_data;
+    if (m->dev == 0 && m->cmd == HTIF_CMD_READ) {
+      uint8_t ch = uart_read_irq();
+      m->data = 0x100 | ch;
+      int tag = 0;
+      printk("char is %c", ch);
+     // unsigned long message = m->data;
+      asm volatile ("ltag %0, 0(%1)":"=r"(tag):"r"((&(m->data))));
+      printk("tag is %x", tag);
+
+      // dequeue from request queue
+      if (prev)
+        prev->sbi_private_data = (uintptr_t)next;
+      else
+        HLS()->device_request_queue_head = next;
+      HLS()->device_request_queue_size = n-1;
+      m->sbi_private_data = 0;
+
+      // enqueue to response queue
+      if (HLS()->device_response_queue_tail)
+        HLS()->device_response_queue_tail->sbi_private_data = (uintptr_t)m;
+      else
+        HLS()->device_response_queue_head = m;
+      HLS()->device_response_queue_tail = m;
+
+      // signal software interrupt
+      set_csr(mip, MIP_SSIP);
+      return 0;
+    }
+
+    prev = m;
+    m = (void*)atomic_read(&m->sbi_private_data);
+  }
+
+  */
+
+  printf("io_irq_service(): no record");
 }

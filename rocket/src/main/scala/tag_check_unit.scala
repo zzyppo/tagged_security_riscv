@@ -41,11 +41,11 @@ class TagCheckUnit(resetSignal:Bool = null) extends Module(_reset = resetSignal)
   }
 
   def hasRetTag(tag:UInt): Bool = {
-    (tag & UInt(2)) === UInt(2)
+    (tag & UInt(RET_TAG)) === UInt(RET_TAG)
   }
 
   def hasInvTag(tag:UInt): Bool = {
-    (tag & UInt(1)) === UInt(1)
+    (tag & UInt(INV_TAG)) === UInt(INV_TAG)
   }
 
   def registerIsRA(adress:UInt) : Bool = {
@@ -57,15 +57,15 @@ class TagCheckUnit(resetSignal:Bool = null) extends Module(_reset = resetSignal)
   //2) Register is not RA -> check if INV tag is not set to be valid
 
   def rule1CheckActivated(tag_ctrl:UInt) : Bool = {
-    (tag_ctrl & UInt(1)) === UInt(1)
+    (tag_ctrl & RET_TAG_CHECK) === RET_TAG_CHECK
   }
 
   def rule2CheckActivated(tag_ctrl:UInt) : Bool = {
-    (tag_ctrl & UInt(2)) === UInt(2)
+    (tag_ctrl & INV_TAG_CHECK) === INV_TAG_CHECK
   }
 
   def debugCheckActivated(tag_ctrl:UInt) : Bool = {
-    (tag_ctrl & UInt(8)) === UInt(8)
+    (tag_ctrl & DEBUG_TAG_CHECK) === DEBUG_TAG_CHECK
   }
 
   //val is_valid = (hasRetTag(io.tag_in) && registerIsRA(io.jump_register)) || (!hasInvTag(io.tag_in) && !registerIsRA(io.jump_register))

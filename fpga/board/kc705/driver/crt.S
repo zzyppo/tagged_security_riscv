@@ -11,6 +11,17 @@
 # define SREG sw
 # define REGBYTES 4
 #endif
+
+  .data
+  .align 6
+trap_table:
+#define HTIF_INTERRUPT_VECTOR 0
+  .word htif_interrupt
+#define TRAP_FROM_MACHINE_MODE_VECTOR 1
+  .word trap_from_machine_mode
+#define IO_INTERRUPT_VECTOR 2
+  .word io_irq_service
+
 .comm zaehler, 8
   .text
   .align 6
@@ -63,7 +74,6 @@ _start:
   li  x29,0
   li  x30,0
   li  x31,0
-
 
   li t0, MSTATUS_PRV1; csrc mstatus, t0    # run tests in user mode
   li t0, MSTATUS_IE1;  csrs mstatus, t0    # enable interrupts in user mode
@@ -194,6 +204,7 @@ trap_entry:
   SREG x31, 31*REGBYTES(sp)
 
   csrr a0, mcause
+  bltz a0, .Linterrupt
   csrr a1, mepc
   mv a2, sp
   jal handle_trap
@@ -310,6 +321,137 @@ asm_soft_reset:
 1:  add a1, a1, -1
     bne a1, a0, 1b
     csrw mreset, a0
+
+
+.Linterrupt:
+  sll a0, a0, 1    # discard MSB
+
+  # See if this is a timer interrupt; post a supervisor interrupt if so.
+  li a1, IRQ_TIMER * 2
+  bne a0, a1, 1f
+  li a0, MIP_MTIP
+  csrc mip, a0
+  li a1, MIP_STIP
+  csrc mie, a0
+  csrs mip, a1
+
+1:
+
+  # See if this is an HTIF interrupt; if so, handle it in machine mode.
+  li a1, IRQ_HOST * 2
+  bne a0, a1, 1f
+  li a0, HTIF_INTERRUPT_VECTOR
+  j .Lhandle_trap_in_machine_mode
+
+1:
+  # See if this is a peripheral IRQ; if so, handle it in machine mode.
+  li a1, IRQ_IO * 2
+  bne a0, a1, .Lbad_trap
+  li a0, IO_INTERRUPT_VECTOR
+
+.Lhandle_trap_in_machine_mode:
+  # Preserve the registers.  Compute the address of the trap handler.
+  SREG ra, 1*REGBYTES(sp)
+  csrrw ra, mscratch, sp           # ra <- user sp
+  SREG gp, 3*REGBYTES(sp)
+  SREG tp, 4*REGBYTES(sp)
+  SREG t0, 5*REGBYTES(sp)
+1:auipc t0, %pcrel_hi(trap_table)  # t0 <- %hi(trap_table)
+  SREG t1, 6*REGBYTES(sp)
+  sll t1, a0, 2                    # t1 <- mcause << 2
+  SREG t2, 7*REGBYTES(sp)
+  add t0, t0, t1                   # t0 <- %hi(trap_table)[mcause]
+  SREG s0, 8*REGBYTES(sp)
+  lw t0, %pcrel_lo(1b)(t0)         # t0 <- trap_table[mcause]
+  SREG s1, 9*REGBYTES(sp)
+  mv a1, sp                        # a1 <- regs
+  SREG a2,12*REGBYTES(sp)
+  SREG a3,13*REGBYTES(sp)
+  SREG a4,14*REGBYTES(sp)
+  SREG a5,15*REGBYTES(sp)
+  SREG a6,16*REGBYTES(sp)
+  SREG a7,17*REGBYTES(sp)
+  SREG s2,18*REGBYTES(sp)
+  SREG s3,19*REGBYTES(sp)
+  SREG s4,20*REGBYTES(sp)
+  SREG s5,21*REGBYTES(sp)
+  SREG s6,22*REGBYTES(sp)
+  SREG s7,23*REGBYTES(sp)
+  SREG s8,24*REGBYTES(sp)
+  SREG s9,25*REGBYTES(sp)
+  SREG s10,26*REGBYTES(sp)
+  SREG s11,27*REGBYTES(sp)
+  SREG t3,28*REGBYTES(sp)
+  SREG t4,29*REGBYTES(sp)
+  SREG t5,30*REGBYTES(sp)
+  SREG t6,31*REGBYTES(sp)
+  SREG ra, 2*REGBYTES(sp)         # sp
+
+#ifndef __riscv_hard_float
+  lw tp, (sp) # Move the emulated FCSR from x0's save slot into tp.
+#endif
+  SREG x0, (sp) # Zero x0's save slot.
+
+
+
+  # Invoke the handler.
+  jalr t0
+
+#ifndef __riscv_hard_float
+  sw tp, (sp) # Move the emulated FCSR from tp into x0's save slot.
+#endif
+
+  # Restore all of the registers.
+  LREG ra, 1*REGBYTES(sp)
+  LREG gp, 3*REGBYTES(sp)
+  LREG tp, 4*REGBYTES(sp)
+  LREG t0, 5*REGBYTES(sp)
+  LREG t1, 6*REGBYTES(sp)
+  LREG t2, 7*REGBYTES(sp)
+  LREG s0, 8*REGBYTES(sp)
+  LREG s1, 9*REGBYTES(sp)
+  LREG a1,11*REGBYTES(sp)
+  LREG a2,12*REGBYTES(sp)
+  LREG a3,13*REGBYTES(sp)
+  LREG a4,14*REGBYTES(sp)
+  LREG a5,15*REGBYTES(sp)
+  LREG a6,16*REGBYTES(sp)
+  LREG a7,17*REGBYTES(sp)
+  LREG s2,18*REGBYTES(sp)
+  LREG s3,19*REGBYTES(sp)
+  LREG s4,20*REGBYTES(sp)
+  LREG s5,21*REGBYTES(sp)
+  LREG s6,22*REGBYTES(sp)
+  LREG s7,23*REGBYTES(sp)
+  LREG s8,24*REGBYTES(sp)
+  LREG s9,25*REGBYTES(sp)
+  LREG s10,26*REGBYTES(sp)
+  LREG s11,27*REGBYTES(sp)
+  LREG t3,28*REGBYTES(sp)
+  LREG t4,29*REGBYTES(sp)
+  LREG t5,30*REGBYTES(sp)
+  LREG t6,31*REGBYTES(sp)
+
+  bnez a0, 1f
+
+  # Go back whence we came.
+  LREG a0, 10*REGBYTES(sp)
+  LREG sp, 2*REGBYTES(sp)
+  nop
+  nop
+  nop
+  nop
+  nop
+  eret
+
+1:# Redirect the trap to the supervisor.
+  LREG a0, 10*REGBYTES(sp)
+  LREG sp, 2*REGBYTES(sp)
+  mrts
+
+.Lbad_trap:
+  j bad_trap
+
 
 .section ".tdata.begin"
 .globl _tdata_begin

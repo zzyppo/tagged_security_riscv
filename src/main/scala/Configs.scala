@@ -103,7 +103,8 @@ class DefaultConfig extends ChiselConfig (
         case NWays => Knob("TC_WAYS")
         case RowBits => site(TCBlockTags) * site(TagBits)
       }: PF
-      
+
+
       //Tile Constants
       case NTiles => Knob("NTILES")
       case NDCachePorts => 2
