@@ -29,7 +29,7 @@ RISCV_LINK_OPTS = -nostdlib -nostartfiles -ffast-math -lc -lgcc
 default: all
 
 TARGETS = boot dram hello reset sdcard tag_instructions memory_read_write dram_antibug tag_ld_st hello_ret_addr_attack lbu_test jop_attack_standalone rop_attack_standalone lb_sb_bug_test tag_iteration_standalone_after_boot
-LINUX_TARGETS = jop_attack hello_ret_addr_attack jop_attack_with_file
+LINUX_TARGETS = jop_attack rop_attack jop_attack_with_file
 
 DRIVER_OBJS += \
 	$(DRIVER_DIR)/syscalls.o \

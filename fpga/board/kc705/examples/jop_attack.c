@@ -4,6 +4,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#define write_csr(reg, val) \
+  asm volatile ("csrw " #reg ", %0" :: "r"(val))
+
+
 int attack_sucessful(int value)
 {
   printf("Attack Function!  (should not reach this point) %d\n", value);
@@ -22,47 +26,40 @@ struct foo {
   int (*function_pointer)(int);
 };
 
-#define read_csr(reg) ({ unsigned long __tmp; \
-  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
-  __tmp; })
-
 int main(int argc, char** argv, char** envp) 
 {
   struct foo *f = malloc(sizeof(*f));
+  char string[256];
+  int debug_tag = 0;
+
+
+   write_csr(0x400, 0x7); //Switch on the checks
+
+  if(argc == 2 || argc == 3)
+  {
+    if(!strcmp(argv[1], "off"))
+      write_csr(0x400, 0x0); //Switch off the checks
+  }
+
   f->function_pointer = &valid_function;
 
-  char string[256];
-
-  int debug_tag = 0;
-  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((string)));
-  printf("String tag before scanf %x\n", debug_tag);
-
-  printf("plase type some string\n");
-  printf("CSR is %x\n", read_csr(0x400));
-  scanf( "%s" , &string[0]);
-   printf("CSR is %x\n", read_csr(0x400));
-  printf("Read  %s form IO\n", string);
-  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((string)));
-  printf("String tag after scanf %x\n", debug_tag);
-
-asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((f->buffer)));
-printf("\nf-buffer before strcpy %x\n", debug_tag);
-
-  printf("Function pointer value before %x\n", f->function_pointer);
+  printf("Function pointer value before strcpy: %x\n", f->function_pointer);
   asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(f->function_pointer)));
-  printf("\nFunction pointer tag before %x\n", debug_tag);
+  printf("\nFunction pointer tag before strcpy: %x\n", debug_tag);
 
-  strcpy(f->buffer, string);
-   printf("Function pointer value after %x\n", f->function_pointer);
-   asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(f->function_pointer)));
-   printf("\nFunction pointer tag after %x\n", debug_tag);
+  if(argc > 2)
+      strcpy(f->buffer, argv[2]); //Variant with arguments passed
+  else
+  {
+      printf("Please type some string---------------------------------------\n");
+      scanf( "%s" , &string[0]);
+      printf("Read  %s form IO\n", string);
+      strcpy(f->buffer, string);
+  }
 
-  //strcpy(f->buffer, argv[1]); //Variant with arguments passed
-
-  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((f->buffer)));
-  printf("\nf-buffer after strcpy %x\n", debug_tag);
-
-  printf("\n\n");
+  printf("Function pointer value after strcpy: %x\n", f->function_pointer);
+  asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"(&(f->function_pointer)));
+  printf("\nFunction pointer tag after strcpy: %x\n", debug_tag);
 
   int testvar = 5;
   int ret = 0;

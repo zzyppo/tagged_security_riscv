@@ -162,7 +162,12 @@ class L1LoadGen(typ: Bits, addr: Bits, dat: Bits, zero: Bool, tagWidth: Int) {
   val t = new L1StoreGen(typ, addr, dat, tagWidth)
   val sign = typ === MT_B || typ === MT_H || typ === MT_W || typ === MT_D
 
-  val tag = Cat(Bits(0,64-tagWidth), dat(63+tagWidth, 64))
+  //Return address policy: partial loads shall clear the RA tag bit
+  val partial_tag_mask = ~UInt(RET_TAG, width = tagWidth) //Use all tags exept the RET_TAG
+
+  val tag = Mux(t.byte || t.half || t.word, dat(63+tagWidth, 64) & partial_tag_mask,  dat(63+tagWidth, 64))
+
+  val pure_tag = Cat(Bits(0,64-tagWidth), dat(63+tagWidth, 64))
 
   val wordShift = Mux(addr(2), dat(63,32), dat(31,0))
   val word = Cat(tag, Cat(Mux(t.word, Fill(32, sign && wordShift(31)), dat(63,32)), wordShift))
@@ -171,7 +176,7 @@ class L1LoadGen(typ: Bits, addr: Bits, dat: Bits, zero: Bool, tagWidth: Int) {
   val byteShift = Mux(zero, UInt(0), Mux(addr(0), half(15,8), half(7,0)))
   //val byte = Mux(t.tag,  tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift))
   //Version for core tag support
-   val byte = Mux(t.tag, tag << 64 | tag, Cat(tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift)))
+   val byte = Mux(t.tag, pure_tag << 64 | pure_tag, Cat(tag, Cat(Mux(zero || t.byte, Fill(56, sign && byteShift(7)), half(63,8)), byteShift)))
 }
 
 //ToDo: Adapt for tagged data size and insertion of tag from io

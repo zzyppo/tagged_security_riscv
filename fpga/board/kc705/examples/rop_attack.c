@@ -2,14 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
-//#include "uart.h"
-/*
-extern void asm_set_tagctrl(long tag_ctrl);
 
-#define SYS_soft_reset 617
-#define SYS_set_tagctrl 0x3100
-extern long syscall(long num, long arg0, long arg1, long arg2);
-*/
 
 #define ATTACK_DOUBLE_WORD 0
 #define ATTACK_BYTE_WRITE 1
@@ -30,19 +23,11 @@ void nix()
 
 int attackDoubleWord(int var)
 {
-  //char test[2];
-  //test[0] = 0xdE;
-  //test[1] = 0xBF;
 int y = 4;
   y += var;
   long x[10];
   nix();
-  x[12] =  (0xdeadbeef);
- // memcpy(x + 12, test, sizeof(char) * 2);
-  //x[12] =  bla;
-
- // x[12] =  &attack_sucessful;
-
+  x[12] =  &attack_sucessful;;
   return y;
 }
 
@@ -58,7 +43,6 @@ int attackByteOverwrite(int var)
   nix();
   //Bytewise overwrite the return address -> Trap shall trigger
   (*(char*)(x + 12)) = test[0];
-  //memcpy(x + 12, test, sizeof(char) * 2);
   return y;
 }
 
@@ -69,7 +53,6 @@ int attackPartialCopy(int var)
   y += var;
   long x[10];
   nix();
-  asm volatile ("stag %0, 0(%1)" ::"r"(0xF), "r"(x+12));
   //Assemble return adress out of valid return adress bytes
   test = (*(char*)(x + 12));
   *(((char*)(x + 12)) + 1) = test;
@@ -80,36 +63,49 @@ int attackPartialCopy(int var)
 #define write_csr(reg, val) \
   asm volatile ("csrw " #reg ", %0" :: "r"(val))
 
-int main() {
+int main(int argc, char** argv, char** envp)
+{
   long a[2];
   int test_tag = 0;
-
   int attack_mode = ATTACK_BYTE_WRITE;
 
+  write_csr(0x400, 0x7); //Switch on the checks
 
+  if(argc == 2)
+  {
+    if(!strcmp(argv[1], "off"))
+      write_csr(0x400, 0x0); //Switch off the checks
+  }
 
-  write_csr(0x400, 7);
+  printf("----------------------\n");
+  printf("Chose Attack Mode: \n");
+  printf("0: overwrite ra fully\n");
+  printf("1: Byte write to ra\n");
+  printf("2: partial copy create ra\n");
+
+  scanf("%d", &attack_mode);
+
+  printf("Try To perform RET attack!\n");
 
   switch(attack_mode)
   {
     case ATTACK_DOUBLE_WORD:
-      asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
       attackDoubleWord(1111);
       break;
 
     case ATTACK_BYTE_WRITE:
-      asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
       attackByteOverwrite(1111);
       break;
 
     case ATTACK_PARTIAL_COPY:
-      asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
       attackPartialCopy(1111);
       break;
+
+    default:
+      printf("Unknown attack type\n");
   }
 
-
-  asm volatile ("ltag %0, 0(%1)":"=r"(test_tag):"r"((a)));
+  printf("No attack performed\n");
   return 0;
 }
 
