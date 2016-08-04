@@ -22,6 +22,7 @@ RISCV_LINK = $(RISCV_GCC) -T $(DRIVER_DIR)/test.ld
 RISCV_LINK_OPTS = -nostdlib -nostartfiles -ffast-math -lc -lgcc
 
 
+
 #--------------------------------------------------------------------
 # Objects
 #--------------------------------------------------------------------
