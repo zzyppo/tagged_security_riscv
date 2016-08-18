@@ -47,7 +47,7 @@ int main() {
 int temp = 0;
   long array[2];
 
- write_csr(0x400,0x0);
+ write_csr(0x800,0x0);
 #ifndef IS_SIMULATION
   //uart_init();
  // printf("DRAM test program.\n");

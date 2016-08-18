@@ -51,7 +51,7 @@ int main() {
   //long a[2];
   int test_tag = 0;
   unsigned long uart_data = 0;
-  write_csr(0x400,0xF);
+  write_csr(0x800,0xF);
 
   sbi_device_message m;
   

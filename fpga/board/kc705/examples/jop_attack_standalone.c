@@ -48,7 +48,7 @@ int main(int argc, char** argv, char** envp)
   printf("String tag before scanf %x\n", debug_tag);
 
   printf("plase type some string\n");
-  printf("CSR is %x\n", read_csr(0x400));
+  printf("CSR is %x\n", read_csr(0x800));
 
   scanf("s", string);
 /*
@@ -74,7 +74,7 @@ int main(int argc, char** argv, char** envp)
   */
 
  // scanf( "%s" , &string[0]);
-   printf("CSR is %x\n", read_csr(0x400));
+   printf("CSR is %x\n", read_csr(0x800));
   printf("Read  %s form IO\n", string);
   asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((string)));
   printf("String tag after scanf %x\n", debug_tag);

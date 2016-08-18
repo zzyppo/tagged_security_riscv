@@ -39,7 +39,7 @@ int main(int argc, char** argv, char** envp)
   printf("String tag before scanf %x\n", debug_tag);
 
   printf("plase type some string\n");
-  printf("CSR is %x\n", read_csr(0x400));
+  printf("CSR is %x\n", read_csr(0x800));
  rm = fopen("jop_input_hex.txt", "r");
 if (rm != NULL) {
     while (!feof(rm)) {
@@ -49,7 +49,7 @@ if (rm != NULL) {
     }
     fclose(rm);
 }
-   printf("CSR is %x\n", read_csr(0x400));
+   printf("CSR is %x\n", read_csr(0x800));
   printf("Read  %s form IO\n", string);
   printf("Lenght  %d \n", strlen(string));
   asm volatile ("ltag %0, 0(%1)":"=r"(debug_tag):"r"((string)));

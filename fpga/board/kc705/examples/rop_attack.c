@@ -69,12 +69,12 @@ int main(int argc, char** argv, char** envp)
   int test_tag = 0;
   int attack_mode = ATTACK_BYTE_WRITE;
 
-  write_csr(0x400, 0x7); //Switch on the checks
+  write_csr(0x800, 0x7); //Switch on the checks
 
   if(argc == 2)
   {
     if(!strcmp(argv[1], "off"))
-      write_csr(0x400, 0x0); //Switch off the checks
+      write_csr(0x800, 0x0); //Switch off the checks
   }
 
   printf("----------------------\n");

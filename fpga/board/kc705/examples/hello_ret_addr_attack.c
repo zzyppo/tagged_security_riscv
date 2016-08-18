@@ -88,7 +88,7 @@ int main() {
 
 
 
-  write_csr(0x400, 7);
+  write_csr(0x800, 7);
 
   switch(attack_mode)
   {

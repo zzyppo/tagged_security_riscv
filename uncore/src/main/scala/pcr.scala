@@ -12,7 +12,7 @@ object PCRs {
   val ptohost   = 0x780
   val pfromhost = 0x781
   val preset    = 0x782
-  val ptagctrl  = 0x400 //New control register to switch on/ off tag check and/or propagation (Wirteable also in UserMode)
+  val ptagctrl  = 0x800 //New control register to switch on/ off tag check and/or propagation (Wirteable also in UserMode)
   val pmem_map  = 0x7a0
   val pmem_map_update = 0x7af
   val pio_map   = 0x7b0

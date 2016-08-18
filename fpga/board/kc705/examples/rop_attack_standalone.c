@@ -40,7 +40,7 @@ int main() {
   long a[2];
   uart_init();
   printf("Try To perform RET attack!\n");
-  write_csr(0x400, 7);
+  write_csr(0x800, 7);
   test(1111);
   printf("No attack performed\n");
   return 0;

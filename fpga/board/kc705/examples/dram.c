@@ -5,6 +5,10 @@
 #include "uart.h"
 #include "memory.h"
 
+#define write_csr(reg, val) \
+  asm volatile ("csrw " #reg ", %0" :: "r"(val))
+
+
 //#define IS_SIMULATION
 //#define USE_IO_SPACE
 unsigned long long lfsr64(unsigned long long d) {
@@ -45,6 +49,7 @@ int temp = 0;
 #ifndef IS_SIMULATION
   uart_init();
   printf("DRAM test program.\n");
+  write_csr(0x800, 0x0); //Switch on the checks
   #endif
 
 #ifdef USE_IO_SPACE

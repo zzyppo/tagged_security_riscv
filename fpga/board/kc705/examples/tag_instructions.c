@@ -37,7 +37,7 @@ int dummyfunc()
 
 int main() {
 
- write_csr(0x400, 0xF); // Activate al checks + dummy trap check
+ write_csr(0x800, 0xF); // Activate al checks + dummy trap check
  int dummy_var = 5;
 
   dummy_var = dummyfunc();
