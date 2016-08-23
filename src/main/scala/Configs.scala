@@ -207,15 +207,15 @@ class DefaultConfig extends ChiselConfig (
     case "L1D_SETS" => 32 //64
     case "L1D_WAYS" => 2//4
 
-    case "L1I_SETS" => 64
-    case "L1I_WAYS" => 4
+    case "L1I_SETS" => 32
+    case "L1I_WAYS" => 2
 
     case "L2_XACTORS" => 2
     case "L2_SETS" => 32 //256 // 1024
     case "L2_WAYS" => 2 // 2
 
     case "TC_XACTORS" => 1
-    case "TC_SETS" => 4//4
+    case "TC_SETS" => 32//4
     case "TC_WAYS" => 2//2
     case "TC_BASE_ADDR" =>  0x7FFFFFFF //<< 20 //0x7FF00000 //Strart Tag segment for DRAM
 

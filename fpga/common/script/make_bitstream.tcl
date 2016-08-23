@@ -9,6 +9,9 @@ open_project $orig_proj_dir/$project_name.xpr
 # IP flow regeneration
 set_msg_config -id "\[IP_Flow 19-3664\]" -suppress
 
+#increase limit of variable size
+set_param synth.elaboration.rodinMoreOptions "rt::set_parameter var_size_limit 4194304"
+
 # reset runs
 reset_run synth_1
 reset_run impl_1
